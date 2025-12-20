@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Resume Analyzer</title>
+
+<style>
+:root{
+  --dark-blue:#0a3d91;
+  --royal-blue:#0a66c2;
+  --orange:#f2ad58;
+  --light-gray:#f4f6fa;
+  --dark-gray:#333;
+  --white:#fff;
+}
+
+body{
+  background:var(--light-gray);
+  font-family:Segoe UI,sans-serif;
+  padding:30px;
+}
+
+.card{
+  max-width:900px;
+  margin:auto;
+  background:var(--white);
+  padding:30px;
+  border-radius:18px;
+  box-shadow:0 15px 30px rgba(0,0,0,0.08);
+}
+
+h1{color:var(--dark-blue);}
+
+.upload{
+  border:2px dashed var(--royal-blue);
+  padding:25px;
+  border-radius:14px;
+  text-align:center;
+  margin:20px 0;
+}
+
+button{
+  background:var(--royal-blue);
+  color:#fff;
+  padding:12px 25px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.progress{
+  background:#e5e8f0;
+  border-radius:20px;
+  margin:15px 0;
+  overflow:hidden;
+}
+
+.bar{
+  height:18px;
+  width:0%;
+  background:linear-gradient(90deg,var(--royal-blue),var(--orange));
+  transition:0.6s;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+  margin-top:25px;
+}
+
+.box{
+  background:var(--light-gray);
+  padding:20px;
+  border-radius:14px;
+}
+
+ul{padding-left:18px;font-size:14px;}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>Resume ATS Analyzer</h1>
+  <p><strong>Upload TXT resume only</strong> (frontend ATS simulation)</p>
+
+  <div class="upload">
+    <input type="file" id="file" accept=".txt">
+  </div>
+
+  <button onclick="analyze()">Analyze Resume</button>
+
+  <h3>ATS Score</h3>
+  <div class="progress">
+    <div class="bar" id="bar"></div>
+  </div>
+  <strong id="score">0 / 100</strong>
+
+  <div class="grid">
+    <div class="box">
+      <h3>Detected Skills</h3>
+      <ul id="skills"></ul>
+    </div>
+    <div class="box">
+      <h3>Detected Sections</h3>
+      <ul id="sections"></ul>
+    </div>
+    <div class="box">
+      <h3>Suggestions</h3>
+      <ul id="tips"></ul>
+    </div>
+  </div>
+</div>
+
+<script>
+const skillsDB = [
+ "java","python","javascript","html","css","sql",
+ "react","node","git","data structures","algorithms"
+];
+
+const sectionsDB = [
+ "education","skills","projects","experience","certifications"
+];
+
+function analyze(){
+  const file = document.getElementById("file").files[0];
+  if(!file){ alert("Upload TXT resume"); return; }
+
+  const reader = new FileReader();
+  reader.onload = () => processText(reader.result.toLowerCase());
+  reader.readAsText(file);
+}
+
+function processText(text){
+  let score = 20; // base score
+  let foundSkills=[], foundSections=[];
+
+  skillsDB.forEach(s=>{
+    if(text.includes(s)){ foundSkills.push(s); score+=5; }
+  });
+
+  sectionsDB.forEach(sec=>{
+    if(text.includes(sec)){ foundSections.push(sec); score+=6; }
+  });
+
+  const words = text.split(/\s+/).length;
+  if(words>=300 && words<=800) score+=20;
+
+  if(score>100) score=100;
+
+  document.getElementById("bar").style.width = score+"%";
+  document.getElementById("score").innerText = score+" / 100";
+
+  fill("skills", foundSkills, "Add more skills");
+  fill("sections", foundSections, "Missing sections");
+  tips(score, foundSkills.length, foundSections.length, words);
+}
+
+function fill(id, arr, empty){
+  const ul=document.getElementById(id);
+  ul.innerHTML="";
+  arr.length ? arr.forEach(x=>ul.innerHTML+=`<li>${x}</li>`) : ul.innerHTML=`<li>${empty}</li>`;
+}
+
+function tips(score, sk, sec, w){
+  const ul=document.getElementById("tips");
+  ul.innerHTML="";
+  if(score<60) ul.innerHTML+="<li>Resume needs improvement</li>";
+  if(sk<5) ul.innerHTML+="<li>Add more technical skills</li>";
+  if(sec<4) ul.innerHTML+="<li>Add missing sections</li>";
+  if(w<300) ul.innerHTML+="<li>Resume too short</li>";
+  if(w>900) ul.innerHTML+="<li>Resume too long</li>";
+  if(!ul.innerHTML) ul.innerHTML="<li>Excellent ATS-ready resume</li>";
+}
+</script>
+
+</body>
+</html>

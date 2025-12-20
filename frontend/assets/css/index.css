@@ -12,36 +12,126 @@ body {
   overflow-x: hidden;
 }
 
-/* ============ NAVBAR ============ */
+/* ============ MODERN FLOATING NAVBAR ============ */
+:root {
+  --nav-text: #0a3d91;
+  --nav-hover: #0a66c2;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --shadow-soft: 0 8px 32px rgba(31, 38, 135, 0.1);
+}
+
 .navbar {
   position: sticky;
-  top: 0;
-  z-index: 100;
+  top: 20px; /* Floats 20px from top */
+  z-index: 1000;
+  
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 22px 80px;
-  background: white;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  
+  /* Sizing & Spacing */
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto 40px auto; /* Centered with bottom margin */
+  padding: 15px 40px;
+  
+  /* Glassmorphism Style */
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); /* Safari support */
+  border: 1px solid var(--glass-border);
+  border-radius: 50px; /* Pill shape */
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s ease;
 }
 
+/* Logo Styling */
 .logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--nav-text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -0.5px;
+}
+
+.logo i {
+  color: var(--nav-hover); /* Icon color */
   font-size: 1.8rem;
-  font-weight: 700;
-  color: #0a3d91;
+}
+
+/* Navigation Links */
+.navbar nav {
+  display: flex;
+  gap: 30px;
+  align-items: center;
 }
 
 .navbar nav a {
-  margin-left: 35px;
   text-decoration: none;
-  font-weight: 500;
-  color: #0a3d91;
+  font-weight: 600;
+  color: var(--nav-text);
+  font-size: 0.95rem;
+  position: relative;
+  transition: color 0.3s ease;
+  padding: 5px 0;
+}
+
+/* Animated Underline Effect */
+.navbar nav a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--nav-hover);
+  transition: width 0.3s ease-in-out;
+  border-radius: 2px;
 }
 
 .navbar nav a:hover {
-  color: #1e88e5;
+  color: var(--nav-hover);
 }
 
+.navbar nav a:hover::after {
+  width: 100%;
+}
+
+/* Call to Action Button (Optional "Login" or "Get Started") */
+.nav-btn {
+  padding: 10px 25px;
+  background: var(--nav-text);
+  color: white !important;
+  border-radius: 30px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 15px rgba(10, 61, 145, 0.2);
+}
+
+.nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(10, 61, 145, 0.3);
+  color: white !important;
+}
+
+.nav-btn::after {
+  display: none; /* No underline for the button */
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .navbar {
+    width: 95%;
+    padding: 15px 20px;
+    top: 10px;
+  }
+  
+  .navbar nav {
+    display: none; /* Hidden for mobile in this snippet */
+  }
+}
 /* ============ HERO ============ */
 .hero {
   height: 92vh;

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile | T&P Management AI</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- 1. COLOR VARIABLES --- */
+        :root {
+            --primary-dark: #0a3d91;      /* Navbar, Headings */
+            --primary-royal: #0a66c2;     /* Links, Buttons */
+            --bg-white: #ffffff;          /* Cards */
+            --accent-orange: #f2ad58;     /* Highlights */
+            --bg-light-gray: #f4f6fa;     /* Page Background */
+            --text-dark: #333333;         /* Main Text */
+            --text-muted: #666666;
+            
+            /* Social Colors */
+            --social-linkedin: #0a66c2;
+            --social-instagram: #e1306c;
+            --social-twitter: #1da1f2;
+            --social-youtube: #ff0000;
+        }
+
+        /* --- 2. RESET & LAYOUT --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light-gray);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- 3. SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--primary-dark);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i { color: var(--accent-orange); }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            border-left: 4px solid var(--accent-orange);
+        }
+
+        /* --- 4. MAIN CONTENT --- */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 { color: var(--primary-dark); }
+
+        .btn-primary {
+            background-color: var(--primary-royal);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn-primary:hover { background-color: #084e96; }
+
+        /* --- 5. GRID LAYOUT FOR PROFILE --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+        }
+
+        /* CARD STYLES */
+        .card {
+            background: var(--bg-white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--primary-royal);
+        }
+
+        /* --- LEFT COLUMN: PROFILE INFO --- */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            background-color: #ddd;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            object-fit: cover;
+            border: 3px solid var(--primary-royal);
+        }
+
+        .profile-name { font-size: 1.4rem; font-weight: bold; color: var(--primary-dark); }
+        .profile-role { color: var(--accent-orange); font-weight: 600; margin-bottom: 10px; }
+
+        .info-list { list-style: none; text-align: left; margin-top: 20px; }
+        .info-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .info-list span { color: var(--text-muted); }
+
+        /* SOCIAL ICONS */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: 0.3s;
+            font-size: 1.2rem;
+        }
+
+        /* Hover Effects */
+        .social-btn.linkedin:hover { background: var(--social-linkedin); color: white; }
+        .social-btn.instagram:hover { background: var(--social-instagram); color: white; }
+        .social-btn.twitter:hover { background: var(--social-twitter); color: white; }
+        .social-btn.youtube:hover { background: var(--social-youtube); color: white; }
+
+        /* --- RIGHT COLUMN: CHARTS --- */
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .chart-box {
+            background: var(--bg-white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--bg-light-gray);
+            padding-bottom: 10px;
+        }
+        
+        /* AI Badge */
+        .ai-badge {
+            background: linear-gradient(45deg, var(--primary-dark), var(--primary-royal));
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            float: right;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .dashboard-grid, .charts-container { grid-template-columns: 1fr; }
+            .sidebar { width: 70px; padding: 10px; }
+            .nav-links span, .logo span { display: none; }
+            .main-content { margin-left: 70px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>T&P AI</span>
+        </div>
+        <nav class="nav-links">
+            <a href="#" class="active"><i class="fa-solid fa-user"></i> <span>My Profile</span></a>
+            <a href="#"><i class="fa-solid fa-chart-line"></i> <span>Performance</span></a>
+            <a href="#"><i class="fa-solid fa-briefcase"></i> <span>Placements</span></a>
+            <a href="#"><i class="fa-solid fa-file-invoice"></i> <span>AI Resume</span></a>
+            <a href="#"><i class="fa-solid fa-bell"></i> <span>Notices</span></a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        
+        <div class="header">
+            <div>
+                <h1>Student Dashboard</h1>
+                <p style="color: var(--text-muted);">Welcome back, check your placement readiness.</p>
+            </div>
+            <button class="btn-primary">Edit Profile</button>
+        </div>
+
+        <div class="dashboard-grid">
+
+            <div class="card">
+                <div class="profile-header">
+                    <img src="https://via.placeholder.com/150" alt="Student" class="profile-img">
+                    <h2 class="profile-name">Shreyas Dakhole</h2>
+                    <p class="profile-role">Computer Science Engineering</p>
+                    <div style="margin-top: 10px;">
+                        <span style="background: var(--bg-light-gray); padding: 5px 10px; border-radius: 4px; font-size: 0.9rem;">
+                            <i class="fa-solid fa-location-dot" style="color:var(--primary-royal)"></i> Amravati, MH
+                        </span>
+                    </div>
+                </div>
+
+                <ul class="info-list">
+                    <li><span>Roll No:</span> <strong>CS-2025-045</strong></li>
+                    <li><span>Email:</span> <strong>shreyas@example.com</strong></li>
+                    <li><span>Phone:</span> <strong>+91 98765 43210</strong></li>
+                    <li><span>CGPA:</span> <strong>8.9 / 10.0</strong></li>
+                    <li><span>Batch:</span> <strong>2025</strong></li>
+                </ul>
+
+                <div class="social-links">
+                    <a href="#" class="social-btn linkedin"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#" class="social-btn instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="social-btn twitter"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="social-btn youtube"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                
+                <div class="chart-box" style="margin-bottom: 25px;">
+                    <h3 class="chart-title">
+                        Technical Skill Analysis
+                        <span class="ai-badge"><i class="fa-solid fa-robot"></i> AI Analyzed</span>
+                    </h3>
+                    <div style="height: 250px;">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-box">
+                        <h3 class="chart-title">Placement Probability</h3>
+                        <div style="height: 200px; display: flex; justify-content: center;">
+                            <canvas id="doughnutChart"></canvas>
+                        </div>
+                        <p style="text-align: center; margin-top: 10px; color: var(--text-muted); font-size: 0.9rem;">
+                            Based on current CGPA & Skills
+                        </p>
+                    </div>
+
+                    <div class="chart-box">
+                        <h3 class="chart-title">Mock Test Performance</h3>
+                        <div style="height: 200px;">
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CHART 1: Technical Skills (Bar Chart) ---
+        const ctx1 = document.getElementById('skillsChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['Java', 'React JS', 'Python', 'DSA', 'SQL', 'Comm. Skills'],
+                datasets: [{
+                    label: 'Proficiency Level (%)',
+                    data: [85, 75, 60, 80, 70, 90],
+                    backgroundColor: '#0a66c2', // Royal Blue
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, max: 100 }
+                }
+            }
+        });
+
+        // --- CHART 2: Placement Probability (Doughnut) ---
+        const ctx2 = document.getElementById('doughnutChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Ready', 'Needs Improvement'],
+                datasets: [{
+                    data: [88, 12],
+                    backgroundColor: ['#0a3d91', '#f4f6fa'], // Dark Blue vs Light Gray
+                    hoverBackgroundColor: ['#0a66c2', '#e2e6ea'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                cutout: '70%',
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // --- CHART 3: Mock Test History (Line Chart) ---
+        const ctx3 = document.getElementById('lineChart').getContext('2d');
+        new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'],
+                datasets: [{
+                    label: 'Score',
+                    data: [65, 70, 72, 85, 88],
+                    borderColor: '#f2ad58', // Orange Accent
+                    backgroundColor: 'rgba(242, 173, 88, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, max: 100 }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

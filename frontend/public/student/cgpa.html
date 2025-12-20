@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CGPA Calculator | AI Training & Placement Cell</title>
+
+<style>
+:root{
+  --dark-blue:#0a3d91;
+  --royal-blue:#0a66c2;
+  --orange:#f2ad58;
+  --light-gray:#f4f6fa;
+  --dark-gray:#333;
+  --white:#fff;
+}
+
+*{
+  box-sizing:border-box;
+  font-family:Segoe UI, sans-serif;
+}
+
+body{
+  background:var(--light-gray);
+  padding:30px;
+}
+
+.container{
+  max-width:1000px;
+  margin:auto;
+  background:var(--white);
+  padding:30px;
+  border-radius:18px;
+  box-shadow:0 15px 30px rgba(0,0,0,0.08);
+}
+
+h1{
+  color:var(--dark-blue);
+}
+
+.semester{
+  background:var(--light-gray);
+  padding:20px;
+  border-radius:14px;
+  margin:20px 0;
+}
+
+.semester h3{
+  margin-top:0;
+  color:var(--royal-blue);
+}
+
+.row{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  gap:15px;
+  margin-bottom:10px;
+}
+
+input, select{
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+button{
+  background:var(--royal-blue);
+  color:var(--white);
+  border:none;
+  padding:12px 25px;
+  border-radius:8px;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+button.orange{
+  background:var(--orange);
+  color:#000;
+}
+
+button:hover{
+  opacity:0.9;
+}
+
+.result{
+  margin-top:30px;
+  padding:20px;
+  background:var(--light-gray);
+  border-radius:14px;
+}
+
+.add-btn{
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>CGPA Calculator</h1>
+  <p>Calculate semester-wise GPA and overall CGPA.</p>
+
+  <div id="semesters"></div>
+
+  <button class="orange" onclick="addSemester()">+ Add Semester</button>
+  <br><br>
+  <button onclick="calculateCGPA()">Calculate CGPA</button>
+
+  <div class="result" id="result" style="display:none;"></div>
+</div>
+
+<script>
+const gradePoints = {
+  "O":10,
+  "A+":9,
+  "A":8,
+  "B+":7,
+  "B":6,
+  "C":5,
+  "F":0
+};
+
+let semesterCount = 0;
+
+addSemester();
+
+function addSemester(){
+  semesterCount++;
+  const sem = document.createElement("div");
+  sem.className = "semester";
+  sem.innerHTML = `
+    <h3>Semester ${semesterCount}</h3>
+    <div class="subjects"></div>
+    <button class="add-btn" onclick="addSubject(this)">+ Add Subject</button>
+  `;
+  document.getElementById("semesters").appendChild(sem);
+  addSubject(sem.querySelector("button"));
+}
+
+function addSubject(btn){
+  const container = btn.parentElement.querySelector(".subjects");
+  const row = document.createElement("div");
+  row.className = "row";
+  row.innerHTML = `
+    <input type="text" placeholder="Subject Name">
+    <input type="number" placeholder="Credits" min="1">
+    <select>
+      <option value="">Grade</option>
+      <option>O</option>
+      <option>A+</option>
+      <option>A</option>
+      <option>B+</option>
+      <option>B</option>
+      <option>C</option>
+      <option>F</option>
+    </select>
+  `;
+  container.appendChild(row);
+}
+
+function calculateCGPA(){
+  let totalCredits = 0;
+  let totalPoints = 0;
+  let output = "<h3>Results</h3>";
+
+  document.querySelectorAll(".semester").forEach((sem, i)=>{
+    let semCredits = 0;
+    let semPoints = 0;
+
+    sem.querySelectorAll(".row").forEach(row=>{
+      const credit = Number(row.children[1].value);
+      const grade = row.children[2].value;
+
+      if(credit && grade){
+        semCredits += credit;
+        semPoints += credit * gradePoints[grade];
+      }
+    });
+
+    if(semCredits){
+      const sgpa = (semPoints / semCredits).toFixed(2);
+      output += `<p><strong>Semester ${i+1} GPA:</strong> ${sgpa}</p>`;
+      totalCredits += semCredits;
+      totalPoints += semPoints;
+    }
+  });
+
+  if(!totalCredits){
+    alert("Enter valid data");
+    return;
+  }
+
+  const cgpa = (totalPoints / totalCredits).toFixed(2);
+  output += `<hr><h3>Final CGPA: ${cgpa}</h3>`;
+
+  document.getElementById("result").innerHTML = output;
+  document.getElementById("result").style.display = "block";
+}
+</script>
+
+</body>
+</html>
