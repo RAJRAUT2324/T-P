@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T & P Login</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            background: #f7f8ff;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .left {
+            flex: 1;
+            background: linear-gradient(145deg, #3b2aff, #7a3bff, #3b9dff);
+            padding: 80px;
+            position: relative;
+            color: white;
+            overflow: hidden;
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(25px);
+            animation: float 6s infinite ease-in-out alternate;
+            opacity: 0.7;
+        }
+
+        .shape1 {
+            width: 180px;
+            height: 180px;
+            background: #ffffff;
+            top: 10%;
+            left: 20%;
+        }
+
+        .shape2 {
+            width: 250px;
+            height: 250px;
+            background: #00eaff;
+            top: 50%;
+            left: -40px;
+        }
+
+        .shape3 {
+            width: 200px;
+            height: 200px;
+            background: #ffc0ff;
+            right: 10%;
+            bottom: 20%;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(10deg); }
+            100% { transform: translateY(0) rotate(-10deg); }
+        }
+
+        .text-box {
+            position: relative;
+            z-index: 5;
+            margin-top: 30%;
+        }
+
+        .title {
+            font-size: 48px;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            margin-top: 10px;
+            font-size: 18px;
+            opacity: 0;
+            animation: fadeSlide 2s ease forwards;
+            animation-delay: 1s;
+        }
+
+        @keyframes fadeSlide {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .right {
+            flex: 0.9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #eef0ff, #ffffff);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .right::before {
+            content: "";
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: #7a3bff44;
+            filter: blur(120px);
+            animation: glowMove 10s infinite alternate ease-in-out;
+            top: -20%;
+            right: -20%;
+        }
+
+        @keyframes glowMove {
+            0% { transform: translate(-40px, 0px); }
+            100% { transform: translate(40px, 40px); }
+        }
+
+        .login-card {
+            width: 380px;
+            padding: 30px;
+            background: #ffffffd4;
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            text-align: center;
+            animation: cardFadeUp 1.2s ease forwards;
+            transform: translateY(25px);
+            opacity: 0;
+        }
+
+        @keyframes cardFadeUp {
+            0% { opacity: 0; transform: translateY(25px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-card:hover {
+            transform: scale(1.02);
+            transition: 0.4s;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+        }
+
+        /* Social Buttons */
+        .icon-btn {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .social-btn {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 10px;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s ease;
+        }
+
+        .google {
+            background: #ffffff;
+            border: 2px solid #ddd;
+        }
+
+        .google:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(66,133,244,0.4);
+        }
+
+        .divider {
+            margin: 18px 0;
+            color: #999;
+        }
+
+        .input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            outline: none;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .input:hover,
+        .input:focus {
+            border-color: #6c48ff;
+            box-shadow: 0 0 10px #6c48ff55;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            border: none;
+            background: #6c48ff;
+            color: white;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background: #5830ff;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 25px #7a3bffaa;
+        }
+
+        .signup-link {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .signup-link a {
+            color: #6c48ff;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="left">
+        <div class="floating-shape shape1"></div>
+        <div class="floating-shape shape2"></div>
+        <div class="floating-shape shape3"></div>
+
+        <div class="text-box">
+            <h1 class="title">Welcome to <br> T & P Management System</h1>
+            <p class="subtitle">Your gateway to training, placements & success.</p>
+        </div>
+    </div>
+
+    <div class="right">
+        <div class="login-card">
+            <h2>Sign in</h2>
+
+            <!-- GOOGLE LOGIN (UNCHANGED) -->
+            <button class="social-btn google">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="icon-btn">
+                Continue with Google
+            </button>
+
+            <div class="divider">or</div>
+
+            <!-- EMAIL LOGIN -->
+            <input type="email" id="email" placeholder="Email" class="input">
+            <input type="password" id="password" placeholder="Password" class="input">
+
+            <button class="login-btn" onclick="login()">Login</button>
+
+            <p class="signup-link">Don't have an account? <a href="#">Create one</a></p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function login() {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        if (email === "Raj@123gmail.com" && password === "pass@123") {
+            window.location.href = "index.html";
+        } else {
+            alert("Invalid Email or Password ❌");
+        }
+    }
+</script>
+
+</body>
+</html>

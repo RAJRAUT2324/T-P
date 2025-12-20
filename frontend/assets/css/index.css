@@ -1,0 +1,446 @@
+/* ============ GLOBAL ============ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: #f4f8ff;
+  color: #0a3d91;
+  overflow-x: hidden;
+}
+
+/* ============ NAVBAR ============ */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 80px;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0a3d91;
+}
+
+.navbar nav a {
+  margin-left: 35px;
+  text-decoration: none;
+  font-weight: 500;
+  color: #0a3d91;
+}
+
+.navbar nav a:hover {
+  color: #1e88e5;
+}
+
+/* ============ HERO ============ */
+.hero {
+  height: 92vh;
+  background: linear-gradient(135deg, #e3f2fd, #ffffff);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Moving AI background bubbles */
+.hero::before,
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #1e88e5, transparent);
+  opacity: 0.12;
+  border-radius: 50%;
+  animation: float 15s infinite alternate;
+}
+
+.hero::after {
+  top: 65%;
+  left: 65%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  from { transform: translateY(0px); }
+  to { transform: translateY(-120px); }
+}
+
+.hero h2 {
+  font-size: 3.8rem;
+  max-width: 1000px;
+}
+
+.hero span {
+  color: #1e88e5;
+}
+
+.hero p {
+  margin: 25px 0;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+/* ============ BUTTONS ============ */
+.btn {
+  padding: 15px 38px;
+  border-radius: 50px;
+  margin: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.primary {
+  background: #1e88e5;
+  color: white;
+}
+
+.primary:hover {
+  background: #0a3d91;
+  transform: scale(1.05);
+}
+
+.secondary {
+  border: 2px solid #1e88e5;
+  color: #1e88e5;
+}
+
+.secondary:hover {
+  background: #1e88e5;
+  color: white;
+}
+
+/* ============ ANNOUNCEMENTS ============ */
+.announcements {
+  padding: 90px 120px;
+  background: #ffffff;
+}
+
+.announce-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 50px;
+}
+
+.announce-box {
+  background: #f4f8ff;
+  padding: 50px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  transition: transform 0.3s;
+}
+
+.announce-box:hover {
+  transform: translateY(-10px);
+}
+
+.announce-box h3 {
+  font-size: 1.9rem;
+  margin-bottom: 15px;
+  color: #0a3d91;
+}
+
+.announce-box p {
+  font-size: 1.05rem;
+  margin-bottom: 25px;
+  color: #444;
+}
+
+/* ============ MARQUEE ============ */
+.marquee-section {
+  padding: 60px 0;
+  background: #e3f2fd;
+  text-align: center;
+}
+
+.marquee-section h3 {
+  margin-bottom: 30px;
+  font-size: 1.9rem;
+}
+
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.track {
+  display: inline-flex;
+  align-items: center;
+  animation: scroll 18s linear infinite;
+}
+
+.track img {
+  height: 80px;
+  margin: 0 50px;
+}
+
+@keyframes scroll {
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
+}
+
+/* ============ ABOUT ============ */
+.about {
+  padding: 100px 150px;
+  background: white;
+  text-align: center;
+}
+
+.about h2 {
+  font-size: 2.8rem;
+  margin-bottom: 20px;
+}
+
+.about p {
+  max-width: 900px;
+  margin: auto;
+  font-size: 1.15rem;
+  line-height: 1.8;
+}
+
+/* ============ FOOTER ============ */
+.footer {
+  background: #0a3d91;
+  color: white;
+  padding: 70px 100px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.footer h4 {
+  margin-bottom: 15px;
+}
+
+.footer p {
+  opacity: 0.9;
+}
+
+.footer small {
+  display: block;
+  text-align: center;
+  margin-top: 40px;
+  opacity: 0.7;
+}
+/* ===== AI ASSISTANT ===== */
+#ai-assistant {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 65px;
+  height: 65px;
+  background: radial-gradient(circle, #1e88e5, #0a3d91);
+  color: white;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 0 20px rgba(30,136,229,0.6);
+  transition: transform 0.3s ease;
+}
+
+/* Hover effect */
+#ai-assistant:hover {
+  transform: scale(1.15);
+}
+
+/* Floating animation after click */
+.ai-active {
+  animation: floatAI 2.5s ease-in-out infinite;
+}
+
+@keyframes floatAI {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+  100% { transform: translateY(0); }
+}
+
+/* Message bubble */
+#ai-message {
+  position: fixed;
+  bottom: 110px;
+  right: 30px;
+  background: white;
+  color: #0a3d91;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  display: none;
+  z-index: 9999;
+}
+/* ===== SOCIAL SIDEBAR ===== */
+.social-sidebar {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 999;
+  background-color: transparent;
+}
+
+.social-link {
+  width: 45px;
+  height: 45px;
+  background: transparent;
+  color: #0a3d91;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  border-radius: 0 12px 12px 0;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  width: 55px;
+  color: #ffffff;
+}
+
+/* Brand colors on hover */
+.linkedin:hover { background: #0a66c2; }
+.instagram:hover { background: #e1306c; }
+.twitter:hover { background: #1da1f2; }
+.youtube:hover { background: #ff0000; }
+body {
+  padding-left: 55px; /* space for social sidebar */
+}
+/* ===== ANNOUNCEMENTS SCROLLING BOXES ===== */
+.announcements .row {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  padding: 60px 120px;
+}
+
+.announcements .section-title {
+  background: #1e88e5;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 8px 8px 0 0;
+}
+
+.announcements .announce-box {
+  width: 45%;
+  min-width: 280px;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.announcements .scroll-area {
+  height: 260px;
+  overflow: hidden;
+  position: relative;
+}
+
+.announcements .announce-list {
+  display: flex;
+  flex-direction: column;
+  animation: scrollUp 12s linear infinite;
+}
+
+.announcements .announce-item {
+  background: #f4f8ff;
+  margin: 6px 10px;
+  padding: 14px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #0a3d91;
+}
+
+.announcements .announce-item span {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+@keyframes scrollUp {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+/* ===== ABOUT CARDS ===== */
+.about-cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-top: 40px;
+}
+
+.about-card {
+  background: #f4f8ff;
+  border-radius: 12px;
+  padding: 30px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.about-card h3 {
+  color: #1e88e5;
+  margin-bottom: 15px;
+}
+
+.about-card p {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .announcements .row {
+    gap: 20px;
+    padding: 40px 20px;
+  }
+  .announcements .announce-box {
+    width: 100%;
+  }
+  .about-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+/* About card images */
+.about-card img {
+  width: 100%;
+  height: 250px;        /* Fixed height for all cards */
+  object-fit: cover;    /* Cover ensures no distortion, crops if necessary */
+  border-radius: 12px 12px 0 0; /* Rounded top corners matching card */
+  margin-bottom: 20px;  /* Space between image and title */
+}
