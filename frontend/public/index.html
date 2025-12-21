@@ -6,7 +6,6 @@
   <title>AI Training & Placement Cell</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
@@ -21,11 +20,7 @@
       --transition: all 0.3s ease;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Poppins', sans-serif;
@@ -49,11 +44,7 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
 
-    .logo {
-      color: var(--white);
-      font-size: 1.8rem;
-      font-weight: 700;
-    }
+    .logo { color: var(--white); font-size: 1.8rem; font-weight: 700; }
 
     .navbar nav a {
       color: rgba(255,255,255,0.8);
@@ -62,9 +53,7 @@
       transition: var(--transition);
     }
 
-    .navbar nav a:hover {
-      color: var(--accent-orange);
-    }
+    .navbar nav a:hover { color: var(--accent-orange); }
 
     /* --- 3. HERO SECTION WITH ANIMATED BACKGROUND --- */
     .hero {
@@ -99,23 +88,9 @@
       100% { transform: translate(50px, 50px) scale(1.2); }
     }
 
-    .hero h2 {
-      font-size: 3.5rem;
-      margin-bottom: 20px;
-      z-index: 2;
-    }
-
-    .hero h2 span {
-      color: var(--accent-orange);
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-      margin-bottom: 40px;
-      opacity: 0.9;
-      z-index: 2;
-    }
-
+    .hero h2 { font-size: 3.5rem; margin-bottom: 20px; z-index: 2; }
+    .hero h2 span { color: var(--accent-orange); }
+    .hero p { font-size: 1.2rem; margin-bottom: 40px; opacity: 0.9; z-index: 2; }
     .hero-buttons { z-index: 2; }
 
     .btn {
@@ -127,223 +102,114 @@
       display: inline-block;
     }
 
-    .btn.primary {
-      background: var(--accent-orange);
-      color: #000;
-    }
-
-    .btn.primary:hover {
-      background: #e09b45;
-      transform: translateY(-3px);
-    }
-
-    .btn.secondary {
-      background: transparent;
-      border: 2px solid var(--white);
-      color: var(--white);
-    }
-
-    .btn.secondary:hover {
-      background: var(--white);
-      color: var(--primary-dark);
-      transform: translateY(-3px);
-    }
+    .btn.primary { background: var(--accent-orange); color: #000; }
+    .btn.primary:hover { background: #e09b45; transform: translateY(-3px); }
+    .btn.secondary { background: transparent; border: 2px solid var(--white); color: var(--white); }
+    .btn.secondary:hover { background: var(--white); color: var(--primary-dark); transform: translateY(-3px); }
 
     /* --- 4. ANNOUNCEMENTS SECTION (Vertical Scroll) --- */
-    .announcements {
-      padding: 60px 5%;
-    }
-
-    .row {
-      display: flex;
-      gap: 30px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
+    .announcements { padding: 60px 5%; }
+    .row { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
+    
     .announce-box {
-      flex: 1;
-      min-width: 300px;
-      background: var(--white);
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-      overflow: hidden;
+      flex: 1; min-width: 300px; background: var(--white); border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden;
       border-top: 5px solid var(--primary-royal);
     }
 
-    .announce-box:nth-child(2) {
-      border-top: 5px solid var(--accent-orange);
-    }
+    .announce-box:nth-child(2) { border-top: 5px solid var(--accent-orange); }
 
     .section-title {
-      background: var(--bg-light);
-      padding: 15px;
-      font-weight: 700;
-      color: var(--primary-dark);
-      text-align: center;
-      border-bottom: 1px solid #eee;
+      background: var(--bg-light); padding: 15px; font-weight: 700;
+      color: var(--primary-dark); text-align: center; border-bottom: 1px solid #eee;
     }
 
-    /* Infinite Vertical Scroll Logic */
-    .scroll-area {
-      height: 300px; /* Fixed height for viewing window */
-      overflow: hidden;
-      position: relative;
-    }
-
-    .announce-list {
-      animation: scrollUp 15s linear infinite;
-    }
-
-    .announce-list:hover {
-      animation-play-state: paused; /* Pause on hover */
-    }
+    .scroll-area { height: 300px; overflow: hidden; position: relative; }
+    .announce-list { animation: scrollUp 15s linear infinite; }
+    .announce-list:hover { animation-play-state: paused; }
 
     @keyframes scrollUp {
       0% { transform: translateY(0); }
-      100% { transform: translateY(-50%); } /* Moves exactly half way (assuming content is duplicated) */
+      100% { transform: translateY(-50%); }
     }
 
     .announce-item {
-      padding: 15px 20px;
-      border-bottom: 1px solid #f0f0f0;
-      color: var(--text-dark);
-      font-size: 0.95rem;
-      display: flex;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: var(--transition);
+      padding: 15px 20px; border-bottom: 1px solid #f0f0f0; color: var(--text-dark);
+      font-size: 0.95rem; display: flex; justify-content: space-between;
+      cursor: pointer; transition: var(--transition);
     }
-
     .announce-item span { color: var(--accent-orange); }
     .announce-item:hover { background: #fafafa; padding-left: 25px; color: var(--primary-royal); }
 
-    /* --- 5. MARQUEE SECTIONS (Horizontal Scroll) --- */
-    .marquee-section {
-      padding: 40px 0;
-      background: var(--white);
-      margin-bottom: 20px;
+    /* --- 5. MARQUEE SECTIONS (UPDATED FOR SEAMLESS LOOP) --- */
+    .marquee-section { padding: 40px 0; background: var(--white); margin-bottom: 20px; }
+    .marquee-section h3 { text-align: center; color: var(--primary-dark); margin-bottom: 30px; font-size: 1.8rem; }
+    
+    .marquee { 
+      width: 100%; 
+      overflow: hidden; 
+      white-space: nowrap; 
+      position: relative; 
     }
-
-    .marquee-section h3 {
-      text-align: center;
-      color: var(--primary-dark);
-      margin-bottom: 30px;
-      font-size: 1.8rem;
+    
+    .track { 
+      display: inline-flex; 
+      /* The animation moves -50% because we duplicated the content. 
+         -50% brings us exactly to the start of the duplicate set, 
+         creating a seamless loop. */
+      animation: scrollLeft 25s linear infinite; 
+      align-items: center; 
     }
-
-    .marquee {
-      width: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      position: relative;
-    }
-
-    .track {
-      display: inline-flex;
-      animation: scrollLeft 20s linear infinite;
-      align-items: center;
-    }
-
+    
     .track:hover { animation-play-state: paused; }
-
-    .track img {
-      height: 80px;
-      margin: 0 40px;
-      filter: grayscale(100%);
-      transition: var(--transition);
-      opacity: 0.7;
+    
+    /* Ensure images have consistent sizing and spacing */
+    .track img { 
+      height: 80px; 
+      margin: 0 40px; 
+      filter: grayscale(100%); 
+      transition: var(--transition); 
+      opacity: 0.7; 
+      flex-shrink: 0; /* Prevent images from squishing */
     }
-
-    .track img:hover {
-      filter: grayscale(0%);
-      opacity: 1;
-      transform: scale(1.1);
-    }
+    
+    .track img:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
 
     @keyframes scrollLeft {
       from { transform: translateX(0); }
-      to { transform: translateX(-50%); } /* Ensure HTML has duplicate images to make this seamless */
+      to { transform: translateX(-50%); } /* Moves exactly half the total width */
     }
 
     /* --- 6. ABOUT SECTION --- */
-    .about {
-      padding: 80px 5%;
-      text-align: center;
-      background: var(--bg-light);
-    }
-
-    .about h2 {
-      color: var(--primary-dark);
-      font-size: 2.2rem;
-      margin-bottom: 15px;
-    }
-
-    .about p {
-      max-width: 700px;
-      margin: 0 auto 50px;
-      color: #666;
-    }
-
-    .about-cards {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      flex-wrap: wrap;
-    }
+    .about { padding: 80px 5%; text-align: center; background: var(--bg-light); }
+    .about h2 { color: var(--primary-dark); font-size: 2.2rem; margin-bottom: 15px; }
+    .about p { max-width: 700px; margin: 0 auto 50px; color: #666; }
+    .about-cards { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
 
     .about-card {
-      background: var(--white);
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      width: 300px;
-      transition: var(--transition);
-      border-bottom: 4px solid transparent;
+      background: var(--white); padding: 30px; border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08); width: 300px;
+      transition: var(--transition); border-bottom: 4px solid transparent;
     }
-
-    .about-card:hover {
-      transform: translateY(-10px);
-      border-bottom: 4px solid var(--accent-orange);
-    }
-
+    .about-card:hover { transform: translateY(-10px); border-bottom: 4px solid var(--accent-orange); }
     .about-card img {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      margin-bottom: 20px;
-      border: 3px solid var(--primary-royal);
-      object-fit: cover;
+      width: 100px; height: 100px; border-radius: 50%; margin-bottom: 20px;
+      border: 3px solid var(--primary-royal); object-fit: cover;
     }
+    .about-card h3 { color: var(--primary-dark); margin-bottom: 10px; }
+    .about-card p { font-size: 0.9rem; line-height: 1.6; }
 
-    .about-card h3 {
-      color: var(--primary-dark);
-      margin-bottom: 10px;
-    }
-
-    .about-card p {
-      font-size: 0.9rem;
-      line-height: 1.6;
-    }
-
-    /* --- 7. AI ASSISTANT & SOCIAL --- */
+    /* --- 7. AI CHATBOT WIDGET --- */
     #ai-assistant {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 60px;
-      height: 60px;
-      background: var(--accent-orange);
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 30px;
-      cursor: pointer;
+      position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+      background: var(--accent-orange); border-radius: 50%;
+      display: flex; justify-content: center; align-items: center;
+      font-size: 30px; cursor: pointer; z-index: 1001;
       box-shadow: 0 5px 20px rgba(242, 173, 88, 0.5);
-      z-index: 1001;
-      animation: pulse 2s infinite;
+      animation: pulse 2s infinite; transition: var(--transition);
     }
+    
+    #ai-assistant:hover { transform: scale(1.1); }
 
     @keyframes pulse {
       0% { box-shadow: 0 0 0 0 rgba(242, 173, 88, 0.7); }
@@ -351,43 +217,68 @@
       100% { box-shadow: 0 0 0 0 rgba(242, 173, 88, 0); }
     }
 
-    #ai-message {
-      position: fixed;
-      bottom: 100px;
-      right: 30px;
-      background: var(--white);
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-      display: none; /* Can be toggled with JS */
-      z-index: 1000;
-      border-left: 4px solid var(--primary-royal);
+    /* Chat Window */
+    .chat-container {
+      position: fixed; bottom: 100px; right: 30px; width: 350px; height: 500px;
+      background: var(--white); border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 2000;
+      display: none; flex-direction: column; overflow: hidden;
+      border: 1px solid #eee;
     }
 
-    #ai-assistant:hover + #ai-message {
-      display: block;
+    .chat-container.active { display: flex; }
+
+    .chat-header {
+      background: var(--primary-dark); color: var(--white); padding: 15px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-weight: 600;
     }
 
+    .chat-messages {
+      flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .message {
+      max-width: 80%; padding: 10px 15px; border-radius: 10px; font-size: 0.9rem;
+      line-height: 1.4; word-wrap: break-word;
+    }
+
+    .bot-msg { background: #e1e1e1; color: #333; align-self: flex-start; border-bottom-left-radius: 0; }
+    .user-msg { background: var(--primary-royal); color: white; align-self: flex-end; border-bottom-right-radius: 0; }
+
+    .chat-input-area {
+      padding: 10px; border-top: 1px solid #eee; display: flex; align-items: center; gap: 8px;
+    }
+
+    .chat-input-area input {
+      flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none;
+    }
+
+    .chat-btn {
+      background: var(--primary-royal); color: white; border: none;
+      width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+      display: flex; justify-content: center; align-items: center; transition: 0.2s;
+    }
+
+    .chat-btn:hover { background: var(--primary-dark); }
+    .mic-btn.active { background: #ff4444; animation: pulse-red 1s infinite; }
+
+    @keyframes pulse-red {
+      0% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); }
+    }
+
+    /* --- 8. SOCIAL SIDEBAR --- */
     .social-sidebar {
-      position: fixed;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      z-index: 100;
+      position: fixed; left: 0; top: 50%; transform: translateY(-50%);
+      display: flex; flex-direction: column; z-index: 100;
     }
 
     .social-link {
-      width: 50px;
-      height: 50px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 1.2rem;
-      transition: var(--transition);
-      margin-left: -10px; /* Slight tuck */
+      width: 50px; height: 50px; display: flex; justify-content: center; align-items: center;
+      color: white; font-size: 1.2rem; transition: var(--transition); margin-left: -10px;
     }
 
     .social-link:hover { margin-left: 0; width: 60px; }
@@ -396,36 +287,12 @@
     .social-link.twitter { background: #1da1f2; }
     .social-link.youtube { background: #ff0000; }
 
-    /* --- 8. FOOTER --- */
-    .footer {
-      background: var(--primary-dark);
-      color: var(--white);
-      padding: 50px 5% 20px;
-    }
-
-    .footer-content {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      margin-bottom: 30px;
-      gap: 30px;
-    }
-
-    .footer h4 {
-      color: var(--accent-orange);
-      margin-bottom: 15px;
-      font-size: 1.2rem;
-    }
-
+    /* --- 9. FOOTER --- */
+    .footer { background: var(--primary-dark); color: var(--white); padding: 50px 5% 20px; }
+    .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 30px; gap: 30px; }
+    .footer h4 { color: var(--accent-orange); margin-bottom: 15px; font-size: 1.2rem; }
     .footer p { opacity: 0.8; line-height: 1.6; }
-
-    .copyright {
-      text-align: center;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      padding-top: 20px;
-      font-size: 0.9rem;
-      opacity: 0.6;
-    }
+    .copyright { text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; font-size: 0.9rem; opacity: 0.6; }
 
     /* Responsive */
     @media (max-width: 768px) {
@@ -434,6 +301,7 @@
       .navbar nav a { margin: 0 10px; }
       .social-sidebar { display: none; }
       .footer-content { flex-direction: column; text-align: center; }
+      .chat-container { width: 90%; right: 5%; bottom: 100px; }
     }
   </style>
 </head>
@@ -459,7 +327,6 @@
 
  <section class="announcements">
   <div class="row">
-
     <div class="announce-box">
       <div class="section-title">Campus Announcements</div>
       <div class="scroll-area">
@@ -471,14 +338,9 @@
           <div class="announce-item">College Magazine – Potential 24 <span>➤</span></div>
           <div class="announce-item">E-Newsletter Jan–Apr 2024 <span>➤</span></div>
           <div class="announce-item">Alumni Portal <span>➤</span></div>
-
           <div class="announce-item">Internal Complaint Committee Form <span>➤</span></div>
           <div class="announce-item">Placement 2024–25 <span>➤</span></div>
           <div class="announce-item">Newsletter Jan–Mar 2025 <span>➤</span></div>
-          <div class="announce-item">AICTE Feedback System <span>➤</span></div>
-          <div class="announce-item">College Magazine – Potential 24 <span>➤</span></div>
-          <div class="announce-item">E-Newsletter Jan–Apr 2024 <span>➤</span></div>
-          <div class="announce-item">Alumni Portal <span>➤</span></div>
         </div>
       </div>
     </div>
@@ -493,40 +355,37 @@
           <div class="announce-item">Capgemini Pooled Drive <span>➤</span></div>
           <div class="announce-item">Cognizant GENC Opportunity <span>➤</span></div>
           <div class="announce-item">HCL Graduate Program <span>➤</span></div>
-
           <div class="announce-item">Infosys Off-Campus Drive <span>➤</span></div>
           <div class="announce-item">TCS NQT Hiring 2025 <span>➤</span></div>
           <div class="announce-item">Wipro TalentNext Program <span>➤</span></div>
-          <div class="announce-item">Capgemini Pooled Drive <span>➤</span></div>
-          <div class="announce-item">Cognizant GENC Opportunity <span>➤</span></div>
-          <div class="announce-item">HCL Graduate Program <span>➤</span></div>
         </div>
       </div>
     </div>
-
   </div>
 </section>
 
-
-  <div id="ai-assistant">🤖</div>
-  <div id="ai-message">
-    Hi User 👋<br>
-    I’m your AI Assistant
+  <div id="ai-assistant" onclick="toggleChat()">🤖</div>
+  
+  <div class="chat-container" id="chatWindow">
+    <div class="chat-header">
+      <span><i class="fas fa-robot"></i> AI Assistant</span>
+      <span style="cursor:pointer" onclick="toggleChat()"><i class="fas fa-times"></i></span>
+    </div>
+    <div class="chat-messages" id="chatBody">
+      <div class="message bot-msg">Hello! I am your AI Placement Assistant. You can type or speak to me! 🎙</div>
+    </div>
+    <div class="chat-input-area">
+      <button class="chat-btn mic-btn" id="micBtn" onclick="startListening()"><i class="fas fa-microphone"></i></button>
+      <input type="text" id="userInput" placeholder="Ask about placements..." onkeypress="handleEnter(event)">
+      <button class="chat-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+    </div>
   </div>
 
   <div class="social-sidebar">
-    <a href="#" class="social-link linkedin" title="LinkedIn">
-      <i class="fab fa-linkedin-in"></i>
-    </a>
-    <a href="#" class="social-link instagram" title="Instagram">
-      <i class="fab fa-instagram"></i>
-    </a>
-    <a href="#" class="social-link twitter" title="Twitter">
-      <i class="fab fa-twitter"></i>
-    </a>
-    <a href="#" class="social-link youtube" title="YouTube">
-      <i class="fab fa-youtube"></i>
-    </a>
+    <a href="#" class="social-link linkedin" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+    <a href="#" class="social-link instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
+    <a href="#" class="social-link twitter" title="Twitter"><i class="fab fa-twitter"></i></a>
+    <a href="#" class="social-link youtube" title="YouTube"><i class="fab fa-youtube"></i></a>
   </div>
 
   <section class="marquee-section">
@@ -541,7 +400,7 @@
         <span><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD-LlCOmae37Y3uBB3lzSVMpkDDT45pdvmAfePfZgZzA&s" /></span>
         <span><img src="https://iili.io/fxlKRna.th.jpg" /></span>
         <span><img src="https://iili.io/fx3eUg4.th.jpg" /></span>
-        
+
         <span><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD-LlCOmae37Y3uBB3lzSVMpkDDT45pdvmAfePfZgZzA&s" /></span>
         <span><img src="https://iili.io/fxlKRna.th.jpg" /></span>
         <span><img src="https://iili.io/fx3eUg4.th.jpg" /></span>
@@ -564,8 +423,6 @@
         <img src="https://prpotepatilengg.ac.in/assets/images/partners/6.jpg" />
         <img src="https://prpotepatilengg.ac.in/assets/images/partners/14.png" />
         <img src="https://prpotepatilengg.ac.in/assets/images/partners/8.jpg" />
-        <img src="https://prpotepatilengg.ac.in/assets/images/partners/4.jpg" />
-        <img src="https://prpotepatilengg.ac.in/assets/images/partners/3.jpg" />
 
         <img src="https://prpotepatilengg.ac.in/assets/images/partners/10.jpg" />
         <img src="https://prpotepatilengg.ac.in/assets/images/partners/5.jpg" />
@@ -573,43 +430,30 @@
         <img src="https://prpotepatilengg.ac.in/assets/images/partners/6.jpg" />
         <img src="https://prpotepatilengg.ac.in/assets/images/partners/14.png" />
         <img src="https://prpotepatilengg.ac.in/assets/images/partners/8.jpg" />
-        <img src="https://prpotepatilengg.ac.in/assets/images/partners/4.jpg" />
-        <img src="https://prpotepatilengg.ac.in/assets/images/partners/3.jpg" />
       </div>
     </div>
   </section>
 
   <section id="about" class="about">
     <h2>About Our Training & Placement Cell</h2>
-    <p>
-      We bridge the gap between academics and industry using AI-powered
-      training modules, mock interviews, and personalized guidance.
-    </p>
- <div class="about-cards">
-
-  <div class="about-card">
-    <img src="https://prpotepatilengg.ac.in/assets/images/chairman.png" alt="Placement Head">
-    <h3>Placement Head</h3>
-    <p>Dr. John Doe<br>Email: placement@college.edu<br>Phone: +91 98765 43210</p>
-  </div>
-
-  <div class="about-card">
-    <img src="https://prpotepatilengg.ac.in/assets/images/vice-chairman.png" alt="Training Head">
-    <h3>Training Head</h3>
-    <p>Prof. Jane Smith<br>Email: training@college.edu<br>Phone: +91 98765 43211</p>
-  </div>
-
-  <div class="about-card">
-    <img src="https://prpotepatilengg.ac.in/assets/images/mentor.png" alt="Chairman">
-    <h3>Chairman & College Info</h3>
-    <p>Mr. Alan Walker<br>AI Training & Placement Cell<br>College Name, City, State</p>
-  </div>
-
-</div>
-
-
-</div>
-
+    <p>We bridge the gap between academics and industry using AI-powered training modules, mock interviews, and personalized guidance.</p>
+    <div class="about-cards">
+      <div class="about-card">
+        <img src="https://prpotepatilengg.ac.in/assets/images/chairman.png" alt="Placement Head">
+        <h3>Placement Head</h3>
+        <p>Dr. John Doe<br>Email: placement@college.edu<br>Phone: +91 98765 43210</p>
+      </div>
+      <div class="about-card">
+        <img src="https://prpotepatilengg.ac.in/assets/images/vice-chairman.png" alt="Training Head">
+        <h3>Training Head</h3>
+        <p>Prof. Jane Smith<br>Email: training@college.edu<br>Phone: +91 98765 43211</p>
+      </div>
+      <div class="about-card">
+        <img src="https://prpotepatilengg.ac.in/assets/images/mentor.png" alt="Chairman">
+        <h3>Chairman & College Info</h3>
+        <p>Mr. Alan Walker<br>AI Training & Placement Cell<br>College Name, City, State</p>
+      </div>
+    </div>
   </section>
 
   <footer class="footer">
@@ -623,14 +467,120 @@
         <p>Email: placement@college.edu</p>
         <p>Phone: +91 98765 43210</p>
       </div>
-        <div>
-    <h4>Developers</h4>
-    <p>Raj Raut</p>
-    <p>Shreyas Dakhole</p>
-  </div>
+      <div>
+        <h4>Developers</h4>
+        <p>Raj Raut</p>
+        <p>Shreyas Dakhole</p>
+      </div>
     </div>
     <p class="copyright">© 2025 College Name. All rights reserved.</p>
   </footer>
+
+  <script>
+    // --- 1. CHATBOT TOGGLE ---
+    function toggleChat() {
+      const chatWindow = document.getElementById("chatWindow");
+      if (chatWindow.style.display === "flex") {
+        chatWindow.style.display = "none";
+      } else {
+        chatWindow.style.display = "flex";
+      }
+    }
+
+    function handleEnter(e) {
+      if (e.key === "Enter") sendMessage();
+    }
+
+    // --- 2. SEND MESSAGE LOGIC ---
+    function sendMessage() {
+      const inputField = document.getElementById("userInput");
+      const chatBody = document.getElementById("chatBody");
+      const text = inputField.value.trim();
+
+      if (text === "") return;
+
+      // Add User Message
+      const userDiv = document.createElement("div");
+      userDiv.className = "message user-msg";
+      userDiv.innerText = text;
+      chatBody.appendChild(userDiv);
+      inputField.value = "";
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      // AI Response Logic (Simulated)
+      setTimeout(() => {
+        let botText = getAIResponse(text);
+        
+        const botDiv = document.createElement("div");
+        botDiv.className = "message bot-msg";
+        botDiv.innerText = botText;
+        chatBody.appendChild(botDiv);
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        // Speak the response
+        speak(botText);
+
+      }, 800);
+    }
+
+    // --- 3. SIMPLE AI LOGIC ---
+    function getAIResponse(input) {
+      input = input.toLowerCase();
+      if (input.includes("placement") || input.includes("jobs")) {
+        return "We had 85% placements last year with top recruiters like TCS and Infosys.";
+      } else if (input.includes("contact") || input.includes("email")) {
+        return "You can reach us at placement@college.edu.";
+      } else if (input.includes("companies") || input.includes("recruiters")) {
+        return "Our top recruiters are TCS, Wipro, Capgemini, and Accenture.";
+      } else if (input.includes("hello") || input.includes("hi")) {
+        return "Hello! How can I assist you with your career today?";
+      } else {
+        return "I am an AI assistant. Please ask about placements, companies, or contact info.";
+      }
+    }
+
+    // --- 4. TEXT TO SPEECH (ROBOT VOICE) ---
+    function speak(text) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 1;
+        utterance.pitch = 1;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    // --- 5. SPEECH TO TEXT (MIC INPUT) ---
+    function startListening() {
+      if ('webkitSpeechRecognition' in window) {
+        const recognition = new webkitSpeechRecognition();
+        const micBtn = document.getElementById("micBtn");
+        
+        recognition.lang = 'en-US';
+        recognition.start();
+
+        micBtn.classList.add("active"); // Visual feedback
+
+        recognition.onresult = function(event) {
+          const transcript = event.results[0][0].transcript;
+          document.getElementById("userInput").value = transcript;
+          micBtn.classList.remove("active");
+          sendMessage(); // Auto-send after speaking
+        };
+
+        recognition.onerror = function(event) {
+          console.error("Speech error", event);
+          micBtn.classList.remove("active");
+        };
+
+        recognition.onend = function() {
+          micBtn.classList.remove("active");
+        };
+      } else {
+        alert("Voice input is not supported in this browser. Please use Chrome.");
+      }
+    }
+  </script>
 
 </body>
 </html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T&P Admin Console | NextGen</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #4f46e5; /* Indigo */
+            --secondary: #ec4899; /* Pink */
+            --success: #10b981;
+            --dark: #0f172a;
+            --light: #f1f5f9;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background: var(--dark);
+            color: white;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .brand {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .menu-btn {
+            padding: 14px 15px;
+            color: #94a3b8;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: inherit;
+        }
+
+        .menu-btn:hover, .menu-btn.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left: 4px solid var(--secondary);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+        .section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- DASHBOARD WIDGETS --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            border-bottom: 4px solid transparent;
+            transition: transform 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); }
+
+        .stat-card.blue { border-color: var(--primary); }
+        .stat-card.pink { border-color: var(--secondary); }
+        .stat-card.green { border-color: var(--success); }
+
+        /* --- DATA TABLE --- */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th { text-align: left; padding: 15px; color: #64748b; font-weight: 600; border-bottom: 2px solid #f1f5f9; }
+        td { padding: 15px; color: #334155; border-bottom: 1px solid #f1f5f9; }
+        tr:hover { background: #f8fafc; }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .placed { background: #dcfce7; color: #166534; }
+        .pending { background: #fee2e2; color: #991b1b; }
+
+        /* --- ADD STUDENT FORM --- */
+        .add-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-primary:hover { background: #4338ca; }
+
+        /* --- HIGHEST PACKAGE CARD --- */
+        .gold-card {
+            background: linear-gradient(135deg, #ffd700, #f59e0b);
+            color: #78350f;
+            border-radius: 15px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            grid-column: span 2;
+        }
+        .gold-card i {
+            position: absolute;
+            right: 20px;
+            bottom: -10px;
+            font-size: 8rem;
+            opacity: 0.2;
+        }
+
+        /* --- AI TOOL STYLES --- */
+        .ai-panel {
+            background: #1e293b;
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-user-tie"></i> T&P OFFICER
+        </div>
+        <button class="menu-btn active" onclick="showSection('dashboard', this)">
+            <i class="fa-solid fa-gauge-high"></i> Overview
+        </button>
+        <button class="menu-btn" onclick="showSection('students', this)">
+            <i class="fa-solid fa-users"></i> Student Database
+        </button>
+        <button class="menu-btn" onclick="showSection('ai-shortlist', this)">
+            <i class="fa-solid fa-microchip"></i> AI Shortlister
+        </button>
+        <button class="menu-btn" onclick="showSection('analytics', this)">
+            <i class="fa-solid fa-chart-line"></i> Analytics
+        </button>
+        
+        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #334155;">
+            <small style="color: #64748b;">Admin: Prof. Sharma</small>
+            <button class="menu-btn" style="color: #ef4444; margin-top: 10px;">
+                <i class="fa-solid fa-power-off"></i> Logout
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        
+        <div id="dashboard" class="section active">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1 style="color: #1e293b; margin: 0;">Dashboard Overview</h1>
+                <button class="btn-primary" onclick="showSection('students', document.querySelectorAll('.menu-btn')[1])">
+                    <i class="fa-solid fa-plus"></i> Add New Student
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <p style="color: #64748b; font-size: 0.9rem; margin: 0;">Total Students</p>
+                    <h2 style="margin: 5px 0 0; font-size: 2rem;" id="total-count">0</h2>
+                </div>
+                <div class="stat-card green">
+                    <p style="color: #64748b; font-size: 0.9rem; margin: 0;">Placed Students</p>
+                    <h2 style="margin: 5px 0 0; font-size: 2rem;" id="placed-count">0</h2>
+                </div>
+                <div class="stat-card pink">
+                    <p style="color: #64748b; font-size: 0.9rem; margin: 0;">Placement %</p>
+                    <h2 style="margin: 5px 0 0; font-size: 2rem;" id="placement-rate">0%</h2>
+                </div>
+                <div class="stat-card">
+                    <p style="color: #64748b; font-size: 0.9rem; margin: 0;">Avg. Package</p>
+                    <h2 style="margin: 5px 0 0; font-size: 2rem;">8.5 LPA</h2>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+                
+                <div class="gold-card">
+                    <i class="fa-solid fa-trophy"></i>
+                    <h3>🏆 Highest Package of the Year</h3>
+                    <div id="highest-package-container"></div>
+                </div>
+
+                <div class="stat-card" style="height: 200px; overflow: hidden;">
+                    <h4>📢 Recent Drives</h4>
+                    <ul style="list-style: none; padding: 0; color: #64748b; font-size: 0.9rem;">
+                        <li style="margin-bottom: 10px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 5px;">
+                            <strong style="color: #334155;">TCS Digital</strong> - Scheduled (Tomorrow)
+                        </li>
+                        <li style="margin-bottom: 10px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 5px;">
+                            <strong style="color: #334155;">Amazon</strong> - Results Declared
+                        </li>
+                        <li>
+                            <strong style="color: #334155;">Infosys</strong> - Shortlisting..
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 2rem; color: #1e293b;">Department Wise Hiring</h3>
+            <div style="height: 300px; background: white; padding: 1rem; border-radius: 12px;">
+                <canvas id="deptChart"></canvas>
+            </div>
+        </div>
+
+        <div id="students" class="section">
+            <h2 style="margin-bottom: 1.5rem;">📁 Manage Student Database</h2>
+
+            <div class="add-box">
+                <div style="grid-column: span 2; font-weight: 600; color: var(--primary);">
+                    <i class="fa-solid fa-pen-to-square"></i> Upload / Add Student Details
+                </div>
+                <input type="text" id="s-name" placeholder="Student Name">
+                <input type="text" id="s-id" placeholder="Roll Number">
+                <select id="s-branch">
+                    <option value="CSE">Computer Science (CSE)</option>
+                    <option value="IT">Information Tech (IT)</option>
+                    <option value="ENTC">Electronics (ENTC)</option>
+                    <option value="MECH">Mechanical</option>
+                </select>
+                <input type="number" id="s-cgpa" placeholder="CGPA">
+                <select id="s-status">
+                    <option value="Not Placed">Not Placed</option>
+                    <option value="Placed">Placed</option>
+                </select>
+                <input type="number" id="s-package" placeholder="Package (LPA) - leave 0 if not placed">
+                <button class="btn-primary" style="grid-column: span 2;" onclick="addStudent()">Add Student to Database</button>
+            </div>
+
+            <div class="table-container">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <h3>Registered Candidates</h3>
+                    <input type="text" id="searchBox" onkeyup="filterTable()" placeholder="Search Name..." style="width: 250px; padding: 8px;">
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Roll No</th>
+                            <th>Name</th>
+                            <th>Branch</th>
+                            <th>CGPA</th>
+                            <th>Status</th>
+                            <th>Package</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="ai-shortlist" class="section">
+            <h2>🤖 AI Job Matcher</h2>
+            <p>Paste a Job Description (JD) and the AI will find the best fit students from your database.</p>
+            
+            <div class="ai-panel">
+                <div style="flex: 1;">
+                    <textarea id="jd-text" placeholder="Paste JD here (e.g., 'Looking for React developers with 8.0+ CGPA...')" style="width: 100%; height: 120px; background: #334155; color: white; border: none; padding: 15px; border-radius: 10px;"></textarea>
+                </div>
+                <div>
+                    <button class="btn-primary" style="background: var(--secondary);" onclick="runAIMatch()">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Find Matches
+                    </button>
+                </div>
+            </div>
+
+            <div id="ai-results" style="margin-top: 2rem; display: none;">
+                <h3>✨ AI Recommendation: Top Candidates</h3>
+                <div class="table-container">
+                    <table id="ai-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Match Score</th>
+                                <th>Skills/Criteria</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="analytics" class="section">
+            <h2>📊 Detailed Reports</h2>
+            <div style="width: 100%; height: 400px; background: white; border-radius: 15px; padding: 20px;">
+                <canvas id="growthChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. DUMMY DATABASE ---
+        let students = [
+            { id: "CS101", name: "Shreyas Dakhole", branch: "CSE", cgpa: 9.2, status: "Placed", package: 12.5, company: "JP Morgan" },
+            { id: "IT102", name: "Ananya Gupta", branch: "IT", cgpa: 8.8, status: "Placed", package: 8.0, company: "Accenture" },
+            { id: "ME201", name: "Rahul Deshmukh", branch: "MECH", cgpa: 7.5, status: "Not Placed", package: 0, company: "-" },
+            { id: "CS103", name: "Vikram Singh", branch: "CSE", cgpa: 8.1, status: "Placed", package: 4.5, company: "TCS" },
+            { id: "EN301", name: "Priya Sharma", branch: "ENTC", cgpa: 9.5, status: "Placed", package: 24.0, company: "Amazon" },
+            { id: "IT105", name: "Amit Trivedi", branch: "IT", cgpa: 7.9, status: "Not Placed", package: 0, company: "-" }
+        ];
+
+        // --- 2. INITIALIZATION ---
+        window.onload = function() {
+            renderTable(students);
+            updateDashboard();
+            initCharts();
+        };
+
+        // --- 3. NAVIGATION ---
+        function showSection(id, btn) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        // --- 4. RENDER TABLE ---
+        function renderTable(data) {
+            const tbody = document.getElementById('student-table-body');
+            tbody.innerHTML = '';
+
+            data.forEach(s => {
+                let badgeClass = s.status === 'Placed' ? 'placed' : 'pending';
+                let pkgText = s.package > 0 ? `₹${s.package} LPA` : '-';
+                
+                let row = `<tr>
+                    <td>${s.id}</td>
+                    <td><strong>${s.name}</strong><br><small style="color:#94a3b8">${s.company}</small></td>
+                    <td>${s.branch}</td>
+                    <td>${s.cgpa}</td>
+                    <td><span class="badge ${badgeClass}">${s.status}</span></td>
+                    <td style="font-weight: 600;">${pkgText}</td>
+                    <td>
+                        <button onclick="deleteStudent('${s.id}')" style="color: #ef4444; background:none; border:none; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // --- 5. ADD & DELETE STUDENT ---
+        function addStudent() {
+            let name = document.getElementById('s-name').value;
+            let id = document.getElementById('s-id').value;
+            let branch = document.getElementById('s-branch').value;
+            let cgpa = parseFloat(document.getElementById('s-cgpa').value);
+            let status = document.getElementById('s-status').value;
+            let pkg = parseFloat(document.getElementById('s-package').value);
+
+            if(name === "" || id === "") { alert("Name and Roll No are required!"); return; }
+
+            let newStudent = {
+                id: id,
+                name: name,
+                branch: branch,
+                cgpa: cgpa,
+                status: status,
+                package: pkg,
+                company: status === 'Placed' ? "Newly Placed" : "-"
+            };
+
+            students.push(newStudent);
+            renderTable(students);
+            updateDashboard();
+            document.getElementById('s-name').value = '';
+            document.getElementById('s-id').value = '';
+            alert("Student added successfully!");
+        }
+
+        function deleteStudent(id) {
+            if(confirm("Delete this student record?")) {
+                students = students.filter(s => s.id !== id);
+                renderTable(students);
+                updateDashboard();
+            }
+        }
+
+        // --- 6. DASHBOARD & HIGHEST PACKAGE ---
+        function updateDashboard() {
+            document.getElementById('total-count').innerText = students.length;
+            let placedCount = students.filter(s => s.status === "Placed").length;
+            document.getElementById('placed-count').innerText = placedCount;
+            let rate = students.length > 0 ? Math.round((placedCount / students.length) * 100) : 0;
+            document.getElementById('placement-rate').innerText = rate + "%";
+
+            let sorted = [...students].sort((a, b) => b.package - a.package);
+            let top = sorted[0];
+
+            if(top && top.package > 0) {
+                document.getElementById('highest-package-container').innerHTML = `
+                    <h1 style="font-size: 3rem; margin: 10px 0;">₹${top.package} LPA</h1>
+                    <p style="font-size: 1.2rem;"><strong>${top.name}</strong> (${top.branch})</p>
+                    <span style="background: rgba(255,255,255,0.3); padding: 5px 15px; border-radius: 20px;">${top.company}</span>
+                `;
+            } else {
+                document.getElementById('highest-package-container').innerHTML = `<p>No placements yet.</p>`;
+            }
+        }
+
+        // --- 7. FILTER SEARCH ---
+        function filterTable() {
+            let val = document.getElementById('searchBox').value.toLowerCase();
+            let filtered = students.filter(s => s.name.toLowerCase().includes(val));
+            renderTable(filtered);
+        }
+
+        // --- 8. AI SHORTLISTER ---
+        function runAIMatch() {
+            let resultsDiv = document.getElementById('ai-results');
+            resultsDiv.style.display = 'block';
+            let tbody = document.getElementById('ai-table').querySelector('tbody');
+            tbody.innerHTML = '<tr><td colspan="3">AI is analyzing database...</td></tr>';
+
+            setTimeout(() => {
+                tbody.innerHTML = '';
+                let candidates = students.filter(s => s.cgpa > 8.0);
+                candidates.forEach(c => {
+                    let matchScore = Math.floor(Math.random() * (99 - 80) + 80);
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${c.name}</strong></td>
+                            <td><span style="color:#10b981; font-weight:bold;">${matchScore}% Match</span></td>
+                            <td>CGPA: ${c.cgpa} | Branch: ${c.branch}</td>
+                        </tr>
+                    `;
+                });
+            }, 1500);
+        }
+
+        // --- 9. CHARTS ---
+        function initCharts() {
+            new Chart(document.getElementById('deptChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['CSE', 'IT', 'ENTC', 'MECH'],
+                    datasets: [{ label: 'Students Placed', data: [120, 90, 60, 45], backgroundColor: '#4f46e5' }]
+                }
+            });
+
+            new Chart(document.getElementById('growthChart'), {
+                type: 'line',
+                data: {
+                    labels: ['2021', '2022', '2023', '2024', '2025'],
+                    datasets: [{ label: 'Average Package (LPA)', data: [4.5, 5.2, 6.0, 7.5, 8.5], borderColor: '#ec4899', tension: 0.4 }]
+                }
+            });
+        }
+    </script>
+</body>
+</html>

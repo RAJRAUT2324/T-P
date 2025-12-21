@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Training & Placement Cell | Enhanced</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --dark-blue: #0a3d91;
+      --royal-blue: #0a66c2;
+      --orange: #f2ad58;
+      --light-gray: #f4f6fa;
+      --dark-gray: #333333;
+      --white: #ffffff;
+      --glass: rgba(255, 255, 255, 0.9);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; scroll-behavior: smooth; }
+    body { background: var(--light-gray); color: var(--dark-gray); overflow-x: hidden; position: relative; }
+
+    /* --- ANIMATED BACKGROUND --- */
+    .background-animation {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      background: linear-gradient(135deg, #f4f6fa 0%, #eef2f3 100%);
+    }
+    .shape {
+      position: absolute;
+      filter: blur(50px);
+      opacity: 0.4;
+      animation: float 20s infinite linear;
+    }
+    .shape:nth-child(1) { top: -10%; left: -10%; width: 300px; height: 300px; background: var(--royal-blue); animation-delay: 0s; }
+    .shape:nth-child(2) { bottom: 20%; right: -5%; width: 200px; height: 200px; background: var(--orange); animation-delay: -5s; }
+    .shape:nth-child(3) { top: 40%; left: 40%; width: 150px; height: 150px; background: var(--dark-blue); animation-delay: -10s; }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(50px, 50px) rotate(180deg); }
+      100% { transform: translate(0, 0) rotate(360deg); }
+    }
+
+    /* --- COMMON UTILS --- */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    .section-title { text-align: center; margin-bottom: 40px; font-size: 2.5rem; color: var(--dark-blue); position: relative; display: inline-block; width: 100%; }
+    .section-title::after { content: ''; display: block; width: 60px; height: 4px; background: var(--orange); margin: 10px auto 0; border-radius: 2px; }
+    .btn { padding: 10px 20px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    .btn-primary { background: var(--orange); color: var(--dark-blue); }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(242, 173, 88, 0.4); }
+    
+    /* FADE IN ANIMATION CLASS */
+    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+
+    /* --- HEADER --- */
+    header { background: var(--dark-blue); color: #fff; padding: 15px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .header-content { display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+    .nav-links a { color: #fff; text-decoration: none; margin-left: 20px; font-weight: 500; transition: 0.3s; }
+    .nav-links a:hover { color: var(--orange); }
+
+    /* --- HERO --- */
+    .hero { padding: 100px 0; text-align: center; }
+    .hero h1 { font-size: 3.5rem; margin-bottom: 20px; color: var(--dark-blue); }
+    .hero span { color: var(--royal-blue); }
+    .hero p { max-width: 700px; margin: 0 auto 30px; font-size: 1.2rem; color: #555; }
+
+    /* --- STATS --- */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; padding: 40px 0; }
+    .stat-card { background: var(--white); padding: 30px; border-radius: 15px; text-align: center; box-shadow: var(--shadow); transition: 0.3s; border-bottom: 4px solid var(--royal-blue); }
+    .stat-card:hover { transform: translateY(-10px); }
+    .stat-card i { font-size: 2.5rem; color: var(--orange); margin-bottom: 15px; }
+    .stat-card h3 { font-size: 2.5rem; color: var(--dark-blue); }
+
+    /* --- GRAPHS SECTION --- */
+    .graphs-section { padding: 60px 0; }
+    .charts-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; background: var(--white); padding: 40px; border-radius: 20px; box-shadow: var(--shadow); }
+    @media(max-width: 768px) { .charts-wrapper { grid-template-columns: 1fr; } }
+
+    /* --- T&P TEAM --- */
+    .team-section { padding: 60px 0; }
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+    .team-card { background: var(--white); border-radius: 15px; overflow: hidden; box-shadow: var(--shadow); text-align: center; transition: 0.3s; }
+    .team-card:hover { transform: scale(1.03); }
+    .team-img { width: 100%; height: 200px; background: #ddd; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .team-img img { width: 100%; height: 100%; object-fit: cover; }
+    .team-info { padding: 20px; }
+    .team-info h4 { color: var(--dark-blue); margin-bottom: 5px; }
+    .team-info p { color: var(--royal-blue); font-size: 0.9rem; font-weight: bold; }
+    .team-social { margin-top: 15px; }
+    .team-social i { margin: 0 10px; color: #777; cursor: pointer; transition: 0.3s; }
+    .team-social i:hover { color: var(--orange); }
+
+    /* --- HR & COMPANIES --- */
+    .hr-section { padding: 60px 0; background: rgba(255,255,255,0.5); }
+    .hr-grid { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; scrollbar-width: thin; }
+    .hr-card { min-width: 250px; background: var(--white); padding: 20px; border-radius: 12px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 15px; }
+    .hr-avatar { width: 60px; height: 60px; border-radius: 50%; background: #ccc; overflow: hidden; }
+    .hr-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    
+    /* Company Marquee */
+    .marquee { overflow: hidden; white-space: nowrap; padding: 40px 0; position: relative; }
+    .marquee-content { display: inline-block; animation: scroll 20s linear infinite; }
+    .company-logo { display: inline-block; padding: 0 40px; font-size: 1.5rem; font-weight: bold; color: #888; filter: grayscale(100%); transition: 0.3s; }
+    .company-logo:hover { filter: grayscale(0%); color: var(--dark-blue); }
+    @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* --- ANNOUNCEMENTS & CONTACT --- */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; padding: 60px 0; }
+    @media(max-width: 768px) { .info-grid { grid-template-columns: 1fr; } }
+    
+    /* Notice Board */
+    .notice-board { background: var(--white); padding: 30px; border-radius: 15px; box-shadow: var(--shadow); height: 400px; overflow: hidden; position: relative; }
+    .notice-board h3 { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
+    .notice-scroller { height: 300px; overflow-y: hidden; position: relative; }
+    .notice-content { animation: scrollUp 10s linear infinite; }
+    .notice-item { background: #f9f9f9; padding: 15px; margin-bottom: 15px; border-left: 4px solid var(--orange); border-radius: 4px; }
+    .notice-date { font-size: 0.8rem; color: #888; display: block; margin-bottom: 5px; }
+    @keyframes scrollUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-150%); } }
+
+    /* Contact Form */
+    .contact-form { background: var(--dark-blue); color: #fff; padding: 30px; border-radius: 15px; box-shadow: var(--shadow); }
+    .contact-form h3 { margin-bottom: 20px; color: var(--orange); }
+    .form-group { margin-bottom: 15px; }
+    .form-group input, .form-group textarea { width: 100%; padding: 12px; border-radius: 6px; border: none; outline: none; }
+    .form-group textarea { resize: none; height: 100px; }
+    .submit-btn { width: 100%; background: var(--orange); color: var(--dark-blue); font-weight: bold; padding: 12px; border: none; border-radius: 6px; cursor: pointer; }
+
+    /* --- FOOTER --- */
+    footer { background: #05204d; color: #aaa; padding: 40px 0 20px; text-align: center; }
+    .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 30px; text-align: left; }
+    .footer-col { flex: 1; min-width: 200px; margin-bottom: 20px; }
+    .footer-col h4 { color: #fff; margin-bottom: 15px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a { color: #aaa; text-decoration: none; transition: 0.3s; }
+    .footer-col ul li a:hover { color: var(--orange); }
+
+    /* --- SIDEBAR --- */
+    .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--dark-blue); padding: 30px 20px; transition: 0.4s; z-index: 1000; box-shadow: 4px 0 15px rgba(0,0,0,0.2); }
+    .sidebar.open { left: 0; }
+    .sidebar h2 { color: var(--white); margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+    .sidebar button { width: 100%; background: rgba(255,255,255,0.05); color: #fff; border: none; text-align: left; padding: 15px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
+    .sidebar button:hover { background: var(--royal-blue); padding-left: 20px; }
+    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 999; backdrop-filter: blur(3px); }
+    .overlay.show { display: block; }
+
+    /* --- POPUP MODAL --- */
+    .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); background: #fff; padding: 30px; width: 90%; max-width: 500px; border-radius: 15px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); z-index: 2000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; }
+    .modal.active { transform: translate(-50%, -50%) scale(1); }
+    .modal i { font-size: 3rem; color: var(--orange); margin-bottom: 20px; }
+    .modal h2 { color: var(--dark-blue); margin-bottom: 10px; }
+    .close-modal { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; cursor: pointer; color: #999; }
+
+    /* --- AI CHAT WIDGET --- */
+    .ai-widget { position: fixed; bottom: 30px; right: 30px; z-index: 1500; display: flex; flex-direction: column; align-items: flex-end; }
+    .chat-box { width: 300px; height: 400px; background: #fff; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); overflow: hidden; margin-bottom: 15px; display: none; flex-direction: column; }
+    .chat-header { background: var(--royal-blue); color: #fff; padding: 15px; display: flex; align-items: center; gap: 10px; }
+    .chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; }
+    .bot-msg { background: #e1e1e1; padding: 8px 12px; border-radius: 10px 10px 10px 0; margin-bottom: 10px; display: inline-block; max-width: 80%; font-size: 0.9rem; }
+    .user-msg { background: var(--royal-blue); color: #fff; padding: 8px 12px; border-radius: 10px 10px 0 10px; margin-bottom: 10px; display: block; width: fit-content; margin-left: auto; font-size: 0.9rem; }
+    .chat-input-area { padding: 10px; border-top: 1px solid #eee; display: flex; }
+    .chat-input-area input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 20px; outline: none; }
+    .chat-input-area button { background: none; border: none; color: var(--royal-blue); margin-left: 10px; cursor: pointer; font-size: 1.2rem; }
+    
+    .ai-toggle { width: 60px; height: 60px; background: linear-gradient(135deg, var(--royal-blue), var(--dark-blue)); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 1.8rem; cursor: pointer; box-shadow: 0 5px 20px rgba(10, 61, 145, 0.4); transition: 0.3s; animation: pulse 2s infinite; }
+    .ai-toggle:hover { transform: scale(1.1); }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(10, 102, 194, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(10, 102, 194, 0); } 100% { box-shadow: 0 0 0 0 rgba(10, 102, 194, 0); } }
+
+  </style>
+</head>
+<body>
+
+  <div class="background-animation">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+  </div>
+
+  <div class="sidebar" id="sidebar">
+    <h2><i class="fas fa-university"></i> Portal Menu</h2>
+    <button><i class="fas fa-user-graduate"></i></i><a href="student_data.html">Upload Student Details</a> </button>
+    <button><i class="fas fa-briefcase"></i><a href="company_internship.html">Company Hiring</a> </button>
+    <button><i class="fas fa-laptop-code"></i><a href="company_internship.html"> Internships</a></button>
+    <button><i class="fas fa-chart-pie"></i><a href="placement_anulysis.html">Placement Analysis</a> </button>
+    <button><i class="fas fa-users"></i> Eligible Students</button>
+    <button><i class="fas fa-robot"></i> Ask AI Assistant</button>
+  </div>
+  <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+  <header>
+    <div class="container header-content">
+      <div class="logo">
+        <i class="fas fa-brain"></i> AI T&P Cell
+      </div>
+      <nav class="nav-links">
+        <a href="#hero">Home</a>
+        <a href="#stats">Stats</a>
+        <a href="#team">Team</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button class="btn btn-primary" onclick="openPortal()">Portal/Menu</button>
+    </div>
+  </header>
+
+  <div class="modal" id="welcomeModal">
+    <span class="close-modal" onclick="closeModal()">&times;</span>
+    <i class="fas fa-bell"></i>
+    <h2>Latest Announcement</h2>
+    <p>TCS NQT Registration closes tomorrow! Make sure to update your profiles.</p>
+    <button class="btn btn-primary" style="margin-top:20px;" onclick="closeModal()">Check Details</button>
+  </div>
+
+  <section class="hero reveal" id="hero">
+    <div class="container">
+      <h1>Bridging <span id="typing-text">Talent</span> with Industry</h1>
+      <p>A smart AI-powered Training & Placement platform that enhances student employability, placement tracking, and recruiter collaboration through data-driven insights.</p>
+      <div style="display: flex; justify-content: center; gap: 15px;">
+        <button class="btn btn-primary"><a href="student_data.html">Upload Student Details</a></button>
+        <button class="btn" style="background:var(--white); border:1px solid #ccc;"> <a href="company_internship.html">Recruiters</a> </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="container stats-grid reveal" id="stats">
+    <div class="stat-card">
+      <i class="fas fa-users"></i>
+      <h3>500+</h3>
+      <p>Registered Students</p>
+    </div>
+    <div class="stat-card">
+      <i class="fas fa-building"></i>
+      <h3>45</h3>
+      <p>Companies Visited</p>
+    </div>
+    <div class="stat-card">
+      <i class="fas fa-file-contract"></i>
+      <h3>320</h3>
+      <p>Offers Made</p>
+    </div>
+    <div class="stat-card">
+      <i class="fas fa-percentage"></i>
+      <h3>84%</h3>
+      <p>Placement Rate</p>
+    </div>
+  </section>
+
+  <section class="graphs-section reveal">
+    <div class="container">
+      <div class="section-title">Placement Analytics</div>
+      <div class="charts-wrapper">
+        <div>
+          <canvas id="placementChart"></canvas>
+        </div>
+        <div>
+          <canvas id="branchChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="team-section reveal" id="team">
+    <div class="container">
+      <div class="section-title">Training & Placement Team</div>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-img">
+            <img src="https://via.placeholder.com/300x300/0a3d91/ffffff?text=TPO" alt="TPO">
+          </div>
+          <div class="team-info">
+            <h4>Dr. A. Sharma</h4>
+            <p>Head TPO</p>
+            <div class="team-social">
+              <i class="fab fa-linkedin"></i> <i class="fas fa-envelope"></i>
+            </div>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-img">
+            <img src="https://via.placeholder.com/300x300/f2ad58/ffffff?text=Coord" alt="Coordinator">
+          </div>
+          <div class="team-info">
+            <h4>Prof. R. Verma</h4>
+            <p>Faculty Coordinator</p>
+            <div class="team-social">
+              <i class="fab fa-linkedin"></i> <i class="fas fa-envelope"></i>
+            </div>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-img">
+            <img src="https://via.placeholder.com/300x300/0a66c2/ffffff?text=Student" alt="Student">
+          </div>
+          <div class="team-info">
+            <h4>Sneha Gupta</h4>
+            <p>Student Secretary</p>
+            <div class="team-social">
+              <i class="fab fa-linkedin"></i> <i class="fas fa-envelope"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hr-section reveal">
+    <div class="container">
+      <div class="section-title">Our Recruiters & HR Network</div>
+      
+      <h3 style="margin-bottom:20px; color:#666;">Top HR Interactions</h3>
+      <div class="hr-grid">
+        <div class="hr-card">
+          <div class="hr-avatar"><img src="https://via.placeholder.com/100" alt="HR"></div>
+          <div><h4>John Doe</h4><p style="font-size:0.8rem; color:#666;">HR Head, Infosys</p></div>
+        </div>
+        <div class="hr-card">
+          <div class="hr-avatar"><img src="https://via.placeholder.com/100" alt="HR"></div>
+          <div><h4>Jane Smith</h4><p style="font-size:0.8rem; color:#666;">Talent Acq, Wipro</p></div>
+        </div>
+        <div class="hr-card">
+          <div class="hr-avatar"><img src="https://via.placeholder.com/100" alt="HR"></div>
+          <div><h4>Mike Ross</h4><p style="font-size:0.8rem; color:#666;">HR Manager, TCS</p></div>
+        </div>
+        <div class="hr-card">
+          <div class="hr-avatar"><img src="https://via.placeholder.com/100" alt="HR"></div>
+          <div><h4>Sarah Lee</h4><p style="font-size:0.8rem; color:#666;">Campus Lead, Accenture</p></div>
+        </div>
+      </div>
+
+      <div class="marquee">
+        <div class="marquee-content">
+          <span class="company-logo">GOOGLE</span>
+          <span class="company-logo">MICROSOFT</span>
+          <span class="company-logo">AMAZON</span>
+          <span class="company-logo">TCS</span>
+          <span class="company-logo">INFOSYS</span>
+          <span class="company-logo">WIPRO</span>
+          <span class="company-logo">CAPGEMINI</span>
+          <span class="company-logo">ACCENTURE</span>
+          <span class="company-logo">IBM</span>
+          <span class="company-logo">GOOGLE</span>
+          <span class="company-logo">MICROSOFT</span>
+          <span class="company-logo">AMAZON</span>
+          <span class="company-logo">TCS</span>
+          <span class="company-logo">INFOSYS</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container info-grid reveal" id="contact">
+    
+    <div class="notice-board">
+      <h3><i class="fas fa-bullhorn" style="color:var(--orange)"></i> Announcements</h3>
+      <div class="notice-scroller">
+        <div class="notice-content">
+          <div class="notice-item">
+            <span class="notice-date">Dec 20, 2025</span>
+            <strong>Accenture Pre-Placement Talk</strong> at 10:00 AM in Audi 1.
+          </div>
+          <div class="notice-item">
+            <span class="notice-date">Dec 18, 2025</span>
+            TCS Digital Interview Results declared. Check portal.
+          </div>
+          <div class="notice-item">
+            <span class="notice-date">Dec 15, 2025</span>
+            Resume building workshop by AI Cell on Saturday.
+          </div>
+          <div class="notice-item">
+            <span class="notice-date">Dec 10, 2025</span>
+            IBM registration link is live. Apply now!
+          </div>
+           <div class="notice-item">
+            <span class="notice-date">Dec 05, 2025</span>
+            Mock Interview Schedule released for CS/IT.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-form">
+      <h3>Contact Us</h3>
+      <form>
+        <div class="form-group">
+          <input type="text" placeholder="Your Name">
+        </div>
+        <div class="form-group">
+          <input type="email" placeholder="Your Email">
+        </div>
+        <div class="form-group">
+          <textarea placeholder="Message / Query"></textarea>
+        </div>
+        <button type="button" class="submit-btn">Send Message</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-col">
+          <h4>AI T&P Cell</h4>
+          <p>Empowering careers through technology and guidance.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#">Student Login</a></li>
+            <li><a href="#">Recruiter Login</a></li>
+            <li><a href="#">Placement Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact Info</h4>
+          <ul>
+            <li><i class="fas fa-map-marker-alt"></i> College Campus, Block A</li>
+            <li><i class="fas fa-phone"></i> +91 98765 43210</li>
+            <li><i class="fas fa-envelope"></i> tpo@college.edu</li>
+          </ul>
+        </div>
+      </div>
+      <p style="border-top:1px solid #333; padding-top:20px;">© 2025 AI Training & Placement Cell | Final Year Project</p>
+    </div>
+  </footer>
+
+  <div class="ai-widget">
+    <div class="chat-box" id="chatBox">
+      <div class="chat-header">
+        <i class="fas fa-robot"></i> AI Assistant
+        <span style="margin-left:auto; cursor:pointer;" onclick="toggleChat()">&times;</span>
+      </div>
+      <div class="chat-body" id="chatBody">
+        <div class="bot-msg">Hello! I am your Placement AI Assistant. How can I help you today?</div>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="userInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+    <div class="ai-toggle" onclick="toggleChat()">
+      <i class="fas fa-comment-dots"></i>
+    </div>
+  </div>
+
+  <script>
+    // --- SIDEBAR LOGIC ---
+    function openPortal() {
+      document.getElementById("sidebar").classList.add("open");
+      document.getElementById("overlay").classList.add("show");
+    }
+    function closeMenu() {
+      document.getElementById("sidebar").classList.remove("open");
+      document.getElementById("overlay").classList.remove("show");
+    }
+
+    // --- POPUP LOGIC ---
+    window.onload = function() {
+      setTimeout(() => {
+        document.getElementById("welcomeModal").classList.add("active");
+      }, 1500); // Popup appears after 1.5 seconds
+    }
+    function closeModal() {
+      document.getElementById("welcomeModal").classList.remove("active");
+    }
+
+    // --- CHART.JS GRAPHS ---
+    const ctx1 = document.getElementById('placementChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: ['2021', '2022', '2023', '2024', '2025'],
+        datasets: [{
+          label: 'Students Placed',
+          data: [120, 150, 180, 240, 320],
+          backgroundColor: '#0a66c2'
+        }]
+      },
+      options: { responsive: true, plugins: { title: { display: true, text: 'Yearly Placement Stats' } } }
+    });
+
+    const ctx2 = document.getElementById('branchChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: ['CS', 'IT', 'E&TC', 'Mech', 'Civil'],
+        datasets: [{
+          data: [40, 30, 15, 10, 5],
+          backgroundColor: ['#0a3d91', '#0a66c2', '#f2ad58', '#333333', '#888888']
+        }]
+      },
+      options: { responsive: true, plugins: { title: { display: true, text: 'Branch-wise Selection %' } } }
+    });
+
+    // --- SCROLL ANIMATION (FADE IN) ---
+    window.addEventListener('scroll', reveal);
+    function reveal() {
+      var reveals = document.querySelectorAll('.reveal');
+      for (var i = 0; i < reveals.length; i++) {
+        var windowheight = window.innerHeight;
+        var revealtop = reveals[i].getBoundingClientRect().top;
+        var revealpoint = 100;
+        if (revealtop < windowheight - revealpoint) {
+          reveals[i].classList.add('active');
+        }
+      }
+    }
+
+    // --- AI CHATBOT LOGIC ---
+    function toggleChat() {
+      const chatBox = document.getElementById('chatBox');
+      if (chatBox.style.display === 'flex') {
+        chatBox.style.display = 'none';
+      } else {
+        chatBox.style.display = 'flex';
+      }
+    }
+
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') sendMessage();
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('userInput');
+      const chatBody = document.getElementById('chatBody');
+      const text = input.value.trim();
+
+      if (text !== "") {
+        // User Message
+        const userDiv = document.createElement('div');
+        userDiv.className = 'user-msg';
+        userDiv.innerText = text;
+        chatBody.appendChild(userDiv);
+        input.value = "";
+
+        // Auto Scroll
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        // Fake AI Response (Delay)
+        setTimeout(() => {
+          const botDiv = document.createElement('div');
+          botDiv.className = 'bot-msg';
+          
+          // Simple keyword matching for demo
+          if(text.toLowerCase().includes("placement")) botDiv.innerText = "Current placement rate is 84%.";
+          else if(text.toLowerCase().includes("company")) botDiv.innerText = "Top companies include Google, TCS, and Wipro.";
+          else if(text.toLowerCase().includes("tpo")) botDiv.innerText = "Our Head TPO is Dr. A. Sharma.";
+          else botDiv.innerText = "I can help with placement details. Please ask specific questions.";
+
+          chatBody.appendChild(botDiv);
+          chatBody.scrollTop = chatBody.scrollHeight;
+        }, 1000);
+      }
+    }
+  </script>
+</body>
+</html>**

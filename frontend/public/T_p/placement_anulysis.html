@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TPO Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #4f46e5; --secondary: #1e293b; --bg: #f8fafc; --white: #fff; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--secondary); }
+
+        /* Navbar */
+        .navbar { background: var(--secondary); padding: 1rem 2rem; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.4rem; font-weight: 700; letter-spacing: 1px; }
+        .nav-right a { color: #cbd5e1; text-decoration: none; margin-left: 20px; font-size: 0.9rem; }
+        .nav-right a:hover { color: white; }
+
+        .container { max-width: 1300px; margin: 2rem auto; padding: 0 1.5rem; }
+
+        /* KPI Cards */
+        .kpi-row { display: flex; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .kpi-card { flex: 1; background: var(--white); padding: 1.5rem; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-left: 5px solid var(--primary); }
+        .kpi-title { font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; }
+        .kpi-value { font-size: 2rem; font-weight: 800; color: #0f172a; margin-top: 5px; }
+
+        /* Dashboard Grid */
+        .grid-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+        
+        .card { background: var(--white); padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .card h3 { margin-top: 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; color: var(--primary); }
+
+        /* Company List */
+        .company-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+        .company-name { font-weight: 700; color: #334155; }
+        .company-date { font-size: 0.85rem; background: #e0e7ff; color: #4338ca; padding: 4px 8px; border-radius: 4px; }
+        .pkg-tag { font-size: 0.85rem; color: #059669; font-weight: 600; }
+
+        @media (max-width: 900px) { .grid-layout { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">TPO ADMIN DASHBOARD</div>
+        <div class="nav-right">
+            <a href="student_portal.html">Switch to Student View</a>
+            <a href="#">Log Out</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="kpi-row">
+            <div class="kpi-card" style="border-color: #4f46e5;">
+                <div class="kpi-title">Companies Visited</div>
+                <div class="kpi-value">42</div>
+            </div>
+            <div class="kpi-card" style="border-color: #10b981;">
+                <div class="kpi-title">Students Placed</div>
+                <div class="kpi-value">315</div>
+            </div>
+            <div class="kpi-card" style="border-color: #f59e0b;">
+                <div class="kpi-title">Highest Package</div>
+                <div class="kpi-value">45 LPA</div>
+            </div>
+            <div class="kpi-card" style="border-color: #ef4444;">
+                <div class="kpi-title">Upcoming Drives</div>
+                <div class="kpi-value">8</div>
+            </div>
+        </div>
+
+        <div class="grid-layout">
+            
+            <div class="card">
+                <h3>📅 Recruitment Timeline (Oct - Dec)</h3>
+                <canvas id="timelineChart" height="120"></canvas>
+            </div>
+
+            <div class="card">
+                <h3>📊 Branch-wise Selection</h3>
+                <canvas id="branchChart"></canvas>
+            </div>
+        </div>
+
+        <div class="grid-layout">
+            
+            <div class="card">
+                <h3>📉 Selection Funnel (Current Season)</h3>
+                <canvas id="funnelChart" height="100"></canvas>
+            </div>
+
+            <div class="card">
+                <h3>🚀 Upcoming Drives</h3>
+                <div class="company-list">
+                    <div class="company-item">
+                        <div>
+                            <div class="company-name">TCS Digital</div>
+                            <small>System Engineer</small>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="company-date">25 Oct</div>
+                            <div class="pkg-tag">7.5 LPA</div>
+                        </div>
+                    </div>
+                    <div class="company-item">
+                        <div>
+                            <div class="company-name">Accenture</div>
+                            <small>SDE-1</small>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="company-date">28 Oct</div>
+                            <div class="pkg-tag">6.5 LPA</div>
+                        </div>
+                    </div>
+                    <div class="company-item">
+                        <div>
+                            <div class="company-name">ZS Associates</div>
+                            <small>Data Analyst</small>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="company-date">02 Nov</div>
+                            <div class="pkg-tag">12.0 LPA</div>
+                        </div>
+                    </div>
+                    <div class="company-item">
+                        <div>
+                            <div class="company-name">Amazon</div>
+                            <small>SDE Intern</small>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="company-date">10 Nov</div>
+                            <div class="pkg-tag">45.0 LPA</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Timeline Chart (Line Chart simulating activity peaks) ---
+        const ctxTimeline = document.getElementById('timelineChart').getContext('2d');
+        new Chart(ctxTimeline, {
+            type: 'line',
+            data: {
+                labels: ['Week 1 Oct', 'Week 2 Oct', 'Week 3 Oct', 'Week 4 Oct', 'Week 1 Nov', 'Week 2 Nov'],
+                datasets: [{
+                    label: 'Companies Scheduled',
+                    data: [2, 5, 3, 8, 4, 6], // Number of companies visiting per week
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, title: { display: true, text: 'No. of Companies' } } }
+            }
+        });
+
+        // --- 2. Branch Radar Chart ---
+        const ctxBranch = document.getElementById('branchChart').getContext('2d');
+        new Chart(ctxBranch, {
+            type: 'radar',
+            data: {
+                labels: ['CSE', 'IT', 'Mech', 'Civil', 'ECE'],
+                datasets: [{
+                    label: 'Placement %',
+                    data: [85, 80, 60, 45, 70],
+                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                    borderColor: '#10b981',
+                    pointBackgroundColor: '#10b981'
+                }]
+            },
+            options: {
+                scales: { r: { suggestedMin: 0, suggestedMax: 100 } }
+            }
+        });
+
+        // --- 3. Funnel Chart (Bar Chart styled as funnel) ---
+        const ctxFunnel = document.getElementById('funnelChart').getContext('2d');
+        new Chart(ctxFunnel, {
+            type: 'bar',
+            data: {
+                labels: ['Registered', 'Aptitude Cleared', 'Interviewed', 'Selected'],
+                datasets: [{
+                    label: 'Count',
+                    data: [1240, 850, 420, 315],
+                    backgroundColor: [
+                        '#94a3b8',
+                        '#60a5fa',
+                        '#818cf8',
+                        '#34d399'
+                    ]
+                }]
+            },
+            options: {
+                indexAxis: 'y', // Makes bars horizontal
+                plugins: { legend: { display: false } }
+            }
+        });
+    </script>
+</body>
+</html>
