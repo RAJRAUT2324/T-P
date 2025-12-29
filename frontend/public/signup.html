@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Sign Up</title>
+    <style>
+        /* Reusing your existing styles for consistency */
+        body { background: #f7f8ff; font-family: "Poppins", sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
+        button { width: 100%; padding: 12px; background: #6c48ff; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin-top: 10px;}
+        button:hover { background: #5830ff; }
+        h2 { margin-bottom: 20px; color: #333; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Create Account</h2>
+    <input type="text" id="name" placeholder="Full Name (e.g. Rohit)">
+    <input type="email" id="email" placeholder="Email">
+    <input type="text" id="branch" placeholder="Branch (e.g. CS, IT)">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="register()">Sign Up</button>
+    <p style="margin-top: 15px; font-size: 14px;">Already have an account? <a href="login.html">Login</a></p>
+</div>
+
+<script>
+    async function register() {
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const branch = document.getElementById("branch").value;
+        const password = document.getElementById("password").value;
+
+        if(!name || !email || !password) return alert("Please fill all fields");
+
+        const res = await fetch('http://localhost:5000/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, branch, password })
+        });
+
+        const data = await res.json();
+        if(res.status === 201) {
+            alert("Account Created! Redirecting to Login...");
+            window.location.href = "login.html";
+        } else {
+            alert(data.message);
+        }
+    }
+</script>
+
+</body>
+</html>

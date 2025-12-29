@@ -267,24 +267,54 @@
 
             <button class="login-btn" onclick="login()">Login</button>
 
-            <p class="signup-link">Don't have an account? <a href="#">Create one</a></p>
+          <p class="signup-link">Don't have an account? <a href="../signup.html">Create one</a></p>
         </div>
     </div>
 
 </div>
 
 <script>
-    function login() {
+    async function login() {
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
+        const loginBtn = document.querySelector(".login-btn");
 
-        if (email === "user123@gmail.com" && password === "123") {
-            window.location.href = "student/dashboard.html";
-        } else {
-            alert("Invalid Email or Password ❌");
+        if (!email || !password) {
+            alert("Please fill in all fields");
+            return;
+        }
+
+        loginBtn.innerText = "Checking...";
+
+        try {
+            const response = await fetch('http://localhost:5000/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.status === 200) {
+                if (data.role === 'student') {
+                    // IMPORTANT: Save User ID to LocalStorage
+                    localStorage.setItem('userId', data.userId);
+                    localStorage.setItem('userName', data.name);
+                    
+                    window.location.href = "student/dashboard.html";
+                } else {
+                    alert("This account is not authorized for Student Login.");
+                }
+            } else {
+                alert(data.message || "Login Failed");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Server error. Is backend running?");
+        } finally {
+            loginBtn.innerText = "Login";
         }
     }
 </script>
-
 </body>
 </html>

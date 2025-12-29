@@ -274,14 +274,42 @@
 </div>
 
 <script>
-    function login() {
+    async function login() {
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
+        const loginBtn = document.querySelector(".login-btn");
 
-        if (email === "user123@gmail.com" && password === "123") {
-            window.location.href = "T_p/landing_of_tp.html";
-        } else {
-            alert("Invalid Email or Password ❌");
+        if (!email || !password) {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+        loginBtn.innerText = "Checking...";
+
+        try {
+            const res = await fetch("http://localhost:5000/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await res.json();
+
+            if (res.status === 200) {
+                // Check if the user is actually a T&P Admin
+                if (data.role === 'admin') {
+                    window.location.href = "T_p/landing_of_tp.html";
+                } else {
+                    alert("Access Denied: You are not a T&P Faculty member.");
+                }
+            } else {
+                alert(data); // "User not found" or "Wrong password"
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Server error. Make sure backend is running.");
+        } finally {
+            loginBtn.innerText = "Login";
         }
     }
 </script>
