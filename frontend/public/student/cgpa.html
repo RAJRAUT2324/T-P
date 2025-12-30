@@ -1,201 +1,302 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>CGPA Calculator | AI Training & Placement Cell</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Insight | AI CGPA Architect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --dark-blue: #0a3d91;
+            --royal-blue: #0a66c2;
+            --orange: #f2ad58;
+            --light-gray: #f4f6fa;
+            --white: #ffffff;
+            --success: #2ecc71;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
 
-<style>
-:root{
-  --dark-blue:#0a3d91;
-  --royal-blue:#0a66c2;
-  --orange:#f2ad58;
-  --light-gray:#f4f6fa;
-  --dark-gray:#333;
-  --white:#fff;
-}
+        body {
+            background: var(--light-gray);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
 
-*{
-  box-sizing:border-box;
-  font-family:Segoe UI, sans-serif;
-}
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 25px;
+            max-width: 1300px;
+            margin: auto;
+        }
 
-body{
-  background:var(--light-gray);
-  padding:30px;
-}
+        .card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
 
-.container{
-  max-width:1000px;
-  margin:auto;
-  background:var(--white);
-  padding:30px;
-  border-radius:18px;
-  box-shadow:0 15px 30px rgba(0,0,0,0.08);
-}
+        h1 { color: var(--dark-blue); margin-top: 0; display: flex; align-items: center; gap: 15px; }
+        h1 i { color: var(--orange); }
 
-h1{
-  color:var(--dark-blue);
-}
+        .semester-card {
+            background: #fdfdfd;
+            border: 1px solid #eee;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            transition: 0.3s;
+            position: relative;
+        }
 
-.semester{
-  background:var(--light-gray);
-  padding:20px;
-  border-radius:14px;
-  margin:20px 0;
-}
+        .semester-card:hover { border-color: var(--royal-blue); transform: translateX(5px); }
 
-.semester h3{
-  margin-top:0;
-  color:var(--royal-blue);
-}
+        .row {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr 1fr 40px;
+            gap: 12px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
 
-.row{
-  display:grid;
-  grid-template-columns:2fr 1fr 1fr;
-  gap:15px;
-  margin-bottom:10px;
-}
+        input, select {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            outline: none;
+            font-size: 0.95rem;
+        }
 
-input, select{
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
-}
+        input:focus { border-color: var(--royal-blue); box-shadow: 0 0 5px rgba(10,102,194,0.2); }
 
-button{
-  background:var(--royal-blue);
-  color:var(--white);
-  border:none;
-  padding:12px 25px;
-  border-radius:8px;
-  cursor:pointer;
-  margin-top:10px;
-}
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-button.orange{
-  background:var(--orange);
-  color:#000;
-}
+        .btn-blue { background: var(--royal-blue); color: white; width: 100%; justify-content: center; }
+        .btn-orange { background: var(--orange); color: #000; margin-bottom: 15px; }
+        .btn-remove { background: #fee; color: #e74c3c; padding: 8px; border-radius: 50%; width: 30px; height: 30px; justify-content: center; }
 
-button:hover{
-  opacity:0.9;
-}
+        /* Results Display */
+        .ai-sidebar {
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
 
-.result{
-  margin-top:30px;
-  padding:20px;
-  background:var(--light-gray);
-  border-radius:14px;
-}
+        .stat-box {
+            background: var(--dark-blue);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-.add-btn{
-  margin-top:10px;
-}
-</style>
+        .stat-box h2 { font-size: 3rem; margin: 10px 0; color: var(--orange); }
+
+        .eligibility-list {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .eligibility-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .badge-green { background: #e8f8f0; color: var(--success); }
+        .badge-red { background: #fee; color: #e74c3c; }
+
+        @media (max-width: 900px) {
+            .main-layout { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="container">
-  <h1>CGPA Calculator</h1>
-  <p>Calculate semester-wise GPA and overall CGPA.</p>
+<div class="main-layout">
+    <div class="card">
+        <h1><i class="fa-solid fa-calculator"></i> CGPA Architect</h1>
+        <p>Track your academic progress and placement eligibility instantly.</p>
 
-  <div id="semesters"></div>
+        <div id="semesterContainer"></div>
 
-  <button class="orange" onclick="addSemester()">+ Add Semester</button>
-  <br><br>
-  <button onclick="calculateCGPA()">Calculate CGPA</button>
+        <button class="btn btn-orange" onclick="addSemester()">
+            <i class="fa-solid fa-plus"></i> Add Semester
+        </button>
 
-  <div class="result" id="result" style="display:none;"></div>
+        <button class="btn btn-blue" onclick="calculate()">
+            <i class="fa-solid fa-microchip"></i> Analyze Academic Standing
+        </button>
+    </div>
+
+    <div class="ai-sidebar">
+        <div class="stat-box">
+            <p>Overall CGPA</p>
+            <h2 id="finalCGPA">0.00</h2>
+            <p id="percentageText">Percentage: 0%</p>
+        </div>
+
+        <div class="eligibility-list">
+            <h4 style="margin-top:0; color: var(--dark-blue);"><i class="fa-solid fa-building"></i> Placement Eligibility</h4>
+            <div id="eligibilityContent">
+                <p style="color: #888; font-size: 0.85rem;">Enter grades to see qualifying companies...</p>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+            
+            <h4 style="color: var(--dark-blue);"><i class="fa-solid fa-lightbulb"></i> AI Suggestion</h4>
+            <p id="aiSuggestion" style="font-size: 0.85rem; line-height: 1.5; color: #555;">
+                Start by adding your first semester grades!
+            </p>
+        </div>
+    </div>
 </div>
 
 <script>
-const gradePoints = {
-  "O":10,
-  "A+":9,
-  "A":8,
-  "B+":7,
-  "B":6,
-  "C":5,
-  "F":0
-};
+    const gradePoints = { "O": 10, "A+": 9, "A": 8, "B+": 7, "B": 6, "C": 5, "F": 0 };
+    let semCount = 0;
 
-let semesterCount = 0;
+    // Initialize with 1 semester
+    addSemester();
 
-addSemester();
-
-function addSemester(){
-  semesterCount++;
-  const sem = document.createElement("div");
-  sem.className = "semester";
-  sem.innerHTML = `
-    <h3>Semester ${semesterCount}</h3>
-    <div class="subjects"></div>
-    <button class="add-btn" onclick="addSubject(this)">+ Add Subject</button>
-  `;
-  document.getElementById("semesters").appendChild(sem);
-  addSubject(sem.querySelector("button"));
-}
-
-function addSubject(btn){
-  const container = btn.parentElement.querySelector(".subjects");
-  const row = document.createElement("div");
-  row.className = "row";
-  row.innerHTML = `
-    <input type="text" placeholder="Subject Name">
-    <input type="number" placeholder="Credits" min="1">
-    <select>
-      <option value="">Grade</option>
-      <option>O</option>
-      <option>A+</option>
-      <option>A</option>
-      <option>B+</option>
-      <option>B</option>
-      <option>C</option>
-      <option>F</option>
-    </select>
-  `;
-  container.appendChild(row);
-}
-
-function calculateCGPA(){
-  let totalCredits = 0;
-  let totalPoints = 0;
-  let output = "<h3>Results</h3>";
-
-  document.querySelectorAll(".semester").forEach((sem, i)=>{
-    let semCredits = 0;
-    let semPoints = 0;
-
-    sem.querySelectorAll(".row").forEach(row=>{
-      const credit = Number(row.children[1].value);
-      const grade = row.children[2].value;
-
-      if(credit && grade){
-        semCredits += credit;
-        semPoints += credit * gradePoints[grade];
-      }
-    });
-
-    if(semCredits){
-      const sgpa = (semPoints / semCredits).toFixed(2);
-      output += `<p><strong>Semester ${i+1} GPA:</strong> ${sgpa}</p>`;
-      totalCredits += semCredits;
-      totalPoints += semPoints;
+    function addSemester() {
+        semCount++;
+        const div = document.createElement('div');
+        div.className = 'semester-card';
+        div.id = `sem-${semCount}`;
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 style="margin:0; color:var(--royal-blue)">Semester ${semCount}</h3>
+                <span id="sgpa-${semCount}" style="font-weight:bold; color:var(--orange)">SGPA: 0.00</span>
+            </div>
+            <div class="subject-list"></div>
+            <button class="btn" style="background:none; color:var(--royal-blue); padding:5px 0;" onclick="addSubject(${semCount})">
+                <i class="fa-solid fa-plus-circle"></i> Add Subject
+            </button>
+        `;
+        document.getElementById('semesterContainer').appendChild(div);
+        addSubject(semCount);
     }
-  });
 
-  if(!totalCredits){
-    alert("Enter valid data");
-    return;
-  }
+    function addSubject(sNum) {
+        const container = document.querySelector(`#sem-${sNum} .subject-list`);
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.innerHTML = `
+            <input type="text" placeholder="Subject Name (e.g. DBMS)">
+            <input type="number" class="credits" placeholder="Credits" min="1" max="5" onchange="calculate()">
+            <select class="grade" onchange="calculate()">
+                <option value="">Grade</option>
+                <option value="O">O (Outstanding)</option>
+                <option value="A+">A+</option>
+                <option value="A">A</option>
+                <option value="B+">B+</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="F">F (Fail)</option>
+            </select>
+            <button class="btn btn-remove" onclick="this.parentElement.remove(); calculate();">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        `;
+        container.appendChild(row);
+    }
 
-  const cgpa = (totalPoints / totalCredits).toFixed(2);
-  output += `<hr><h3>Final CGPA: ${cgpa}</h3>`;
+    function calculate() {
+        let totalPoints = 0;
+        let totalCredits = 0;
+        const semesters = document.querySelectorAll('.semester-card');
 
-  document.getElementById("result").innerHTML = output;
-  document.getElementById("result").style.display = "block";
-}
+        semesters.forEach((sem, index) => {
+            let semPoints = 0;
+            let semCredits = 0;
+            const rows = sem.querySelectorAll('.row');
+
+            rows.forEach(row => {
+                const c = parseFloat(row.querySelector('.credits').value);
+                const g = row.querySelector('.grade').value;
+
+                if (c && g) {
+                    semCredits += c;
+                    semPoints += (c * gradePoints[g]);
+                }
+            });
+
+            if (semCredits > 0) {
+                const sgpa = (semPoints / semCredits).toFixed(2);
+                document.getElementById(`sgpa-${index + 1}`).innerText = `SGPA: ${sgpa}`;
+                totalPoints += semPoints;
+                totalCredits += semCredits;
+            }
+        });
+
+        if (totalCredits > 0) {
+            const cgpa = (totalPoints / totalCredits).toFixed(2);
+            const percentage = (cgpa * 9.5).toFixed(1); // Standard Mumbai/Pune Uni Formula
+            
+            document.getElementById('finalCGPA').innerText = cgpa;
+            document.getElementById('percentageText').innerText = `Percentage: ${percentage}%`;
+            
+            updateAI(cgpa);
+        }
+    }
+
+    function updateAI(cgpa) {
+        const content = document.getElementById('eligibilityContent');
+        const suggestion = document.getElementById('aiSuggestion');
+        
+        const companies = [
+            { name: "Google / Microsoft", criteria: 9.0 },
+            { name: "TCS Digital", criteria: 7.5 },
+            { name: "Infosys / Wipro", criteria: 6.5 },
+            { name: "Mass Recruiters", criteria: 6.0 }
+        ];
+
+        content.innerHTML = companies.map(c => `
+            <div class="eligibility-item">
+                <span>${c.name}</span>
+                <span class="badge ${cgpa >= c.criteria ? 'badge-green' : 'badge-red'}">
+                    ${cgpa >= c.criteria ? 'Eligible' : 'Needs ' + c.criteria}
+                </span>
+            </div>
+        `).join('');
+
+        if (cgpa >= 9.0) {
+            suggestion.innerText = "Exceptional! You are in the top 5%. Focus on high-level system design and competitive coding.";
+        } else if (cgpa >= 7.5) {
+            suggestion.innerText = "Strong academic standing. You qualify for most premium product roles. Maintain this consistency.";
+        } else if (cgpa >= 6.5) {
+            suggestion.innerText = "You are eligible for mass recruitment. Aim for 0.5 boost in next sem to unlock 'Digital' profile roles.";
+        } else {
+            suggestion.innerText = "Focus on clearing backlogs and improving your core subjects to reach the 6.5 threshold for placements.";
+        }
+    }
 </script>
 
 </body>

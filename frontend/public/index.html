@@ -307,15 +307,14 @@
 </head>
 <body>
 
-  <header class="navbar">
+<header class="navbar">
     <h1 class="logo">𖤍 AI T&P Cell</h1>
     <nav>
       <a href="#about">About</a>
-      <a href="#placements">Placements</a>
-      <a href="#login">Login</a>
+      <a href="#announcements">Announcements</a>
+    
     </nav>
   </header>
-
   <section class="hero">
     <h2>Empowering Students for <span>Future Careers</span></h2>
     <p>AI-driven training, mock interviews & placement readiness</p>
@@ -325,7 +324,7 @@
     </div>
   </section>
 
- <section class="announcements">
+ <section class="announcements" id="announcements">
   <div class="row">
     <div class="announce-box">
       <div class="section-title">Campus Announcements</div>
@@ -382,10 +381,10 @@
   </div>
 
   <div class="social-sidebar">
-    <a href="#" class="social-link linkedin" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-    <a href="#" class="social-link instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
-    <a href="#" class="social-link twitter" title="Twitter"><i class="fab fa-twitter"></i></a>
-    <a href="#" class="social-link youtube" title="YouTube"><i class="fab fa-youtube"></i></a>
+    <a href="https://www.linkedin.com/company/p-r-pote-patil-group-of-educational-institutes-amravati/?originalSubdomain=in" class="social-link linkedin" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+    <a href="https://www.instagram.com/prpotegroup/?hl=en" class="social-link instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
+    <a href="https://x.com/prpgei?lang=en" class="social-link twitter" title="Twitter"><i class="fab fa-twitter"></i></a>
+    <a href="https://www.youtube.com/channel/UCZ3_sR2StcxL1N9GzPnVX1g" class="social-link youtube" title="YouTube"><i class="fab fa-youtube"></i></a>
   </div>
 
   <section class="marquee-section">
@@ -455,8 +454,7 @@
       </div>
     </div>
   </section>
-
-  <footer class="footer">
+<footer class="footer">
     <div class="footer-content">
       <div>
         <h4>AI Training & Placement Cell</h4>
@@ -468,120 +466,147 @@
         <p>Phone: +91 98765 43210</p>
       </div>
       <div>
-        <h4>Developers</h4>
-        <p>Raj Raut</p>
-        <p>Shreyas Dakhole</p>
-      </div>
+    <h4>Developers</h4>
+    <p>
+        <a href="https://www.linkedin.com/in/raj-raut-0b8502351/" style="text-decoration: none; color: inherit;">
+            👨‍💻 Raj Raut
+        </a>
+    </p>
+    <p>
+        <a href="https://www.linkedin.com/in/shreyas-dakhole-562388338/" style="text-decoration: none; color: inherit;">
+            👨‍💻 Shreyas Dakhole
+        </a>
+    </p>
+</div>
     </div>
     <p class="copyright">© 2025 College Name. All rights reserved.</p>
     <p class="copyright">Made with <span class="heart">❤️</span> by Team Arjuna</p>
   </footer>
+<script>
+    // --- 1. CONFIGURATION & DATA ---
+    const placementData = {
+        stats: "Last year, we achieved a 92% placement rate. The highest package was 45 LPA, and the average was 6.5 LPA.",
+        companies: "Our marquee recruiters include Google, Microsoft, TCS, Infosys, Zensar, and Cognizant.",
+        tpCell: "The T&P Cell is located on the 2nd floor, Admin Block. Headed by Prof. Sharma, it provides resume building and mock interview sessions.",
+        eligibility: "Students need a minimum 6.5 CGPA and no active backlogs to participate in the recruitment drive.",
+        contact: "You can email the T&P cell at tp-cell@college.edu or call +123-456-7890."
+    };
 
-  <script>
-    // --- 1. CHATBOT TOGGLE ---
+    // --- 2. UI LOGIC ---
     function toggleChat() {
-      const chatWindow = document.getElementById("chatWindow");
-      if (chatWindow.style.display === "flex") {
-        chatWindow.style.display = "none";
-      } else {
-        chatWindow.style.display = "flex";
-      }
-    }
-
-    function handleEnter(e) {
-      if (e.key === "Enter") sendMessage();
-    }
-
-    // --- 2. SEND MESSAGE LOGIC ---
-    function sendMessage() {
-      const inputField = document.getElementById("userInput");
-      const chatBody = document.getElementById("chatBody");
-      const text = inputField.value.trim();
-
-      if (text === "") return;
-
-      // Add User Message
-      const userDiv = document.createElement("div");
-      userDiv.className = "message user-msg";
-      userDiv.innerText = text;
-      chatBody.appendChild(userDiv);
-      inputField.value = "";
-      chatBody.scrollTop = chatBody.scrollHeight;
-
-      // AI Response Logic (Simulated)
-      setTimeout(() => {
-        let botText = getAIResponse(text);
+        const chatWindow = document.getElementById("chatWindow");
+        chatWindow.style.display = (chatWindow.style.display === "flex") ? "none" : "flex";
         
-        const botDiv = document.createElement("div");
-        botDiv.className = "message bot-msg";
-        botDiv.innerText = botText;
-        chatBody.appendChild(botDiv);
+        // Greet user when opened for the first time
+        if(chatWindow.style.display === "flex" && document.getElementById("chatBody").children.length === 0) {
+            showInitialGreeting();
+        }
+    }
+
+    function showInitialGreeting() {
+        const greeting = "Hello! I am your T&P Assistant. How can I help you today?";
+        appendMessage(greeting, 'bot-msg');
+        speak(greeting);
+        showSuggestions();
+    }
+
+    // --- 3. SUGGESTION BUTTONS (The "Que & Ans" fix) ---
+    function showSuggestions() {
+        const chatBody = document.getElementById("chatBody");
+        const suggestionDiv = document.createElement("div");
+        suggestionDiv.className = "suggestion-container";
+        suggestionDiv.style.display = "flex";
+        suggestionDiv.style.flexWrap = "wrap";
+        suggestionDiv.style.gap = "5px";
+        suggestionDiv.style.padding = "10px";
+
+        const options = [
+            { label: "📊 Placement Stats", query: "placement stats" },
+            { label: "🏢 Top Companies", query: "companies" },
+            { label: "📍 T&P Location", query: "tp cell" },
+            { label: "📞 Contact Us", query: "contact" }
+        ];
+
+        options.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.innerText = opt.label;
+            btn.style.cssText = "padding:5px 10px; border-radius:15px; border:1px solid #007bff; background:white; color:#007bff; cursor:pointer; font-size:12px;";
+            btn.onclick = () => {
+                document.getElementById("userInput").value = opt.query;
+                sendMessage();
+                suggestionDiv.remove(); // Remove after clicking
+            };
+            suggestionDiv.appendChild(btn);
+        });
+
+        chatBody.appendChild(suggestionDiv);
         chatBody.scrollTop = chatBody.scrollHeight;
-
-        // Speak the response
-        speak(botText);
-
-      }, 800);
     }
 
-    // --- 3. SIMPLE AI LOGIC ---
+    // --- 4. CORE SEND LOGIC ---
+    function sendMessage() {
+        const inputField = document.getElementById("userInput");
+        const text = inputField.value.trim();
+        if (!text) return;
+
+        appendMessage(text, 'user-msg');
+        inputField.value = "";
+
+        setTimeout(() => {
+            const botResponse = getAIResponse(text);
+            appendMessage(botResponse, 'bot-msg');
+            speak(botResponse);
+            // Show suggestions again after a short delay so user can keep clicking
+            setTimeout(showSuggestions, 1000); 
+        }, 600);
+    }
+
+    function appendMessage(text, className) {
+        const chatBody = document.getElementById("chatBody");
+        const msgDiv = document.createElement("div");
+        msgDiv.className = `message ${className}`;
+        msgDiv.innerText = text;
+        chatBody.appendChild(msgDiv);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // --- 5. AI LOGIC ---
     function getAIResponse(input) {
-      input = input.toLowerCase();
-      if (input.includes("placement") || input.includes("jobs")) {
-        return "We had 85% placements last year with top recruiters like TCS and Infosys.";
-      } else if (input.includes("contact") || input.includes("email")) {
-        return "You can reach us at placement@college.edu.";
-      } else if (input.includes("companies") || input.includes("recruiters")) {
-        return "Our top recruiters are TCS, Wipro, Capgemini, and Accenture.";
-      } else if (input.includes("hello") || input.includes("hi")) {
-        return "Hello! How can I assist you with your career today?";
-      } else {
-        return "I am an AI assistant. Please ask about placements, companies, or contact info.";
-      }
-    }
-
-    // --- 4. TEXT TO SPEECH (ROBOT VOICE) ---
-    function speak(text) {
-      if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.rate = 1;
-        utterance.pitch = 1;
-        window.speechSynthesis.speak(utterance);
-      }
-    }
-
-    // --- 5. SPEECH TO TEXT (MIC INPUT) ---
-    function startListening() {
-      if ('webkitSpeechRecognition' in window) {
-        const recognition = new webkitSpeechRecognition();
-        const micBtn = document.getElementById("micBtn");
+        const query = input.toLowerCase();
+        if (query.includes("stats") || query.includes("placement")) return placementData.stats;
+        if (query.includes("company") || query.includes("recruiter")) return placementData.companies;
+        if (query.includes("t&p") || query.includes("cell") || query.includes("location")) return placementData.tpCell;
+        if (query.includes("eligible") || query.includes("criteria")) return placementData.eligibility;
+        if (query.includes("contact") || query.includes("email")) return placementData.contact;
         
-        recognition.lang = 'en-US';
-        recognition.start();
-
-        micBtn.classList.add("active"); // Visual feedback
-
-        recognition.onresult = function(event) {
-          const transcript = event.results[0][0].transcript;
-          document.getElementById("userInput").value = transcript;
-          micBtn.classList.remove("active");
-          sendMessage(); // Auto-send after speaking
-        };
-
-        recognition.onerror = function(event) {
-          console.error("Speech error", event);
-          micBtn.classList.remove("active");
-        };
-
-        recognition.onend = function() {
-          micBtn.classList.remove("active");
-        };
-      } else {
-        alert("Voice input is not supported in this browser. Please use Chrome.");
-      }
+        return "I'm here to help with placements. Try clicking one of the options below!";
     }
-  </script>
+
+    // --- 6. BEST VOICE TTS ---
+    function speak(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(v => v.name.includes('Google US English') || v.name.includes('Samantha'));
+            if (preferredVoice) utterance.voice = preferredVoice;
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    // Speech to Text (Mic)
+    function startListening() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.onresult = (event) => {
+                document.getElementById("userInput").value = event.results[0][0].transcript;
+                sendMessage();
+            };
+            recognition.start();
+        }
+    }
+</script>
 
 </body>
 </html>

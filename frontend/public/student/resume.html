@@ -1,178 +1,349 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Resume Analyzer</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Architect Pro | T&P Cell</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --dark-blue: #0a3d91;
+            --royal-blue: #0a66c2;
+            --orange: #f2ad58;
+            --light-gray: #f4f6fa;
+            --dark-gray: #333333;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --success: #28a745;
+        }
 
-<style>
-:root{
-  --dark-blue:#0a3d91;
-  --royal-blue:#0a66c2;
-  --orange:#f2ad58;
-  --light-gray:#f4f6fa;
-  --dark-gray:#333;
-  --white:#fff;
-}
+        body {
+            background: var(--light-gray);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            color: var(--dark-gray);
+        }
 
-body{
-  background:var(--light-gray);
-  font-family:Segoe UI,sans-serif;
-  padding:30px;
-}
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 25px;
+            max-width: 1400px;
+            margin: 20px auto;
+            width: 98%;
+        }
 
-.card{
-  max-width:900px;
-  margin:auto;
-  background:var(--white);
-  padding:30px;
-  border-radius:18px;
-  box-shadow:0 15px 30px rgba(0,0,0,0.08);
-}
+        /* Analyzer Styles */
+        .card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+        }
 
-h1{color:var(--dark-blue);}
+        h1 { color: var(--dark-blue); margin: 0 0 10px 0; font-size: 1.8rem; }
+        
+        .upload-area {
+            border: 2px dashed var(--royal-blue);
+            padding: 20px;
+            border-radius: 14px;
+            text-align: center;
+            background: #f8fbff;
+            margin-bottom: 20px;
+        }
 
-.upload{
-  border:2px dashed var(--royal-blue);
-  padding:25px;
-  border-radius:14px;
-  text-align:center;
-  margin:20px 0;
-}
+        select, input[type="file"] {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            width: 90%;
+        }
 
-button{
-  background:var(--royal-blue);
-  color:#fff;
-  padding:12px 25px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
+        .btn {
+            background: var(--royal-blue);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
 
-.progress{
-  background:#e5e8f0;
-  border-radius:20px;
-  margin:15px 0;
-  overflow:hidden;
-}
+        .btn:hover { background: var(--dark-blue); transform: translateY(-2px); }
 
-.bar{
-  height:18px;
-  width:0%;
-  background:linear-gradient(90deg,var(--royal-blue),var(--orange));
-  transition:0.6s;
-}
+        /* Scoring System */
+        .progress-container { 
+            background: #f0f2f5; 
+            padding: 20px; 
+            border-radius: 15px; 
+            margin-bottom: 20px;
+            border: 1px solid #e0e4e8;
+        }
+        .progress-bg { background: #dcdfe6; border-radius: 20px; height: 12px; overflow: hidden; margin: 10px 0; }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--royal-blue), var(--orange)); transition: 1.5s cubic-bezier(0.1, 0.5, 0.5, 1); }
+        .score-num { font-size: 2.5rem; font-weight: 800; color: var(--dark-blue); }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:20px;
-  margin-top:25px;
-}
+        /* Grid Results */
+        .results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .result-box { background: #fff; padding: 15px; border-radius: 12px; border: 1px solid #eee; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .result-box h4 { margin: 0 0 10px 0; font-size: 0.95rem; color: var(--royal-blue); text-transform: uppercase; letter-spacing: 1px; }
+        ul { padding-left: 18px; margin: 0; font-size: 0.85rem; color: #555; }
+        li { margin-bottom: 6px; }
 
-.box{
-  background:var(--light-gray);
-  padding:20px;
-  border-radius:14px;
-}
+        /* AI Assistant */
+        .ai-assistant {
+            background: var(--white);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+            position: sticky;
+            top: 20px;
+            border: 1px solid #e0e0e0;
+        }
 
-ul{padding-left:18px;font-size:14px;}
-</style>
+        .chat-header {
+            background: var(--dark-blue);
+            color: white;
+            padding: 15px;
+            border-radius: 18px 18px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #fdfdfd; display: flex; flex-direction: column; }
+        .msg { margin-bottom: 12px; padding: 12px; border-radius: 15px; font-size: 0.9rem; line-height: 1.5; max-width: 85%; position: relative; }
+        .ai-msg { background: #f0f2f7; color: #333; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #e8e8e8; }
+        .user-msg { background: var(--royal-blue); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+
+        .chat-footer { padding: 15px; background: #fff; border-top: 1px solid #eee; display: flex; gap: 8px; border-radius: 0 0 18px 18px; }
+        .chat-footer input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 25px; outline: none; }
+        .speak-btn { background: #f2f2f2; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; color: #666; }
+        .speak-btn.active { background: var(--orange); color: white; }
+
+        @media (max-width: 1000px) {
+            .container { grid-template-columns: 1fr; }
+            .ai-assistant { height: 600px; position: static; }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="card">
-  <h1>Resume ATS Analyzer</h1>
-  <p><strong>Upload TXT resume only</strong> (frontend ATS simulation)</p>
+<div class="container">
+    <div class="card">
+        <h1><i class="fa-solid fa-bolt-lightning" style="color: var(--orange);"></i> ATS Architect Pro</h1>
+        
+        <div class="upload-area">
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <select id="branchSelect">
+                    <option value="cs">Computer Science / IT</option>
+                    <option value="mech">Mechanical Engineering</option>
+                    <option value="civil">Civil Engineering</option>
+                    <option value="etc">Electronics & Telecomm</option>
+                </select>
+            </div>
+            <input type="file" id="resumeFile" accept=".txt">
+            <button class="btn" onclick="runAnalysis()" style="width: 100%; margin-top: 10px;">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Deep Scan Resume
+            </button>
+        </div>
 
-  <div class="upload">
-    <input type="file" id="file" accept=".txt">
-  </div>
+        <div class="progress-container">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                <div>
+                    <span class="score-num" id="scoreDisplay">0</span><span style="font-size: 1.2rem; font-weight: bold; color: #888;">/100</span>
+                    <p style="margin: 5px 0 0 0; font-weight: 600; color: #666;" id="scoreStatus">Ready for Analysis</p>
+                </div>
+                <i class="fa-solid fa-chart-line fa-3x" style="color: #e0e0e0;"></i>
+            </div>
+            <div class="progress-bg">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
 
-  <button onclick="analyze()">Analyze Resume</button>
-
-  <h3>ATS Score</h3>
-  <div class="progress">
-    <div class="bar" id="bar"></div>
-  </div>
-  <strong id="score">0 / 100</strong>
-
-  <div class="grid">
-    <div class="box">
-      <h3>Detected Skills</h3>
-      <ul id="skills"></ul>
+        <div class="results-grid">
+            <div class="result-box">
+                <h4><i class="fa-solid fa-key"></i> Key Match</h4>
+                <ul id="foundSkills"><li>Keywords identified in text</li></ul>
+            </div>
+            <div class="result-box">
+                <h4><i class="fa-solid fa-triangle-exclamation"></i> Skills Gap</h4>
+                <ul id="missingKeywords"><li>Missing high-demand skills</li></ul>
+            </div>
+            <div class="result-box">
+                <h4><i class="fa-solid fa-gears"></i> Format Check</h4>
+                <ul id="sectionsCheck"><li>Section & Structure status</li></ul>
+            </div>
+            <div class="result-box">
+                <h4><i class="fa-solid fa-award"></i> Action Items</h4>
+                <ul id="industrialTips"><li>Industrial improvement tips</li></ul>
+            </div>
+        </div>
     </div>
-    <div class="box">
-      <h3>Detected Sections</h3>
-      <ul id="sections"></ul>
+
+    <div class="ai-assistant">
+        <div class="chat-header">
+            <div style="background: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-robot" style="color: var(--dark-blue);"></i>
+            </div>
+            <div>
+                <strong>Architect AI</strong><br>
+                <small style="opacity: 0.8;">Expert Placement Consultant</small>
+            </div>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="msg ai-msg">Welcome! I'm your Resume Architect. Upload your TXT resume for a full scan, or ask me anything about <b>fonts, margins, colors, or section headers</b>. How can I help you today?</div>
+        </div>
+        <div class="chat-footer">
+            <button class="speak-btn" onclick="toggleSpeech()" id="voiceBtn"><i class="fa-solid fa-microphone"></i></button>
+            <input type="text" id="chatInput" placeholder="Ask about margins, fonts, or colors...">
+            <button class="btn" style="border-radius: 50%; width: 45px; height: 45px; padding: 0;" onclick="sendMessage()">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
     </div>
-    <div class="box">
-      <h3>Suggestions</h3>
-      <ul id="tips"></ul>
-    </div>
-  </div>
 </div>
 
 <script>
-const skillsDB = [
- "java","python","javascript","html","css","sql",
- "react","node","git","data structures","algorithms"
-];
+    // --- DATABASE ---
+    const branchDB = {
+        cs: ["java", "python", "javascript", "react", "node", "sql", "git", "aws", "docker", "machine learning", "data structures"],
+        mech: ["autocad", "solidworks", "ansys", "catia", "thermodynamics", "hvac", "manufacturing", "matlab", "six sigma"],
+        civil: ["autocad", "revit", "staad pro", "etabs", "surveying", "concrete", "estimation", "construction management"],
+        etc: ["embedded", "vlsi", "matlab", "iot", "arduino", "microcontroller", "signal processing", "pcb design", "verilog"]
+    };
 
-const sectionsDB = [
- "education","skills","projects","experience","certifications"
-];
+    const actionVerbs = ["developed", "led", "managed", "achieved", "increased", "implemented", "created", "designed", "optimized"];
 
-function analyze(){
-  const file = document.getElementById("file").files[0];
-  if(!file){ alert("Upload TXT resume"); return; }
+    // --- ANALYZER LOGIC ---
+    function runAnalysis() {
+        const fileInput = document.getElementById('resumeFile');
+        if (!fileInput.files[0]) { alert("Please upload a .txt file!"); return; }
 
-  const reader = new FileReader();
-  reader.onload = () => processText(reader.result.toLowerCase());
-  reader.readAsText(file);
-}
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const text = e.target.result.toLowerCase();
+            const branch = document.getElementById('branchSelect').value;
+            performDeepScan(text, branch);
+        };
+        reader.readAsText(fileInput.files[0]);
+    }
 
-function processText(text){
-  let score = 20; // base score
-  let foundSkills=[], foundSections=[];
+    function performDeepScan(text, branch) {
+        let score = 0;
+        let foundSkills = [];
+        let missingSkills = [];
+        let sections = [];
+        let tips = [];
 
-  skillsDB.forEach(s=>{
-    if(text.includes(s)){ foundSkills.push(s); score+=5; }
-  });
+        // 1. Skill Match (35 pts)
+        branchDB[branch].forEach(skill => {
+            if (text.includes(skill)) { foundSkills.push(skill); score += (35 / branchDB[branch].length); }
+            else { missingSkills.push(skill); }
+        });
 
-  sectionsDB.forEach(sec=>{
-    if(text.includes(sec)){ foundSections.push(sec); score+=6; }
-  });
+        // 2. Section Integrity (25 pts)
+        ["education", "experience", "projects", "skills", "summary"].forEach(sec => {
+            if (text.includes(sec)) { sections.push(sec + " Found"); score += 5; }
+            else { sections.push("<span style='color:red'>Missing " + sec + "</span>"); }
+        });
 
-  const words = text.split(/\s+/).length;
-  if(words>=300 && words<=800) score+=20;
+        // 3. Action Verbs Check (20 pts)
+        let verbCount = 0;
+        actionVerbs.forEach(v => { if (text.includes(v)) verbCount++; });
+        score += Math.min(verbCount * 4, 20);
+        if (verbCount < 3) tips.push("Use more action verbs like 'Developed' or 'Optimized'.");
 
-  if(score>100) score=100;
+        // 4. Contact & Formatting (20 pts)
+        if (text.includes("@") && text.includes("phone") || text.match(/\d{10}/)) score += 10;
+        else tips.push("Missing valid email or phone number.");
+        
+        const wordCount = text.split(/\s+/).length;
+        if (wordCount >= 400 && wordCount <= 700) score += 10;
+        else tips.push(wordCount < 400 ? "Content too short (target 500 words)." : "Too wordy (target 1 page).");
 
-  document.getElementById("bar").style.width = score+"%";
-  document.getElementById("score").innerText = score+" / 100";
+        // UI Updates
+        const final = Math.round(score);
+        document.getElementById('progressBar').style.width = final + "%";
+        document.getElementById('scoreDisplay').innerText = final;
+        document.getElementById('scoreStatus').innerText = final > 80 ? "ATS Optimized!" : (final > 50 ? "Needs Improvement" : "Critical Warning");
+        
+        updateUI('foundSkills', foundSkills, "No skills detected.");
+        updateUI('missingKeywords', missingSkills, "All key skills present!");
+        updateUI('sectionsCheck', sections, "Upload valid text.");
+        updateUI('industrialTips', tips, "Great formatting!");
+    }
 
-  fill("skills", foundSkills, "Add more skills");
-  fill("sections", foundSections, "Missing sections");
-  tips(score, foundSkills.length, foundSections.length, words);
-}
+    function updateUI(id, arr, empty) {
+        const el = document.getElementById(id);
+        el.innerHTML = arr.length ? arr.map(i => `<li>${i}</li>`).join('') : `<li>${empty}</li>`;
+    }
 
-function fill(id, arr, empty){
-  const ul=document.getElementById(id);
-  ul.innerHTML="";
-  arr.length ? arr.forEach(x=>ul.innerHTML+=`<li>${x}</li>`) : ul.innerHTML=`<li>${empty}</li>`;
-}
+    // --- AI CHATBOT LOGIC ---
+    const aiKnowledge = {
+        font: "For ATS, use clean Sans-Serif fonts like <b>Arial, Calibri, or Helvetica</b>. Size: <b>10-12pt</b> for body and <b>14-16pt</b> for headers.",
+        margin: "Standard industrial margins are <b>1 inch (2.54 cm)</b> on all sides. If you need space, 0.5 inch is the absolute minimum.",
+        color: "Keep it professional. Use <b>Black</b> for text and <b>Dark Blue</b> only for headers. Avoid bright colors as ATS might ignore them.",
+        size: "The total file size should be small. A 1-page PDF is roughly 100-500 KB. Avoid high-res images.",
+        ats: "ATS (Applicant Tracking System) reads text from top to bottom. Avoid tables, columns, and graphics as they scramble the text.",
+        branch: "Choose your branch in the dropdown above to see specific technical keywords for your field."
+    };
 
-function tips(score, sk, sec, w){
-  const ul=document.getElementById("tips");
-  ul.innerHTML="";
-  if(score<60) ul.innerHTML+="<li>Resume needs improvement</li>";
-  if(sk<5) ul.innerHTML+="<li>Add more technical skills</li>";
-  if(sec<4) ul.innerHTML+="<li>Add missing sections</li>";
-  if(w<300) ul.innerHTML+="<li>Resume too short</li>";
-  if(w>900) ul.innerHTML+="<li>Resume too long</li>";
-  if(!ul.innerHTML) ul.innerHTML="<li>Excellent ATS-ready resume</li>";
-}
+    function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const val = input.value.toLowerCase();
+        if (!val.trim()) return;
+
+        addMsg(input.value, 'user-msg');
+        
+        let response = "That's a great question! For specific formatting, ask me about fonts, margins, or colors. You can also upload your resume for a direct score.";
+
+        if (val.includes("font")) response = aiKnowledge.font;
+        else if (val.includes("margin")) response = aiKnowledge.margin;
+        else if (val.includes("color")) response = aiKnowledge.color;
+        else if (val.includes("size")) response = aiKnowledge.size;
+        else if (val.includes("ats")) response = aiKnowledge.ats;
+        else if (val.includes("branch")) response = aiKnowledge.branch;
+
+        setTimeout(() => {
+            addMsg(response, 'ai-msg');
+            if (isSpeaking) speak(response.replace(/<[^>]*>?/gm, ''));
+        }, 600);
+        
+        input.value = "";
+    }
+
+    function addMsg(text, type) {
+        const body = document.getElementById('chatBody');
+        body.innerHTML += `<div class="msg ${type}">${text}</div>`;
+        body.scrollTop = body.scrollHeight;
+    }
+
+    // --- VOICE LOGIC ---
+    let isSpeaking = false;
+    function toggleSpeech() {
+        isSpeaking = !isSpeaking;
+        document.getElementById('voiceBtn').classList.toggle('active');
+        if (isSpeaking) speak("Voice mode enabled. I will read my responses to you.");
+    }
+
+    function speak(text) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.pitch = 1;
+        utterance.rate = 1;
+        window.speechSynthesis.speak(utterance);
+    }
+
+    document.getElementById('chatInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
 </script>
 
 </body>

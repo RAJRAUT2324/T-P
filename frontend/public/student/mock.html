@@ -1,200 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Advanced Mock Interview Simulator</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Placement Cell | Smart Interview Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com"></script>
-<!-- React & ReactDOM -->
-<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-video { transform: scaleX(-1); border-radius:12px; }
-.textarea-scroll::-webkit-scrollbar { width:6px; }
-.textarea-scroll::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.3); border-radius:3px; }
-</style>
+    <style>
+        :root { --dark-blue: #0a3d91; --royal-blue: #0a66c2; --orange: #f2ad58; }
+        body { background-color: #f4f6fa; font-family: 'Segoe UI', sans-serif; }
+        .glass-card { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .btn-primary { background: var(--royal-blue); color: white; transition: 0.3s; }
+        .btn-primary:hover { background: var(--dark-blue); }
+        .resource-pill { background: #eef2f7; padding: 10px 15px; border-radius: 12px; font-size: 0.85rem; border: 1px solid #dce4ee; }
+        video { transform: scaleX(-1); border-radius: 15px; background: #000; border: 3px solid #fff; }
+        .recording-pulse { animation: pulse 1.5s infinite; color: #ef4444; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+    </style>
 </head>
-<body class="bg-gray-100">
-<div id="root"></div>
+<body>
+    <div id="root"></div>
 
-<script>
-const { useState, useEffect, useRef } = React;
+    <script>
+        const { useState, useEffect, useRef } = React;
 
-const QUESTION_BANK = [
-  { id:1, category:"Behavioral", question:"Tell me about a time you faced a difficult challenge at work and how you overcame it.", hint:"Use STAR method: Situation, Task, Action, Result.", keywords:["star","situation","task","action","result","overcame"] },
-  { id:2, category:"Technical (React)", question:"Explain the Virtual DOM and how it improves performance.", hint:"Mention diffing, reconciliation, minimal DOM manipulation.", keywords:["virtual dom","diffing","reconciliation","performance","dom"] },
-  { id:3, category:"Technical (JavaScript)", question:"What is the difference between 'var', 'let', and 'const'?", hint:"Focus on scope and hoisting", keywords:["var","let","const","scope","hoisting"] },
-  { id:4, category:"Situational", question:"You realize a project will miss its deadline. How do you handle this?", hint:"Communicate early, propose new timeline, suggest cutting non-essential features.", keywords:["communicate","stakeholders","timeline","deadline","features"] }
-];
+        const MASTER_DB = {
+            aptitude: [
+                { q: "A shopkeeper sells an item at 20% profit. If the cost price is $500, find the selling price.", keywords: ["600", "price"], hint: "SP = CP + (Profit% of CP)" },
+                { q: "What is the next number in the series: 5, 10, 20, 40, ...?", keywords: ["80", "eighty"], hint: "Each number is multiplied by 2." }
+            ],
+            general: [
+                { q: "What are your strengths and weaknesses?", keywords: ["hardworking", "punctual", "communication", "learning"], hint: "Be honest but focus on how you improve weaknesses." }
+            ],
+            cs: [
+                { q: "What is the difference between TCP and UDP?", keywords: ["connection", "reliable", "handshake", "fast", "packet"], hint: "TCP is connection-oriented, UDP is connectionless." },
+                { q: "Define Primary Key and Foreign Key in SQL.", keywords: ["unique", "identifier", "reference", "relation"], hint: "Primary key identifies a record; Foreign key links tables." }
+            ],
+            mech: [
+                { q: "What is the function of a Flywheel?", keywords: ["energy", "fluctuation", "storage", "speed"], hint: "It stores energy during the power stroke." }
+            ],
+            civil: [
+                { q: "What is the use of a Theodolite?", keywords: ["angle", "horizontal", "vertical", "measurement"], hint: "Used for measuring horizontal and vertical angles." }
+            ]
+        };
 
-function MockInterviewApp() {
-  const [started,setStarted]=useState(false);
-  const [currentQIndex,setCurrentQIndex]=useState(0);
-  const [userAnswer,setUserAnswer]=useState("");
-  const [showHint,setShowHint]=useState(false);
-  const [timer,setTimer]=useState(0);
-  const [isFinished,setIsFinished]=useState(false);
-  const [scores,setScores]=useState([]);
-  const [recordedChunks,setRecordedChunks]=useState([]);
-  const [mediaRecorder,setMediaRecorder]=useState(null);
+        function InterviewPortal() {
+            const [step, setStep] = useState('setup');
+            const [branch, setBranch] = useState('cs');
+            const [sessionQs, setSessionQs] = useState([]);
+            const [currentIdx, setCurrentIdx] = useState(0);
+            const [answer, setAnswer] = useState("");
+            const [scores, setScores] = useState([]);
+            const [isListening, setIsListening] = useState(false);
+            
+            const videoRef = useRef(null);
+            const chartRef = useRef(null);
+            const recognitionRef = useRef(null);
 
-  const videoRef = useRef(null);
-  const chartRef = useRef(null);
-  const recognitionRef = useRef(null);
+            // Initialize Speech Recognition
+            useEffect(() => {
+                if ('webkitSpeechRecognition' in window) {
+                    const recognition = new webkitSpeechRecognition();
+                    recognition.continuous = true;
+                    recognition.interimResults = true;
+                    recognition.lang = 'en-US';
 
-  // Timer
-  useEffect(()=>{
-    let interval=null;
-    if(started && !isFinished){
-      interval=setInterval(()=>setTimer(prev=>prev+1),1000);
-    }
-    return ()=>clearInterval(interval);
-  },[started,isFinished]);
+                    recognition.onresult = (event) => {
+                        let transcript = "";
+                        for (let i = event.resultIndex; i < event.results.length; i++) {
+                            transcript += event.results[i][0].transcript;
+                        }
+                        setAnswer(transcript);
+                    };
+                    recognitionRef.current = recognition;
+                }
+            }, []);
 
-  // Webcam + Audio recording
-  const startVideoAndRecording = async ()=>{
-    try{
-      const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
-      videoRef.current.srcObject = stream;
+            const startSession = async () => {
+                const mix = [
+                    ...MASTER_DB.aptitude.sort(() => 0.5 - Math.random()).slice(0, 2),
+                    ...MASTER_DB.general.slice(0, 1),
+                    ...MASTER_DB[branch].sort(() => 0.5 - Math.random()).slice(0, 2)
+                ];
+                setSessionQs(mix);
+                setStep('active');
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                if (videoRef.current) videoRef.current.srcObject = stream;
+                
+                if (recognitionRef.current) {
+                    recognitionRef.current.start();
+                    setIsListening(true);
+                }
+            };
 
-      const recorder = new MediaRecorder(stream);
-      recorder.ondataavailable = e => setRecordedChunks(prev=>[...prev,e.data]);
-      recorder.start();
-      setMediaRecorder(recorder);
-    }catch(err){
-      alert("Cannot access camera/microphone.");
-      console.error(err);
-    }
-  };
+            const calculateGrade = (avg) => {
+                if (avg >= 85) return "O (Outstanding)";
+                if (avg >= 70) return "A (Excellent)";
+                if (avg >= 50) return "B (Average)";
+                return "C (Needs Improvement)";
+            };
 
-  // Speech-to-text (Chrome only)
-  const startSpeechRecognition = ()=>{
-    if(!("webkitSpeechRecognition" in window)){
-      alert("Speech Recognition not supported. Use Chrome.");
-      return;
-    }
-    const recognition = new webkitSpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = navigator.language || "en-US";
+            const nextQ = async () => {
+                let currentMatch = 0;
+                sessionQs[currentIdx].keywords.forEach(k => { if(answer.toLowerCase().includes(k)) currentMatch++; });
+                const score = Math.round((currentMatch / sessionQs[currentIdx].keywords.length) * 100);
+                const updatedScores = [...scores, score];
+                setScores(updatedScores);
+                setAnswer("");
 
-    let finalTranscript = ""; // store final text
-    recognition.onresult = event=>{
-      let interimTranscript = "";
-      for(let i = event.resultIndex; i < event.results.length; i++){
-        if(event.results[i].isFinal){
-          finalTranscript += event.results[i][0].transcript + " ";
-        } else {
-          interimTranscript += event.results[i][0].transcript;
+                if (currentIdx < sessionQs.length - 1) {
+                    setCurrentIdx(currentIdx + 1);
+                } else {
+                    if (recognitionRef.current) recognitionRef.current.stop();
+                    setStep('result');
+                    
+                    const avg = Math.round(updatedScores.reduce((a,b) => a+b, 0) / updatedScores.length);
+                    saveToHistory(avg);
+
+                    const userId = localStorage.getItem("userId");
+                    if(userId) {
+                        try { await fetch(`/api/auth/user/${userId}/increment-interview`, { method: 'POST' }); } 
+                        catch (e) { console.log("DB Update Failed"); }
+                    }
+                    setTimeout(() => renderChart(updatedScores), 300);
+                }
+            };
+
+            const saveToHistory = (avg) => {
+                const history = JSON.parse(localStorage.getItem("interviewHistory") || "[]");
+                const newEntry = {
+                    date: new Date().toLocaleDateString(),
+                    branch: branch.toUpperCase(),
+                    score: avg,
+                    grade: calculateGrade(avg)
+                };
+                history.unshift(newEntry);
+                localStorage.setItem("interviewHistory", JSON.stringify(history.slice(0, 5)));
+            };
+
+            const renderChart = (data) => {
+                new Chart(chartRef.current, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Apt 1', 'Apt 2', 'HR', 'Tech 1', 'Tech 2'],
+                        datasets: [{ label: 'Score %', data: data, backgroundColor: '#0a66c2', borderRadius: 5 }]
+                    },
+                    options: { scales: { y: { beginAtZero: true, max: 100 } } }
+                });
+            };
+
+            if (step === 'setup') {
+                return React.createElement("div", { className: "max-w-4xl mx-auto mt-10 p-4" },
+                    React.createElement("div", { className: "glass-card p-10 mb-6" },
+                        React.createElement("h2", { className: "text-3xl font-bold mb-4 text-blue-900" }, "AI Mock Interview Portal"),
+                        React.createElement("p", { className: "mb-6 text-gray-600" }, "Tailored questions for your branch with real-time speech analysis."),
+                        React.createElement("select", { className: "w-full p-4 border rounded-xl mb-8 font-bold text-blue-800", onChange: (e) => setBranch(e.target.value) },
+                            React.createElement("option", { value: "cs" }, "Computer Science / IT"),
+                            React.createElement("option", { value: "mech" }, "Mechanical Engineering"),
+                            React.createElement("option", { value: "civil" }, "Civil Engineering")
+                        ),
+                        React.createElement("button", { onClick: startSession, className: "btn-primary w-full py-4 rounded-xl font-bold text-lg shadow-lg" }, "LAUNCH INTERVIEW")
+                    ),
+                    React.createElement("div", { className: "glass-card p-8" },
+                        React.createElement("h3", { className: "font-bold text-lg mb-4 text-blue-900" }, "📚 Preparation Resources"),
+                        React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-4" },
+                            React.createElement("div", { className: "resource-pill" }, React.createElement("i", {className: "fa-solid fa-book mr-2"}), "Aptitude: RS Aggarwal"),
+                            React.createElement("div", { className: "resource-pill" }, React.createElement("i", {className: "fa-solid fa-comments mr-2"}), "HR: STAR Method Guide"),
+                            React.createElement("div", { className: "resource-pill" }, React.createElement("i", {className: "fa-solid fa-code mr-2"}), "Tech: InterviewBit / GFG")
+                        )
+                    )
+                );
+            }
+
+            if (step === 'active') {
+                return React.createElement("div", { className: "max-w-6xl mx-auto mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 p-4" },
+                    React.createElement("div", null,
+                        React.createElement("video", { ref: videoRef, autoPlay: true, muted: true, className: "w-full aspect-video shadow-2xl" }),
+                        React.createElement("div", { className: "mt-4 p-4 glass-card flex items-center justify-between" }, 
+                            React.createElement("div", null, 
+                                React.createElement("p", {className:"text-sm font-bold"}, "AI Facial Analysis: Active"),
+                                React.createElement("p", {className:"text-xs text-gray-400 font-mono"}, "Status: Tracking confidence levels...")
+                            ),
+                            isListening && React.createElement("i", {className: "fa-solid fa-microphone recording-pulse text-xl"})
+                        )
+                    ),
+                    React.createElement("div", { className: "glass-card p-8 flex flex-col h-[520px]" },
+                        React.createElement("div", {className: "flex justify-between items-center mb-4"},
+                            React.createElement("span", {className:"text-orange-600 font-black text-xs tracking-widest"}, "ROUND " + (currentIdx + 1)),
+                            React.createElement("span", {className:"text-gray-400 text-xs"}, "Speak clearly into your mic")
+                        ),
+                        React.createElement("h3", { className: "text-xl font-bold mb-6 text-blue-900 leading-tight" }, sessionQs[currentIdx].q),
+                        React.createElement("textarea", { 
+                            className: "flex-grow p-5 bg-gray-50 border-2 border-blue-100 rounded-2xl resize-none text-lg focus:border-blue-400 outline-none transition-all",
+                            placeholder: "Your spoken words will appear here automatically...",
+                            value: answer,
+                            onChange: (e) => setAnswer(e.target.value)
+                        }),
+                        React.createElement("button", { onClick: nextQ, className: "btn-primary py-4 rounded-xl mt-6 font-bold shadow-xl flex items-center justify-center gap-2" }, 
+                            currentIdx === 4 ? "FINISH INTERVIEW" : "SUBMIT RESPONSE",
+                            React.createElement("i", {className:"fa-solid fa-arrow-right"})
+                        )
+                    )
+                );
+            }
+
+            if (step === 'result') {
+                const avg = Math.round(scores.reduce((a,b) => a+b, 0) / scores.length);
+                const history = JSON.parse(localStorage.getItem("interviewHistory") || "[]");
+
+                return React.createElement("div", { className: "max-w-5xl mx-auto mt-10 p-4" },
+                    React.createElement("div", { className: "grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8" },
+                        React.createElement("div", { className: "glass-card p-8 text-center border-b-4 border-blue-600 col-span-1" },
+                            React.createElement("p", {className:"text-gray-500 uppercase text-xs font-bold mb-2"}, "Session Grade"),
+                            React.createElement("h1", {className:"text-3xl font-black text-blue-700"}, calculateGrade(avg))
+                        ),
+                        React.createElement("div", { className: "glass-card p-8 text-center border-b-4 border-orange-500 col-span-1" },
+                            React.createElement("p", {className:"text-gray-500 uppercase text-xs font-bold mb-2"}, "Average Score"),
+                            React.createElement("h1", {className:"text-5xl font-black text-orange-600"}, avg + "%")
+                        ),
+                        React.createElement("div", { className: "glass-card p-8 col-span-1 flex flex-col justify-center" },
+                            React.createElement("p", {className:"text-gray-500 uppercase text-xs font-bold mb-2"}, "Previous 3 Sessions"),
+                            history.slice(1,4).map((h, i) => 
+                                React.createElement("div", {key:i, className:"flex justify-between text-sm py-1 border-b last:border-0"},
+                                    React.createElement("span", null, h.date),
+                                    React.createElement("span", {className:"font-bold"}, h.score + "%")
+                                )
+                            )
+                        )
+                    ),
+                    React.createElement("div", { className: "grid grid-cols-1 lg:grid-cols-2 gap-8" },
+                        React.createElement("div", { className: "glass-card p-6" }, 
+                            React.createElement("h4", {className:"font-bold mb-4 text-blue-900"}, "Detailed Scoring"),
+                            React.createElement("canvas", { ref: chartRef })
+                        ),
+                        React.createElement("div", { className: "glass-card p-6" },
+                            React.createElement("h4", {className:"font-bold mb-4 text-blue-900"}, "Placement Feedback"),
+                            React.createElement("div", {className: "space-y-4 text-sm"},
+                                React.createElement("p", null, React.createElement("b", null, "Aptitude: "), avg > 70 ? "Strong analytical skills." : "Needs more practice in logic."),
+                                React.createElement("p", null, React.createElement("b", null, "Technical: "), "Focus on keyword accuracy for better industry visibility."),
+                                React.createElement("button", { onClick: () => window.location.reload(), className: "w-full btn-primary py-4 rounded-xl mt-4" }, "NEW SESSION")
+                            )
+                        )
+                    )
+                );
+            }
         }
-      }
-      setUserAnswer(finalTranscript + interimTranscript);
-    };
-    recognition.onerror = e=>console.error(e);
-    recognition.start();
-    recognitionRef.current = recognition;
-  };
 
-  const stopSpeechRecognition = ()=>{
-    if(recognitionRef.current){
-      recognitionRef.current.stop();
-    }
-  };
-
-  const handleStart = ()=>{
-    setStarted(true);
-    startVideoAndRecording();
-    startSpeechRecognition();
-  };
-
-  const handleNext = ()=>{
-    const currentQ = QUESTION_BANK[currentQIndex];
-    const answerLower = userAnswer.toLowerCase();
-    let score = 0;
-    currentQ.keywords.forEach(k=>{ if(answerLower.includes(k.toLowerCase())) score++; });
-    const percentage = Math.round((score/currentQ.keywords.length)*100);
-    setScores(prev=>[...prev,percentage]);
-
-    setUserAnswer(""); setShowHint(false);
-
-    if(currentQIndex < QUESTION_BANK.length-1){ setCurrentQIndex(prev=>prev+1); }
-    else{
-      setIsFinished(true);
-      if(mediaRecorder) mediaRecorder.stop();
-      stopSpeechRecognition();
-      setTimeout(renderChart,500);
-    }
-  };
-
-  const formatTime = seconds=>{
-    const m = Math.floor(seconds/60);
-    const s = seconds%60;
-    return `${m}:${s<10?'0'+s:s}`;
-  };
-
-  const renderChart = ()=>{
-    const ctx = chartRef.current.getContext("2d");
-    new Chart(ctx,{
-      type:'bar',
-      data:{ labels:QUESTION_BANK.map(q=>q.category), datasets:[{label:"Score (%)", data:scores, backgroundColor:"rgba(59,130,246,0.7)"}] },
-      options:{ scales:{ y:{ beginAtZero:true, max:100 } } }
-    });
-  };
-
-  const downloadRecording = ()=>{
-    const blob = new Blob(recordedChunks,{type:"video/webm"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href=url; a.download="interview.webm"; a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  return React.createElement("div",{className:"min-h-screen p-8 flex flex-col items-center"},
-    React.createElement("div",{className:"w-full max-w-4xl mb-8 flex justify-between items-center"},
-      React.createElement("h1",{className:"text-3xl font-bold text-gray-800"},"Advanced Mock Interview Simulator"),
-      started && !isFinished && React.createElement("div",{className:"text-xl font-mono bg-white px-4 py-2 rounded shadow text-red-600"},"⏱ "+formatTime(timer))
-    ),
-    React.createElement("div",{className:"w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8"},
-      React.createElement("div",{className:"bg-black rounded-2xl overflow-hidden shadow-xl h-96 relative flex items-center justify-center"},
-        started?React.createElement("video",{ref:videoRef,autoPlay:true,muted:true,className:"w-full h-full object-cover"}):
-        React.createElement("div",{className:"text-center p-6"}, React.createElement("div",{className:"text-6xl mb-4"},"📹"), React.createElement("p",{className:"text-gray-400"},"Camera preview will appear here")),
-        started && !isFinished && React.createElement("div",{className:"absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm"},"Question "+(currentQIndex+1)+"/"+QUESTION_BANK.length)
-      ),
-      React.createElement("div",{className:"flex flex-col justify-between h-96"},
-        !started ? React.createElement("div",{className:"bg-white p-8 rounded-2xl shadow-lg h-full flex flex-col justify-center items-center text-center"},
-          React.createElement("h2",{className:"text-2xl font-bold mb-4"},"Ready to practice?"),
-          React.createElement("p",{className:"text-gray-600 mb-8"},"This simulator will test your technical and behavioral skills. Turn on your camera & mic to check body language."),
-          React.createElement("button",{onClick:handleStart,className:"bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full"},"Start Interview")
-        ):
-        isFinished?React.createElement("div",{className:"bg-white p-8 rounded-2xl shadow-lg h-full flex flex-col justify-center items-center text-center overflow-auto"},
-          React.createElement("h2",{className:"text-2xl font-bold text-green-600 mb-4"},"Interview Complete!"),
-          React.createElement("p",{className:"text-gray-600 mb-2"},"Total time: "+formatTime(timer)),
-          React.createElement("p",{className:"text-gray-600 mb-4"},"Scores per question: "+scores.join("% | ")+"%"),
-          React.createElement("canvas",{ref:chartRef,className:"mb-4 w-full h-40"}),
-          React.createElement("button",{onClick:downloadRecording,className:"bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-full mb-2"},"Download Recording"),
-          React.createElement("button",{onClick:()=>window.location.reload(),className:"border-2 border-blue-600 text-blue-600 font-bold py-2 px-6 rounded-full hover:bg-blue-50"},"Restart Session")
-        ):
-        React.createElement("div",{className:"bg-white p-6 rounded-2xl shadow-lg h-full flex flex-col"},
-          React.createElement("span",{className:"text-sm font-bold text-blue-500 uppercase mb-2"},QUESTION_BANK[currentQIndex].category),
-          React.createElement("h3",{className:"text-xl font-semibold text-gray-800 mb-4"},QUESTION_BANK[currentQIndex].question),
-          React.createElement("textarea",{className:"w-full flex-grow bg-gray-50 border border-gray-200 rounded-lg p-4 mb-2 resize-none textarea-scroll",placeholder:"Type or speak your answer here...", value:userAnswer,onChange:e=>setUserAnswer(e.target.value)}),
-          showHint && React.createElement("div",{className:"mb-2 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-sm"},React.createElement("strong",null,"Expected Answer Key: "),QUESTION_BANK[currentQIndex].hint),
-          React.createElement("div",{className:"flex gap-2 mt-auto"},
-            React.createElement("button",{onClick:()=>setShowHint(!showHint),className:"flex-1 py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50"}, showHint?"Hide Reference":"Show Reference"),
-            React.createElement("button",{onClick:handleNext,className:"flex-1 py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700"},currentQIndex===QUESTION_BANK.length-1?"Finish":"Next Question")
-          )
-        )
-      )
-    )
-  );
-}
-
-ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(MockInterviewApp));
-</script>
+        ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(InterviewPortal));
+    </script>
 </body>
 </html>

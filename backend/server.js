@@ -2,39 +2,43 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const path = require('path'); // Required to find your HTML files
+const path = require('path');
 const authRoute = require('./routes/auth');
 
-// Force it to find the .env file in the backend folder
-dotenv.config({ path: path.resolve(__dirname, '.env') });
-
+// Initialize Express
 const app = express();
 
-// Middleware
+// Load environment variables
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+
+// --- 1. MIDDLEWARE ---
 app.use(express.json());
 app.use(cors());
 
-// --- 1. SERVE FRONTEND FILES (The Magic Step) ---
-// This tells express to look inside "frontend/public" for html files
+// --- 2. STATIC FILE SERVING ---
+// Serve static files from the public folder (HTML)
 app.use(express.static(path.join(__dirname, '../frontend/public')));
-// This serves css/js/images if they are in "frontend" folder
+// Serve assets (CSS, JS, Images)
 app.use('/assets', express.static(path.join(__dirname, '../frontend/assets')));
 
-// --- 2. DATABASE CONNECTION ---
+// --- 3. DATABASE CONNECTION ---
 mongoose.connect(process.env.MONGO_URL)
     .then(() => console.log("DB Connection Successfull!"))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+        console.error("DB Connection Error:", err);
+    });
 
-// --- 3. ROUTES ---
+// --- 4. ROUTES ---
 app.use("/api/auth", authRoute);
 
-// --- 4. LANDING PAGE ---
-// When someone opens "localhost:5000", show them index.html
+// --- 5. LANDING PAGE ---
+// Direct the root URL to your index.html
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
 });
 
-// Start Server
-app.listen(5000, () => {
-    console.log("Full Project running on http://localhost:5000");
+// --- 6. SERVER INITIALIZATION ---
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Full Project running on http://localhost:${PORT}`);
 });
