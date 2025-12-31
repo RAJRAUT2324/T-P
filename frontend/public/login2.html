@@ -274,44 +274,36 @@
 </div>
 
 <script>
-    async function login() {
+    function login() {
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
         const loginBtn = document.querySelector(".login-btn");
 
-        if (!email || !password) {
-            alert("Please fill in all fields.");
-            return;
-        }
+        // 1. Define your "Hardcoded" credentials
+        const validEmail = "admin@gmail.com";
+        const validPassword = "123";
 
-        loginBtn.innerText = "Checking...";
-
-        try {
-            const res = await fetch("http://localhost:5000/api/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
-            });
-
-            const data = await res.json();
-
-            if (res.status === 200) {
-                // Check if the user is actually a T&P Admin
-                if (data.role === 'admin') {
-                    window.location.href = "T_p/landing_of_tp.html";
-                } else {
-                    alert("Access Denied: You are not a T&P Faculty member.");
-                }
-            } else {
-                alert(data); // "User not found" or "Wrong password"
-            }
-        } catch (err) {
-            console.error(err);
-            alert("Server error. Make sure backend is running.");
-        } finally {
-            loginBtn.innerText = "Login";
+        // 2. Simple Check Logic
+        if (email === validEmail && password === validPassword) {
+            alert("Login Successful! Redirecting to Admin Panel...");
+            
+            // This opens your specific file
+            window.location.href = "T_p/landing_of_tp.html";
+        } else {
+            // This happens if anything is wrong
+            alert("Invalid Credentials. Access Denied.");
+            
+            // Clear fields for retry
+            document.getElementById("password").value = "";
         }
     }
+
+    // Optional: Allow login by pressing the "Enter" key on the keyboard
+    document.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            login();
+        }
+    });
 </script>
 
 </body>

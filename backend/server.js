@@ -4,6 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 const authRoute = require('./routes/auth');
+const studentRoute = require('./routes/studentRoutes');
 
 // Initialize Express
 const app = express();
@@ -14,6 +15,11 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 // --- 1. MIDDLEWARE ---
 app.use(express.json());
 app.use(cors());
+
+// --- REGISTER ROUTES ---
+app.use("/api/auth", authRoute);
+// --- LINE 2: Register the student route ---
+app.use("/api/students", studentRoute);
 
 // --- 2. STATIC FILE SERVING ---
 // Serve static files from the public folder (HTML)

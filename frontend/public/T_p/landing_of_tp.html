@@ -259,19 +259,49 @@ a:hover {
       <p>Placement Rate</p>
     </div>
   </section>
+<section class="graphs-section reveal">
+  <div class="container">
+    <div class="section-title">Real-Time Placement Insights</div>
 
-  <section class="graphs-section reveal">
-    <div class="container">
-      <div class="section-title">Placement Analytics</div>
-      <div class="charts-wrapper">
-        <div>
-          <canvas id="placementChart"></canvas>
-        </div>
-        <div>
-          <canvas id="branchChart"></canvas>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+      
+      <div style="background: var(--dark-blue); color: white; padding: 20px; border-radius: 15px; border-left: 5px solid var(--orange); box-shadow: var(--shadow);">
+        <p style="font-size: 0.8rem; opacity: 0.7;">HIGHEST PACKAGE</p>
+        <h2 id="db-highest-pkg" style="font-size: 2rem; color: var(--orange);">₹50.0 LPA</h2>
+        <p id="db-top-student-name" style="font-size: 0.8rem; margin-top: 5px; font-style: italic;">Fetching...</p>
+      </div>
+
+      <div style="background: white; padding: 20px; border-radius: 15px; border-left: 5px solid var(--royal-blue); box-shadow: var(--shadow);">
+        <p style="font-size: 0.8rem; color: #666;">AVG. CGPA (PLACED)</p>
+        <h2 id="db-avg-cgpa" style="font-size: 2rem; color: var(--dark-blue);">3.5</h2>
+        <div style="width: 100%; background: #eee; height: 5px; border-radius: 10px; margin-top: 10px;">
+            <div id="cgpa-bar" style="width: 0%; height: 100%; background: var(--royal-blue); border-radius: 10px; transition: 1s;"></div>
         </div>
       </div>
+
+      <div style="background: white; padding: 20px; border-radius: 15px; border-left: 5px solid #333; box-shadow: var(--shadow);">
+        <p style="font-size: 0.8rem; color: #666;">LEADING BRANCH</p>
+        <h2 id="db-top-branch" style="font-size: 2rem; color: var(--dark-blue);">-</h2>
+        <p id="db-branch-count" style="font-size: 0.8rem; color: #999;">0 Students Placed</p>
+      </div>
     </div>
+
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 25px;">
+      <div class="charts-wrapper" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px;">
+        <div style="height: 220px;"><canvas id="placementChart"></canvas></div>
+        <div style="height: 220px;"><canvas id="branchChart"></canvas></div>
+      </div>
+
+      <div style="background: white; padding: 20px; border-radius: 20px; box-shadow: var(--shadow); max-height: 320px; overflow-y: auto;">
+        <h4 style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+            <i class="fas fa-history" style="color: var(--orange);"></i> Recent Database Updates
+        </h4>
+        <div id="db-recent-list">
+            </div>
+      </div>
+    </div>
+  </div>
+</section>
   </section>
 
   <section class="team-section reveal" id="team">
@@ -457,115 +487,243 @@ a:hover {
     </div>
   </div>
 
-  <script>
-    // --- SIDEBAR LOGIC ---
+ <script>
+    // --- CONFIGURATION & GLOBALS ---
+    let students = [];
+    const API_BASE = "http://localhost:5000/api/students";
+    let placementChart, branchChart; // Variables to hold chart instances
+
+    // --- 1. INTEGRATED STARTUP (ONLOAD) ---
+    window.onload = function() {
+        // Old Startup: Welcome Modal
+        setTimeout(() => {
+            const modal = document.getElementById("welcomeModal");
+            if(modal) modal.classList.add("active");
+        }, 1500);
+
+        // New Startup: Load Real Data and Init Charts
+        fetchStudents();
+    };
+
+    // --- 2. SIDEBAR & MODAL LOGIC (OLD) ---
     function openPortal() {
-      document.getElementById("sidebar").classList.add("open");
-      document.getElementById("overlay").classList.add("show");
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("overlay").classList.add("show");
     }
     function closeMenu() {
-      document.getElementById("sidebar").classList.remove("open");
-      document.getElementById("overlay").classList.remove("show");
-    }
-
-    // --- POPUP LOGIC ---
-    window.onload = function() {
-      setTimeout(() => {
-        document.getElementById("welcomeModal").classList.add("active");
-      }, 1500); // Popup appears after 1.5 seconds
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("overlay").classList.remove("show");
     }
     function closeModal() {
-      document.getElementById("welcomeModal").classList.remove("active");
+        document.getElementById("welcomeModal").classList.remove("active");
     }
 
-    // --- CHART.JS GRAPHS ---
-    const ctx1 = document.getElementById('placementChart').getContext('2d');
-    new Chart(ctx1, {
-      type: 'bar',
-      data: {
-        labels: ['2021', '2022', '2023', '2024', '2025'],
-        datasets: [{
-          label: 'Students Placed',
-          data: [120, 150, 180, 240, 320],
-          backgroundColor: '#0a66c2'
-        }]
-      },
-      options: { responsive: true, plugins: { title: { display: true, text: 'Yearly Placement Stats' } } }
-    });
+    // --- 3. DATABASE OPERATIONS (NEW) ---
+    async function fetchStudents() {
+        try {
+            const response = await fetch(`${API_BASE}/fetchall`);
+            students = await response.json();
+            renderTable(students);
+            updateDashboard();
+            updateCharts(); // Refresh charts with real data
+        } catch (error) {
+            console.error("Database connection error:", error);
+        }
+    }
 
-    const ctx2 = document.getElementById('branchChart').getContext('2d');
-    new Chart(ctx2, {
-      type: 'doughnut',
-      data: {
-        labels: ['CS', 'IT', 'E&TC', 'Mech', 'Civil'],
-        datasets: [{
-          data: [40, 30, 15, 10, 5],
-          backgroundColor: ['#0a3d91', '#0a66c2', '#f2ad58', '#333333', '#888888']
-        }]
-      },
-      options: { responsive: true, plugins: { title: { display: true, text: 'Branch-wise Selection %' } } }
-    });
+    async function addStudent() {
+        const name = document.getElementById('s-name').value;
+        const rollNo = document.getElementById('s-id').value;
+        const branch = document.getElementById('s-branch').value;
+        const cgpa = parseFloat(document.getElementById('s-cgpa').value);
+        const status = document.getElementById('s-status').value;
+        const pkg = parseFloat(document.getElementById('s-package').value) || 0;
 
-    // --- SCROLL ANIMATION (FADE IN) ---
+        if(!name || !rollNo) { alert("Name and Roll Number are required!"); return; }
+
+        const studentData = {
+            name, rollNo, branch, cgpa, status,
+            package: pkg,
+            company: status === 'Placed' ? "Selected" : "-"
+        };
+
+        try {
+            const res = await fetch(`${API_BASE}/add`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(studentData)
+            });
+
+            if (res.ok) {
+                alert("Database Updated Successfully!");
+                fetchStudents(); // Re-fetch all data
+            }
+        } catch (err) { alert("Error saving data."); }
+    }
+
+    async function deleteStudent(rollNo) {
+        if(confirm(`Delete Roll No: ${rollNo}?`)) {
+            await fetch(`${API_BASE}/delete/${rollNo}`, { method: "DELETE" });
+            fetchStudents();
+        }
+    }
+
+    // --- 4. UI RENDERING & DASHBOARD ---
+    function renderTable(data) {
+        const tbody = document.getElementById('student-table-body');
+        if(!tbody) return;
+        tbody.innerHTML = data.map(s => `
+            <tr>
+                <td>${s.rollNo}</td>
+                <td><strong>${s.name}</strong></td>
+                <td>${s.branch}</td>
+                <td>${s.cgpa}</td>
+                <td><span class="badge ${s.status === 'Placed' ? 'placed' : 'pending'}">${s.status}</span></td>
+                <td>₹${s.package} LPA</td>
+                <td><button onclick="deleteStudent('${s.rollNo}')" style="color:red; background:none; border:none; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td>
+            </tr>
+        `).join('');
+    }
+
+    function updateDashboard() {
+        const totalCount = document.getElementById('total-count');
+        const placedCount = document.getElementById('placed-count');
+        if(totalCount) totalCount.innerText = students.length;
+        if(placedCount) placedCount.innerText = students.filter(s => s.status === "Placed").length;
+    }
+
+    // --- 5. UPDATED CHART LOGIC (MERGED) ---
+    function updateCharts() {
+        // Destroy existing charts if they exist to prevent overlap
+        if(placementChart) placementChart.destroy();
+        if(branchChart) branchChart.destroy();
+
+        const ctx1 = document.getElementById('placementChart').getContext('2d');
+        placementChart = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['CSE', 'IT', 'E&TC', 'Mech', 'Civil'],
+                datasets: [{
+                    label: 'Students Placed',
+                    data: [
+                        students.filter(s => s.branch === 'CSE' && s.status === 'Placed').length,
+                        students.filter(s => s.branch === 'IT' && s.status === 'Placed').length,
+                        students.filter(s => s.branch === 'E&TC' && s.status === 'Placed').length,
+                        students.filter(s => s.branch === 'Mech' && s.status === 'Placed').length,
+                        students.filter(s => s.branch === 'Civil' && s.status === 'Placed').length
+                    ],
+                    backgroundColor: '#0a66c2'
+                }]
+            }
+        });
+
+        const ctx2 = document.getElementById('branchChart').getContext('2d');
+        branchChart = new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['CS', 'IT', 'E&TC', 'Mech', 'Civil'],
+                datasets: [{
+                    data: [
+                        students.filter(s => s.branch === 'CSE').length,
+                        students.filter(s => s.branch === 'IT').length,
+                        students.filter(s => s.branch === 'E&TC').length,
+                        students.filter(s => s.branch === 'Mech').length,
+                        students.filter(s => s.branch === 'Civil').length
+                    ],
+                    backgroundColor: ['#0a3d91', '#0a66c2', '#f2ad58', '#333333', '#888888']
+                }]
+            }
+        });
+    }
+
+    // --- 6. SCROLL ANIMATION (OLD) ---
     window.addEventListener('scroll', reveal);
     function reveal() {
-      var reveals = document.querySelectorAll('.reveal');
-      for (var i = 0; i < reveals.length; i++) {
-        var windowheight = window.innerHeight;
-        var revealtop = reveals[i].getBoundingClientRect().top;
-        var revealpoint = 100;
-        if (revealtop < windowheight - revealpoint) {
-          reveals[i].classList.add('active');
+        var reveals = document.querySelectorAll('.reveal');
+        for (var i = 0; i < reveals.length; i++) {
+            var windowheight = window.innerHeight;
+            var revealtop = reveals[i].getBoundingClientRect().top;
+            if (revealtop < windowheight - 100) {
+                reveals[i].classList.add('active');
+            }
         }
-      }
     }
 
-    // --- AI CHATBOT LOGIC ---
+    // --- 7. AI CHATBOT LOGIC (OLD) ---
     function toggleChat() {
-      const chatBox = document.getElementById('chatBox');
-      if (chatBox.style.display === 'flex') {
-        chatBox.style.display = 'none';
-      } else {
-        chatBox.style.display = 'flex';
-      }
-    }
-
-    function handleKeyPress(e) {
-      if (e.key === 'Enter') sendMessage();
+        const chatBox = document.getElementById('chatBox');
+        chatBox.style.display = (chatBox.style.display === 'flex') ? 'none' : 'flex';
     }
 
     function sendMessage() {
-      const input = document.getElementById('userInput');
-      const chatBody = document.getElementById('chatBody');
-      const text = input.value.trim();
+        const input = document.getElementById('userInput');
+        const chatBody = document.getElementById('chatBody');
+        const text = input.value.trim();
+        if (text !== "") {
+            const userDiv = document.createElement('div');
+            userDiv.className = 'user-msg';
+            userDiv.innerText = text;
+            chatBody.appendChild(userDiv);
+            input.value = "";
+            chatBody.scrollTop = chatBody.scrollHeight;
 
-      if (text !== "") {
-        // User Message
-        const userDiv = document.createElement('div');
-        userDiv.className = 'user-msg';
-        userDiv.innerText = text;
-        chatBody.appendChild(userDiv);
-        input.value = "";
+            setTimeout(() => {
+                const botDiv = document.createElement('div');
+                botDiv.className = 'bot-msg';
+                if(text.toLowerCase().includes("placement")) botDiv.innerText = `Current database shows ${students.filter(s => s.status === "Placed").length} placed students.`;
+                else botDiv.innerText = "I can help with placement details from the database.";
+                chatBody.appendChild(botDiv);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 1000);
+        }
+       function updateDashboard() {
+    // 1. Update Global Counters
+    const totalCount = document.getElementById('total-count');
+    const placedCount = document.getElementById('placed-count');
+    const placedStudents = students.filter(s => s.status === "Placed");
 
-        // Auto Scroll
-        chatBody.scrollTop = chatBody.scrollHeight;
+    if(totalCount) totalCount.innerText = students.length;
+    if(placedCount) placedCount.innerText = placedStudents.length;
 
-        // Fake AI Response (Delay)
-        setTimeout(() => {
-          const botDiv = document.createElement('div');
-          botDiv.className = 'bot-msg';
-          
-          // Simple keyword matching for demo
-          if(text.toLowerCase().includes("placement")) botDiv.innerText = "Current placement rate is 84%.";
-          else if(text.toLowerCase().includes("company")) botDiv.innerText = "Top companies include Google, TCS, and Wipro.";
-          else if(text.toLowerCase().includes("tpo")) botDiv.innerText = "Our Head TPO is Dr. A. Sharma.";
-          else botDiv.innerText = "I can help with placement details. Please ask specific questions.";
+    if (students.length > 0) {
+        // 2. Extract Highest Package & Name
+        const sortedByPkg = [...students].sort((a, b) => (b.package || 0) - (a.package || 0));
+        const topStudent = sortedByPkg[0];
+        document.getElementById('db-highest-pkg').innerText = `₹${topStudent.package || 0} LPA`;
+        document.getElementById('db-top-student-name').innerText = `Achievement by: ${topStudent.name}`;
 
-          chatBody.appendChild(botDiv);
-          chatBody.scrollTop = chatBody.scrollHeight;
-        }, 1000);
-      }
+        // 3. Calculate Average CGPA for Placed Students
+        if (placedStudents.length > 0) {
+            const avgCgpa = placedStudents.reduce((acc, s) => acc + s.cgpa, 0) / placedStudents.length;
+            document.getElementById('db-avg-cgpa').innerText = avgCgpa.toFixed(2);
+            document.getElementById('cgpa-bar').style.width = `${(avgCgpa / 10) * 100}%`;
+        }
+
+        // 4. Determine Leading Branch
+        const branchStats = students.reduce((acc, s) => {
+            if(s.status === "Placed") acc[s.branch] = (acc[s.branch] || 0) + 1;
+            return acc;
+        }, {});
+        
+        const topBranch = Object.keys(branchStats).reduce((a, b) => branchStats[a] > branchStats[b] ? a : b, "N/A");
+        document.getElementById('db-top-branch').innerText = topBranch;
+        document.getElementById('db-branch-count').innerText = `${branchStats[topBranch] || 0} Students Placed`;
+
+        // 5. Fill Recent Database Updates List
+        const recentList = document.getElementById('db-recent-list');
+        recentList.innerHTML = students.slice(-4).reverse().map(s => `
+            <div style="padding: 10px; border-bottom: 1px solid #f9f9f9; display: flex; align-items: center; gap: 10px;">
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: ${s.status === 'Placed' ? '#4CAF50' : '#FFC107'};"></div>
+                <div style="flex: 1;">
+                    <p style="font-size: 0.85rem; font-weight: bold; margin: 0;">${s.name}</p>
+                    <p style="font-size: 0.7rem; color: #888; margin: 0;">${s.branch} • Roll: ${s.rollNo}</p>
+                </div>
+                <span style="font-size: 0.75rem; font-weight: bold; color: var(--dark-blue);">${s.status}</span>
+            </div>
+        `).join('');
     }
-  </script>
+}
+    }
+</script>
 </body>
 </html>**

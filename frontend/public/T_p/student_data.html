@@ -222,9 +222,9 @@
         
         <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #334155;">
             <small style="color: #64748b;">Admin: Prof. Sharma</small>
-            <button class="menu-btn" style="color: #ef4444; margin-top: 10px;">
-                <i class="fa-solid fa-power-off"></i> Logout
-            </button>
+           <button class="menu-btn" style="color: #ef4444; margin-top: 10px;" onclick="handleLogout()">
+    <i class="fa-solid fa-power-off"></i> Logout
+</button>
         </div>
     </div>
 
@@ -374,163 +374,211 @@
 
     </div>
 
-    <script>
-        // --- 1. DUMMY DATABASE ---
-        let students = [
-            { id: "CS101", name: "Shreyas Dakhole", branch: "CSE", cgpa: 9.2, status: "Placed", package: 12.5, company: "JP Morgan" },
-            { id: "IT102", name: "Ananya Gupta", branch: "IT", cgpa: 8.8, status: "Placed", package: 8.0, company: "Accenture" },
-            { id: "ME201", name: "Rahul Deshmukh", branch: "MECH", cgpa: 7.5, status: "Not Placed", package: 0, company: "-" },
-            { id: "CS103", name: "Vikram Singh", branch: "CSE", cgpa: 8.1, status: "Placed", package: 4.5, company: "TCS" },
-            { id: "EN301", name: "Priya Sharma", branch: "ENTC", cgpa: 9.5, status: "Placed", package: 24.0, company: "Amazon" },
-            { id: "IT105", name: "Amit Trivedi", branch: "IT", cgpa: 7.9, status: "Not Placed", package: 0, company: "-" }
-        ];
+  <script>
+    // --- CONFIGURATION ---
+    let students = []; 
+    const API_URL = "http://localhost:5000/api/students";
+    let deptChart; // Global variable for Chart instance
 
-        // --- 2. INITIALIZATION ---
-        window.onload = function() {
+    // --- ONLOAD ---
+    window.onload = function() {
+        fetchStudents(); 
+        
+        setTimeout(() => {
+            const modal = document.getElementById("welcomeModal");
+            if(modal) modal.classList.add("active");
+        }, 1500);
+    };
+
+    // --- DATABASE FUNCTIONS ---
+    async function fetchStudents() {
+        try {
+            const response = await fetch(`${API_URL}/fetchall`);
+            students = await response.json();
             renderTable(students);
             updateDashboard();
-            initCharts();
+            initCharts(); // Trigger chart update after fetching data
+        } catch (error) {
+            console.error("Connection Error:", error);
+        }
+    }
+
+    async function addStudent() {
+        const name = document.getElementById('s-name').value;
+        const rollNo = document.getElementById('s-id').value;
+        const branch = document.getElementById('s-branch').value;
+        const cgpa = parseFloat(document.getElementById('s-cgpa').value);
+        const status = document.getElementById('s-status').value;
+        const pkg = parseFloat(document.getElementById('s-package').value) || 0;
+
+        if(!name || !rollNo) return alert("Name and Roll No are required!");
+
+        const studentData = {
+            name, rollNo, branch, cgpa, status, 
+            package: pkg,
+            company: status === 'Placed' ? "Hired" : "-"
         };
 
-        // --- 3. NAVIGATION ---
-        function showSection(id, btn) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
-
-        // --- 4. RENDER TABLE ---
-        function renderTable(data) {
-            const tbody = document.getElementById('student-table-body');
-            tbody.innerHTML = '';
-
-            data.forEach(s => {
-                let badgeClass = s.status === 'Placed' ? 'placed' : 'pending';
-                let pkgText = s.package > 0 ? `₹${s.package} LPA` : '-';
-                
-                let row = `<tr>
-                    <td>${s.id}</td>
-                    <td><strong>${s.name}</strong><br><small style="color:#94a3b8">${s.company}</small></td>
-                    <td>${s.branch}</td>
-                    <td>${s.cgpa}</td>
-                    <td><span class="badge ${badgeClass}">${s.status}</span></td>
-                    <td style="font-weight: 600;">${pkgText}</td>
-                    <td>
-                        <button onclick="deleteStudent('${s.id}')" style="color: #ef4444; background:none; border:none; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>`;
-                tbody.innerHTML += row;
+        try {
+            const res = await fetch(`${API_URL}/add`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(studentData)
             });
-        }
 
-        // --- 5. ADD & DELETE STUDENT ---
-        function addStudent() {
-            let name = document.getElementById('s-name').value;
-            let id = document.getElementById('s-id').value;
-            let branch = document.getElementById('s-branch').value;
-            let cgpa = parseFloat(document.getElementById('s-cgpa').value);
-            let status = document.getElementById('s-status').value;
-            let pkg = parseFloat(document.getElementById('s-package').value);
-
-            if(name === "" || id === "") { alert("Name and Roll No are required!"); return; }
-
-            let newStudent = {
-                id: id,
-                name: name,
-                branch: branch,
-                cgpa: cgpa,
-                status: status,
-                package: pkg,
-                company: status === 'Placed' ? "Newly Placed" : "-"
-            };
-
-            students.push(newStudent);
-            renderTable(students);
-            updateDashboard();
-            document.getElementById('s-name').value = '';
-            document.getElementById('s-id').value = '';
-            alert("Student added successfully!");
-        }
-
-        function deleteStudent(id) {
-            if(confirm("Delete this student record?")) {
-                students = students.filter(s => s.id !== id);
-                renderTable(students);
-                updateDashboard();
+            if (res.ok) {
+                alert("Database Updated Successfully!");
+                fetchStudents(); 
             }
+        } catch (err) {
+            alert("Failed to connect to server.");
         }
+    }
 
-        // --- 6. DASHBOARD & HIGHEST PACKAGE ---
-        function updateDashboard() {
-            document.getElementById('total-count').innerText = students.length;
-            let placedCount = students.filter(s => s.status === "Placed").length;
-            document.getElementById('placed-count').innerText = placedCount;
-            let rate = students.length > 0 ? Math.round((placedCount / students.length) * 100) : 0;
-            document.getElementById('placement-rate').innerText = rate + "%";
+    async function deleteStudent(rollNo) {
+        if(confirm("Delete this student record?")) {
+            const res = await fetch(`${API_URL}/delete/${rollNo}`, { method: "DELETE" });
+            if(res.ok) fetchStudents();
+        }
+    }
 
-            let sorted = [...students].sort((a, b) => b.package - a.package);
-            let top = sorted[0];
+    // --- CHART LOGIC (UPDATED TO FIX ANALYTICS) ---
+    function initCharts() {
+        // 1. Department Wise Bar Chart
+        const ctxDept = document.getElementById('deptChart').getContext('2d');
+        const branches = ['CSE', 'IT', 'ENTC', 'MECH'];
+        const placedData = branches.map(br => 
+            students.filter(s => s.branch === br && s.status === 'Placed').length
+        );
 
-            if(top && top.package > 0) {
-                document.getElementById('highest-package-container').innerHTML = `
-                    <h1 style="font-size: 3rem; margin: 10px 0;">₹${top.package} LPA</h1>
-                    <p style="font-size: 1.2rem;"><strong>${top.name}</strong> (${top.branch})</p>
-                    <span style="background: rgba(255,255,255,0.3); padding: 5px 15px; border-radius: 20px;">${top.company}</span>
-                `;
-            } else {
-                document.getElementById('highest-package-container').innerHTML = `<p>No placements yet.</p>`;
+        if(deptChart) deptChart.destroy(); 
+        deptChart = new Chart(ctxDept, {
+            type: 'bar',
+            data: {
+                labels: branches,
+                datasets: [{
+                    label: 'Students Placed',
+                    data: placedData,
+                    backgroundColor: '#4f46e5',
+                    borderRadius: 5
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        // 2. Analytics Growth Chart (Line Chart)
+        const ctxGrowth = document.getElementById('growthChart').getContext('2d');
+        
+        // Logic: Compare Total Students vs Placed Students
+        new Chart(ctxGrowth, {
+            type: 'line',
+            data: {
+                labels: ['Total Candidates', 'Placed Candidates'],
+                datasets: [{
+                    label: 'Database Statistics',
+                    data: [students.length, students.filter(s => s.status === 'Placed').length],
+                    borderColor: '#ec4899',
+                    backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' }
+                }
             }
+        });
+    }
+
+    // --- AI MATCHER LOGIC (NOW CONNECTED TO DB) ---
+    function runAIMatch() {
+        const jd = document.getElementById('jd-text').value.toLowerCase();
+        if(!jd) return alert("Please paste a Job Description first!");
+
+        // Simple AI logic: Filter students based on JD keywords (branch or CGPA)
+        const matches = students.filter(s => {
+            const branchMatch = jd.includes(s.branch.toLowerCase());
+            const cgpaReq = jd.match(/(\d+\.\d+|\d+)/); // Look for numbers like 8.5 or 8
+            const cgpaMatch = cgpaReq ? s.cgpa >= parseFloat(cgpaReq[0]) : true;
+            return branchMatch || (s.cgpa >= 7.5); // Fallback to 7.5+ if no specific CGPA in JD
+        }).sort((a, b) => b.cgpa - a.cgpa).slice(0, 5); // Top 5 matches
+
+        const resultsDiv = document.getElementById('ai-results');
+        const tbody = document.querySelector('#ai-table tbody');
+        
+        resultsDiv.style.display = 'block';
+        tbody.innerHTML = matches.map(s => `
+            <tr>
+                <td><strong>${s.name}</strong></td>
+                <td><span class="badge placed">${Math.floor(Math.random() * 20) + 80}%</span></td>
+                <td>${s.branch} | CGPA: ${s.cgpa}</td>
+            </tr>
+        `).join('');
+    }
+
+    // --- UI FUNCTIONS ---
+    function showSection(id, btn) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if(id === 'dashboard') initCharts(); // Redraw chart when switching to dashboard
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('student-table-body');
+        tbody.innerHTML = data.map(s => `
+            <tr>
+                <td>${s.rollNo}</td>
+                <td><strong>${s.name}</strong></td>
+                <td>${s.branch}</td>
+                <td>${s.cgpa}</td>
+                <td><span class="badge ${s.status === 'Placed' ? 'placed' : 'pending'}">${s.status}</span></td>
+                <td>₹${s.package} LPA</td>
+                <td><button onclick="deleteStudent('${s.rollNo}')" style="border:none; background:none; cursor:pointer; color:red;"><i class="fa-solid fa-trash"></i></button></td>
+            </tr>
+        `).join('');
+    }
+
+    function updateDashboard() {
+        document.getElementById('total-count').innerText = students.length;
+        const placed = students.filter(s => s.status === "Placed");
+        document.getElementById('placed-count').innerText = placed.length;
+        const rate = students.length > 0 ? Math.round((placed.length / students.length) * 100) : 0;
+        document.getElementById('placement-rate').innerText = rate + "%";
+
+        const top = [...students].sort((a,b) => b.package - a.package)[0];
+        const container = document.getElementById('highest-package-container');
+        if(top && top.package > 0) {
+            container.innerHTML = `<h1>₹${top.package} LPA</h1><p>${top.name} (${top.branch})</p>`;
         }
+    }
 
-        // --- 7. FILTER SEARCH ---
-        function filterTable() {
-            let val = document.getElementById('searchBox').value.toLowerCase();
-            let filtered = students.filter(s => s.name.toLowerCase().includes(val));
-            renderTable(filtered);
-        }
+    // --- SEARCH FILTER ---
+    function filterTable() {
+        const val = document.getElementById('searchBox').value.toLowerCase();
+        const filtered = students.filter(s => s.name.toLowerCase().includes(val) || s.rollNo.includes(val));
+        renderTable(filtered);
+    }
+    //logout
 
-        // --- 8. AI SHORTLISTER ---
-        function runAIMatch() {
-            let resultsDiv = document.getElementById('ai-results');
-            resultsDiv.style.display = 'block';
-            let tbody = document.getElementById('ai-table').querySelector('tbody');
-            tbody.innerHTML = '<tr><td colspan="3">AI is analyzing database...</td></tr>';
+    function handleLogout() {
+    // 1. Show a quick confirmation popup
+    if (confirm("Do you want to logout from the Admin Console?")) {
+        
+        // 2. Clear any saved login data so nobody else can access it
+        localStorage.clear(); 
+        sessionStorage.clear();
 
-            setTimeout(() => {
-                tbody.innerHTML = '';
-                let candidates = students.filter(s => s.cgpa > 8.0);
-                candidates.forEach(c => {
-                    let matchScore = Math.floor(Math.random() * (99 - 80) + 80);
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><strong>${c.name}</strong></td>
-                            <td><span style="color:#10b981; font-weight:bold;">${matchScore}% Match</span></td>
-                            <td>CGPA: ${c.cgpa} | Branch: ${c.branch}</td>
-                        </tr>
-                    `;
-                });
-            }, 1500);
-        }
+        // 3. Redirect to your original landing/login page
+        // Change 'index.html' to the actual name of your login file
+        window.location.href = "landing_of_tp.html"; 
+    }
+}
 
-        // --- 9. CHARTS ---
-        function initCharts() {
-            new Chart(document.getElementById('deptChart'), {
-                type: 'bar',
-                data: {
-                    labels: ['CSE', 'IT', 'ENTC', 'MECH'],
-                    datasets: [{ label: 'Students Placed', data: [120, 90, 60, 45], backgroundColor: '#4f46e5' }]
-                }
-            });
-
-            new Chart(document.getElementById('growthChart'), {
-                type: 'line',
-                data: {
-                    labels: ['2021', '2022', '2023', '2024', '2025'],
-                    datasets: [{ label: 'Average Package (LPA)', data: [4.5, 5.2, 6.0, 7.5, 8.5], borderColor: '#ec4899', tension: 0.4 }]
-                }
-            });
-        }
-    </script>
+</script>
 </body>
 </html>
