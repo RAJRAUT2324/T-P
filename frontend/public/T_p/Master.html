@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexGen T&P | Elite Placement Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --sidebar: #0f172a;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+
+        /* Sidebar Navigation */
+        aside {
+            width: 360px; background: var(--sidebar); color: white; padding: 2rem;
+            position: sticky; top: 0; height: 100vh; overflow-y: auto; box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .brand { font-size: 1.6rem; font-weight: 800; margin-bottom: 1.5rem; background: linear-gradient(to right, #818cf8, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .field { margin-bottom: 1rem; }
+        label { display: block; font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
+        input { 
+            width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid #334155; 
+            background: #1e293b; color: white; font-size: 0.9rem; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2); }
+        
+        .btn-main { 
+            width: 100%; padding: 1rem; border-radius: 8px; border: none; font-weight: 700; 
+            cursor: pointer; background: var(--primary); color: white; margin-top: 10px; transition: 0.3s;
+        }
+        .btn-main:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+        .export-box { margin-top: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-pdf { background: #334155; color: white; padding: 0.8rem; border-radius: 8px; border: none; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+        .btn-mail { background: var(--success); color: white; padding: 0.8rem; border-radius: 8px; border: none; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+
+        /* Main Dashboard Area */
+        main { flex: 1; padding: 2.5rem; max-width: 1200px; margin: 0 auto; }
+        .header-card { background: white; padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 2rem; border-left: 6px solid var(--primary); }
+        
+        .stats-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin-bottom: 2rem; }
+        .card { background: white; padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        
+        .prs-circle { 
+            width: 140px; height: 140px; border: 10px solid #f1f5f9; border-radius: 50%; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 10px auto;
+        }
+        .prs-num { font-size: 2.2rem; font-weight: 800; }
+
+        /* Roadmap List */
+        .roadmap-container { position: relative; padding-left: 1.5rem; border-left: 2px dashed #e2e8f0; }
+        .roadmap-step { margin-bottom: 1.5rem; position: relative; }
+        .roadmap-step::before { content: ''; position: absolute; left: -29px; top: 5px; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; border: 3px solid white; }
+
+        /* Company Eligibility Grid */
+        .company-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .comp-tag { padding: 10px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 0.85rem; }
+        .eligible { background: #f0fdf4; border-color: #bcf0da; color: #166534; }
+        .not-eligible { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+
+        .hidden { display: none; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate { animation: fadeIn 0.5s ease forwards; }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="brand">⚡ NEXGEN T&P</div>
+        <form id="placementForm">
+            <label>Student Identity</label>
+            <div class="field"><input type="text" id="sName" placeholder="Full Name" required></div>
+            <div class="field"><input type="email" id="sEmail" placeholder="Gmail Address" required></div>
+            <div class="field"><input type="text" id="fName" placeholder="Assign Faculty Mentor" required></div>
+            
+            <label>Academic Metrics</label>
+            <div class="field"><input type="number" id="cgpa" placeholder="CGPA (e.g. 8.5)" step="0.01" max="10"></div>
+            <div class="field"><input type="number" id="dsa" placeholder="DSA Progress %"></div>
+            <div class="field"><input type="number" id="apti" placeholder="Aptitude %"></div>
+            <div class="field"><input type="number" id="mock" placeholder="Mock Interview %"></div>
+            <div class="field"><input type="number" id="backlogs" placeholder="Active Backlogs"></div>
+            
+            <button type="submit" class="btn-main">GENERATE ANALYSIS</button>
+            
+            <div id="exportSection" class="export-box hidden">
+                <button type="button" class="btn-pdf" onclick="generatePDF()">📄 DOWNLOAD</button>
+                <button type="button" class="btn-mail" onclick="sendGmail()">📧 GMAIL IT</button>
+            </div>
+        </form>
+    </aside>
+
+    <main>
+        <div id="placeholder" style="text-align: center; margin-top: 20vh; color: #94a3b8;">
+            <h1>( )</h1>
+            <p>Input student data to generate the intelligent placement report.</p>
+        </div>
+
+        <div id="dashContent" class="hidden animate">
+            <div class="header-card">
+                <h1 id="outStudent">Student Name</h1>
+                <p id="outFaculty" style="color: var(--primary); font-weight: 600; font-size: 0.9rem;"></p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="card" style="text-align: center;">
+                    <label>Readiness Score (PRS)</label>
+                    <div class="prs-circle">
+                        <span class="prs-num" id="outScore">0%</span>
+                    </div>
+                    <div id="statusBadge" style="font-size: 0.8rem; font-weight: bold; padding: 5px 12px; border-radius: 20px; display: inline-block;">-</div>
+                </div>
+
+                <div class="card">
+                    <h3>🛠️ Strategic Improvements</h3>
+                    <ul id="suggestionList" style="margin-top: 15px; font-size: 0.9rem; line-height: 1.8; color: #475569;"></ul>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3>🏢 Company Eligibility Matching</h3>
+                <div class="company-grid" id="companyList"></div>
+            </div>
+
+            <div class="card">
+                <h3>🗺️ Personalized 60-Day Success Roadmap</h3>
+                <div class="roadmap-container" id="roadmapList" style="margin-top: 1.5rem;"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const { jsPDF } = window.jspdf;
+        let finalData = {};
+
+        // Predefined Company Dataset
+        const COMPANIES = [
+            { name: "Google", minCGPA: 8.5, backlogs: 0 },
+            { name: "Amazon", minCGPA: 8.0, backlogs: 0 },
+            { name: "TCS Digital", minCGPA: 7.0, backlogs: 1 },
+            { name: "Infosys", minCGPA: 6.0, backlogs: 2 },
+            { name: "Accenture", minCGPA: 6.5, backlogs: 1 }
+        ];
+
+        document.getElementById('placementForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const s = {
+                name: document.getElementById('sName').value,
+                email: document.getElementById('sEmail').value,
+                faculty: document.getElementById('fName').value,
+                cgpa: parseFloat(document.getElementById('cgpa').value || 0),
+                dsa: parseInt(document.getElementById('dsa').value || 0),
+                apti: parseInt(document.getElementById('apti').value || 0),
+                mock: parseInt(document.getElementById('mock').value || 0),
+                backlogs: parseInt(document.getElementById('backlogs').value || 0)
+            };
+
+            // OLD LOGIC: Weighted PRS Calculation
+            const prs = Math.max(0, Math.min(100, Math.round(
+                (s.cgpa * 10 * 0.25) + (s.dsa * 0.20) + (s.apti * 0.15) + (s.mock * 0.20) + (100 * 0.20) - (s.backlogs * 12)
+            )));
+
+            // Eligibility Logic
+            const eligibility = COMPANIES.map(c => ({
+                name: c.name,
+                isEligible: s.cgpa >= c.minCGPA && s.backlogs <= c.backlogs,
+                reason: s.cgpa < c.minCGPA ? `Needs ${c.minCGPA} CGPA` : (s.backlogs > c.backlogs ? "Too many backlogs" : "Eligible")
+            }));
+
+            // Suggestions & Roadmap
+            const suggestions = [];
+            if(s.dsa < 60) suggestions.push("Prioritize Data Structures (Trees & Graphs) on LeetCode.");
+            if(s.mock < 50) suggestions.push("Join Mock Interview bootcamps with Faculty.");
+            if(s.backlogs > 0) suggestions.push("Clear active backlogs to unlock Tier-1 companies.");
+            if(suggestions.length === 0) suggestions.push("Profile is excellent. Focus on Company Specific Papers.");
+
+            const roadmap = [
+                { week: "Weeks 1-2", focus: s.dsa < 70 ? "DSA Foundations" : "System Design Basics" },
+                { week: "Weeks 3-4", focus: s.apti < 70 ? "Quantitative Aptitude" : "Project Deployment" },
+                { week: "Weeks 5-8", focus: "Mock Interviews & HR Prep" }
+            ];
+
+            finalData = { ...s, prs, eligibility, suggestions, roadmap };
+
+            // UI UPDATES
+            document.getElementById('outStudent').innerText = s.name;
+            document.getElementById('outFaculty').innerText = `Mentored by: ${s.faculty}`;
+            document.getElementById('outScore').innerText = prs + "%";
+            
+            const badge = document.getElementById('statusBadge');
+            badge.innerText = prs > 75 ? "PLACEMENT READY" : (prs > 50 ? "ALMOST READY" : "NOT READY");
+            badge.style.background = prs > 75 ? "#dcfce7" : (prs > 50 ? "#fef3c7" : "#fee2e2");
+            badge.style.color = prs > 75 ? "#166534" : (prs > 50 ? "#92400e" : "#991b1b");
+
+            document.getElementById('suggestionList').innerHTML = suggestions.map(txt => `<li>• ${txt}</li>`).join('');
+            document.getElementById('companyList').innerHTML = eligibility.map(c => `<div class="comp-tag ${c.isEligible ? 'eligible' : 'not-eligible'}"><strong>${c.name}</strong><br><small>${c.reason}</small></div>`).join('');
+            document.getElementById('roadmapList').innerHTML = roadmap.map(r => `<div class="roadmap-step"><strong>${r.week}</strong><p style="font-size:0.85rem; color:#64748b;">${r.focus}</p></div>`).join('');
+
+            document.getElementById('placeholder').classList.add('hidden');
+            document.getElementById('dashContent').classList.remove('hidden');
+            document.getElementById('exportSection').classList.remove('hidden');
+        });
+
+        function generatePDF() {
+            const doc = new jsPDF();
+            const d = finalData;
+
+            // Header Section
+            doc.setFillColor(15, 23, 42);
+            doc.rect(0, 0, 210, 40, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
+            doc.text("PLACEMENT ARCHITECT REPORT", 20, 25);
+            
+            // Student & Faculty
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            doc.text(`Student: ${d.name}`, 20, 55);
+            doc.text(`Mentor: ${d.faculty}`, 20, 62);
+            doc.text(`Readiness Score: ${d.prs}%`, 20, 69);
+            
+            doc.setDrawColor(226, 232, 240);
+            doc.line(20, 75, 190, 75);
+
+            // Eligibility Table
+            doc.text("COMPANY ELIGIBILITY", 20, 85);
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(10);
+            let y = 95;
+            d.eligibility.forEach(c => {
+                doc.text(`${c.name}: ${c.isEligible ? 'Eligible' : 'Not Eligible (' + c.reason + ')'}`, 25, y);
+                y += 7;
+            });
+
+            // Improvement & Roadmap
+            y += 10;
+            doc.setFont(undefined, 'bold');
+            doc.text("STRATEGIC IMPROVEMENTS", 20, y);
+            y += 8;
+            doc.setFont(undefined, 'normal');
+            d.suggestions.forEach(s => { doc.text(`- ${s}`, 25, y); y += 7; });
+
+            y += 10;
+            doc.setFont(undefined, 'bold');
+            doc.text("60-DAY LEARNING ROADMAP", 20, y);
+            y += 8;
+            d.roadmap.forEach(r => {
+                doc.text(`${r.week}: ${r.focus}`, 25, y);
+                y += 7;
+            });
+
+            doc.save(`${d.name}_TP_Report.pdf`);
+        }
+
+        function sendGmail() {
+            const d = finalData;
+            const subject = encodeURIComponent(`Placement Report & 60-Day Roadmap: ${d.name}`);
+            const body = encodeURIComponent(
+                `Hi ${d.name},\n\nYour Placement Readiness Report is ready.\n\n` +
+                `PRS Score: ${d.prs}%\n` +
+                `Assigned Mentor: ${d.faculty}\n\n` +
+                `IMPROVEMENTS NEEDED:\n${d.suggestions.join('\n')}\n\n` +
+                `ROADMAP:\n${d.roadmap.map(r => r.week + ": " + r.focus).join('\n')}\n\n` +
+                `Please download the PDF from the dashboard for the company eligibility list.\n\n` +
+                `Regards,\nTraining & Placement Cell`
+            );
+            window.location.href = `mailto:${d.email}?subject=${subject}&body=${body}`;
+        }
+    </script>
+</body>
+</html>

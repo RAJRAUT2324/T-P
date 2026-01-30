@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+
+<html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>PathFinder | AI Career Discovery Portal</title> <style> /* ======================================== MODERN UI DESIGN SYSTEM (CSS) ======================================== */ :root { --primary: #6366f1; --primary-dark: #4f46e5; --secondary: #ec4899; --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); --card-bg: #ffffff; --text-main: #1e293b; --text-muted: #64748b; --border: #e2e8f0; --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+
+    body {
+        background: var(--bg-gradient);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 30px;
+        animation: fadeInDown 0.8s ease;
+    }
+
+    header h1 { font-size: 2.5rem; color: var(--primary-dark); letter-spacing: -1px; }
+    header p { color: var(--text-muted); margin-top: 5px; }
+
+    /* Progress Bar */
+    .progress-container {
+        width: 100%;
+        max-width: 800px;
+        height: 8px;
+        background: #cbd5e1;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        overflow: hidden;
+    }
+
+    #progress-bar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        transition: width 0.4s ease;
+    }
+
+    /* Card System */
+    .container {
+        width: 100%;
+        max-width: 850px;
+        perspective: 1000px;
+    }
+
+    .card {
+        background: var(--card-bg);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        min-height: 400px;
+        transition: all 0.5s ease;
+    }
+
+    .hidden { display: none; opacity: 0; transform: translateY(20px); }
+
+    /* Form Elements */
+    .branch-select-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+        margin-top: 50px;
+    }
+
+    select {
+        width: 100%;
+        max-width: 400px;
+        padding: 15px;
+        border-radius: 12px;
+        border: 2px solid var(--border);
+        font-size: 1.1rem;
+        outline: none;
+        cursor: pointer;
+        transition: border-color 0.3s;
+    }
+
+    select:focus { border-color: var(--primary); }
+
+    .btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 6px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+    /* Questionnaire UI */
+    .question-box h2 { margin-bottom: 25px; font-size: 1.4rem; }
+    
+    .options-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .option-card {
+        padding: 18px;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+    }
+
+    .option-card:hover { border-color: var(--primary); background: #f5f3ff; }
+    .option-card.selected { border-color: var(--primary); background: #eef2ff; box-shadow: 0 0 0 1px var(--primary); }
+
+    /* Result Dashboard */
+    .result-header { text-align: center; margin-bottom: 30px; }
+    .confidence-tag {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        background: #dcfce7;
+        color: #166534;
+        font-weight: bold;
+        font-size: 0.9rem;
+        margin-top: 10px;
+    }
+
+    .result-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .info-block {
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid var(--border);
+    }
+
+    .info-block h4 { color: var(--primary-dark); margin-bottom: 10px; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+
+    /* Study Plan UI */
+    .roadmap { margin-top: 30px; }
+    .roadmap-week {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px dashed var(--border);
+    }
+
+    .week-num {
+        background: var(--primary);
+        color: white;
+        min-width: 80px;
+        height: 30px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .animate-slide { animation: slideIn 0.4s ease-out forwards; }
+
+    @media (max-width: 768px) {
+        .result-grid { grid-template-columns: 1fr; }
+        .card { padding: 20px; }
+    }
+</style>
+</head> <body>
+
+<header>
+    <h1>PathFinder</h1>
+    <p>AI-Powered Career Discovery & Learning Path Portal</p>
+</header>
+
+<div class="progress-container">
+    <div id="progress-bar"></div>
+</div>
+
+<div class="container">
+    <div id="step-1" class="card">
+        <div class="branch-select-wrapper">
+            <h2 style="text-align:center">Select Your Engineering Branch</h2>
+            <p style="color:var(--text-muted); text-align:center">We'll tailor the discovery process based on your academic foundation.</p>
+            <select id="branch-dropdown">
+                <option value="" disabled selected>Choose branch...</option>
+                <option value="cse">Computer Science / IT</option>
+                <option value="ee">Electrical Engineering</option>
+                <option value="ece">Electronics & Communication</option>
+                <option value="me">Mechanical Engineering</option>
+                <option value="ce">Civil Engineering</option>
+            </select>
+            <button class="btn" onclick="startQuestionnaire()">Start Analysis</button>
+        </div>
+    </div>
+
+    <div id="step-2" class="card hidden">
+        <div class="question-box">
+            <p id="q-count" style="color:var(--primary); font-weight:700; margin-bottom:10px;">Question 1 of 8</p>
+            <h2 id="q-text">Question loading...</h2>
+            <div id="options-container" class="options-grid">
+                </div>
+        </div>
+    </div>
+
+    <div id="step-3" class="card hidden">
+        <div class="result-header">
+            <h2>Your Career Blueprint</h2>
+            <div id="confidence-badge" class="confidence-tag">92% Match</div>
+        </div>
+
+        <div class="result-grid">
+            <div class="info-block">
+                <h4>Best-Fit Field</h4>
+                <h2 id="res-field" style="color:var(--primary-dark)">Field Name</h2>
+            </div>
+            <div class="info-block">
+                <h4>Target Role</h4>
+                <p id="res-role" style="font-weight:600">Role Name</p>
+            </div>
+            <div class="info-block" style="grid-column: span 2;">
+                <h4>Why this fits you</h4>
+                <p id="res-why" style="font-size:0.9rem; color:var(--text-muted)">Analysis...</p>
+            </div>
+            <div class="info-block">
+                <h4>Core Skills to Master</h4>
+                <p id="res-skills" style="font-size:0.9rem;">Skill 1, Skill 2, Skill 3</p>
+            </div>
+            <div class="info-block">
+                <h4>Top Job Roles</h4>
+                <p id="res-jobs" style="font-size:0.9rem;">Role A, Role B, Role C</p>
+            </div>
+        </div>
+
+        <div class="roadmap">
+            <h3 style="margin-bottom:20px; border-left: 4px solid var(--secondary); padding-left:10px;">Personalized 8-Week Study Plan</h3>
+            <div id="plan-container">
+                </div>
+        </div>
+
+        <div style="text-align:center; margin-top:30px;">
+            <button class="btn" onclick="location.reload()">Restart Analysis</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* ========================================
+    CORE LOGIC & DATA (JAVASCRIPT)
+    ========================================
+    */
+
+    const DATA = {
+        cse: {
+            questions: [
+                {
+                    text: "Which part of building an app excites you most?",
+                    options: [
+                        { text: "Designing layouts and user interaction", weights: { frontend: 5 } },
+                        { text: "Handling data, servers, and logic", weights: { backend: 5 } },
+                        { text: "Finding patterns in raw numbers", weights: { data: 5 } },
+                        { text: "Teaching a machine to think or predict", weights: { ai: 5 } }
+                    ]
+                },
+                {
+                    text: "What is your preferred programming environment?",
+                    options: [
+                        { text: "Visual editors and CSS tweaks", weights: { frontend: 5 } },
+                        { text: "Scalable enterprise frameworks (Spring/Node)", weights: { backend: 5, java: 3 } },
+                        { text: "Python notebooks and statistical models", weights: { ai: 5, data: 3 } },
+                        { text: "Low-level system architecture", weights: { backend: 4 } }
+                    ]
+                },
+                {
+                    text: "How do you prefer to solve problems?",
+                    options: [
+                        { text: "Through aesthetic and intuitive solutions", weights: { frontend: 5 } },
+                        { text: "By creating robust, invisible workflows", weights: { backend: 5 } },
+                        { text: "By extracting insights from complexity", weights: { data: 5, ai: 2 } },
+                        { text: "Strict object-oriented principles", weights: { java: 5 } }
+                    ]
+                },
+                {
+                    text: "Which tech giants' work interests you most?",
+                    options: [
+                        { text: "Apple/Airbnb (UX Excellence)", weights: { frontend: 5 } },
+                        { text: "AWS/Netflix (Cloud Infrastructure)", weights: { backend: 5 } },
+                        { text: "OpenAI/DeepMind (Neural Networks)", weights: { ai: 5 } },
+                        { text: "Oracle/SAP (Enterprise Systems)", weights: { java: 5, data: 2 } }
+                    ]
+                },
+                {
+                    text: "Your favorite type of project would be...",
+                    options: [
+                        { text: "A sleek portfolio or dashboard", weights: { frontend: 5 } },
+                        { text: "A complex API for millions of users", weights: { backend: 5 } },
+                        { text: "A system predicting stock prices", weights: { ai: 5, data: 3 } },
+                        { text: "A large-scale banking backend", weights: { java: 5 } }
+                    ]
+                }
+            ],
+            roles: {
+                frontend: {
+                    field: "Front-End Development",
+                    role: "UI/UX Developer",
+                    why: "You have a natural flair for design and user psychology, paired with an interest in making technology accessible through visual interfaces.",
+                    skills: "HTML5, CSS3, JavaScript (React/Vue), Responsive Design, Figma",
+                    jobs: "Frontend Architect, Product Designer, Creative Technologist",
+                    plan: [
+                        { week: "1-2", task: "Master Advanced CSS (Grid, Flex) and Modern JS (ES6+)" },
+                        { week: "3-4", task: "Learn a Component Framework (React.js) and State Management" },
+                        { week: "5-6", task: "API Integration and Performance Optimization techniques" },
+                        { week: "7-8", task: "Build a Fully Responsive SaaS Landing Page with dark mode" }
+                    ]
+                },
+                backend: {
+                    field: "Back-End & Cloud",
+                    role: "Systems Engineer",
+                    why: "You prefer logic, scalability, and infrastructure over visual elements. You enjoy solving 'behind-the-scenes' puzzles.",
+                    skills: "Node.js/Go, SQL/NoSQL, Docker, Kubernetes, REST APIs",
+                    jobs: "DevOps Engineer, Cloud Architect, Backend Lead",
+                    plan: [
+                        { week: "1-2", task: "Server-side logic with Node.js and Express" },
+                        { week: "3-4", task: "Database Design (PostgreSQL) and Auth (JWT)" },
+                        { week: "5-6", task: "Containerization with Docker and Cloud deployment (AWS)" },
+                        { week: "7-8", task: "Project: Real-time Chat App with WebSockets" }
+                    ]
+                },
+                ai: {
+                    field: "Artificial Intelligence",
+                    role: "Machine Learning Engineer",
+                    why: "You are fascinated by the boundary of what computers can simulate and how they can learn from data autonomously.",
+                    skills: "Python, PyTorch/TensorFlow, Calculus, Scikit-learn, NLP",
+                    jobs: "AI Researcher, Computer Vision Engineer, Data Scientist",
+                    plan: [
+                        { week: "1-2", task: "Advanced Python and Mathematics for ML (Linear Algebra)" },
+                        { week: "3-4", task: "Data Wrangling with Pandas and Visualization (Seaborn)" },
+                        { week: "5-6", task: "Supervised & Unsupervised Learning Models" },
+                        { week: "7-8", task: "Project: Build a Movie Recommendation Engine" }
+                    ]
+                },
+                data: {
+                    field: "Data Science",
+                    role: "Business Intelligence Analyst",
+                    why: "You have a methodical mind that loves finding truth in numbers and translating data into business strategy.",
+                    skills: "SQL, Python, Tableau/PowerBI, Statistics, Big Data",
+                    jobs: "Data Architect, BI Developer, Growth Analyst",
+                    plan: [
+                        { week: "1-2", task: "Advanced SQL Queries and Database Normalization" },
+                        { week: "3-4", task: "Python for Data Analysis and Statistics foundations" },
+                        { week: "5-6", task: "Data Visualization storytelling with Tableau" },
+                        { week: "7-8", task: "Project: Analyze a public Kaggle dataset and present findings" }
+                    ]
+                },
+                java: {
+                    field: "Enterprise Development",
+                    role: "Full-Stack Java Developer",
+                    why: "You value stability, strict architectures, and the robustness required by large-scale enterprise systems.",
+                    skills: "Java 17, Spring Boot, Microservices, Hibernate, Maven",
+                    jobs: "Senior Consultant, Solutions Architect, Java Lead",
+                    plan: [
+                        { week: "1-2", task: "Java Fundamentals and Advanced OOP Concepts" },
+                        { week: "3-4", task: "Spring Boot basics and REST Controller development" },
+                        { week: "5-6", task: "Microservices architecture and Database Integration (JPA)" },
+                        { week: "7-8", task: "Project: Build an E-commerce Backend System" }
+                    ]
+                }
+            }
+        },
+        ee: {
+            questions: [
+                {
+                    text: "What scale of hardware interests you most?",
+                    options: [
+                        { text: "City-wide power grids and transmission", weights: { power: 5 } },
+                        { text: "Small chips and smart devices", weights: { embedded: 5 } },
+                        { text: "Industrial robots and factory lines", weights: { plc: 5 } },
+                        { text: "Solar panels and wind turbines", weights: { renew: 5 } }
+                    ]
+                },
+                {
+                    text: "Which component do you enjoy working with?",
+                    options: [
+                        { text: "High voltage transformers and switchgears", weights: { power: 5 } },
+                        { text: "Microcontrollers and sensors", weights: { embedded: 5 } },
+                        { text: "Electric motors and battery packs", weights: { ev: 5 } },
+                        { text: "Sensors and feedback loops", weights: { plc: 5 } }
+                    ]
+                }
+            ],
+            roles: {
+                power: {
+                    field: "Power Systems", role: "Grid Engineer", 
+                    why: "You are driven by the foundational infrastructure of society: electricity distribution.",
+                    skills: "ETAP, Power System Analysis, Switchgear, Protection", jobs: "Transmission Engineer, Load Dispatcher",
+                    plan: [{week: "1-4", task: "Power System Simulation"}, {week: "5-8", task: "Protection Relay Settings"}]
+                },
+                embedded: {
+                    field: "Embedded Systems", role: "Firmware Developer", 
+                    why: "You like the intersection of code and physical circuitry.",
+                    skills: "C/C++, RTOS, Microcontrollers, PCB Design", jobs: "Embedded Engineer, IoT Developer",
+                    plan: [{week: "1-4", task: "Embedded C Mastery"}, {week: "5-8", task: "RTOS Implementation"}]
+                }
+            }
+        }
+        // Logic continues similarly for other branches (simplified for demo size)
+    };
+
+    let currentStep = 1;
+    let selectedBranch = '';
+    let currentQuestionIndex = 0;
+    let userScores = {};
+
+    function startQuestionnaire() {
+        const dropdown = document.getElementById('branch-dropdown');
+        selectedBranch = dropdown.value;
+
+        if (!selectedBranch) {
+            alert("Please select a branch first!");
+            return;
+        }
+
+        // Default branch for demo if other branches don't have full data
+        const branchData = DATA[selectedBranch] || DATA['cse'];
+        
+        // Initialize scores based on the roles available in that branch
+        userScores = {};
+        Object.keys(branchData.roles).forEach(key => {
+            userScores[key] = 0;
+        });
+
+        transitionStep(1, 2);
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const branchData = DATA[selectedBranch] || DATA['cse'];
+        const question = branchData.questions[currentQuestionIndex];
+        
+        document.getElementById('q-count').innerText = `Question ${currentQuestionIndex + 1} of ${branchData.questions.length}`;
+        document.getElementById('q-text').innerText = question.text;
+
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+
+        question.options.forEach((opt, idx) => {
+            const div = document.createElement('div');
+            div.className = 'option-card animate-slide';
+            div.style.animationDelay = `${idx * 0.1}s`;
+            div.innerText = opt.text;
+            div.onclick = () => selectOption(opt.weights);
+            container.appendChild(div);
+        });
+
+        updateProgress();
+    }
+
+    function selectOption(weights) {
+        // Apply weights to scores
+        for (let key in weights) {
+            if (userScores.hasOwnProperty(key)) {
+                userScores[key] += weights[key];
+            }
+        }
+
+        const branchData = DATA[selectedBranch] || DATA['cse'];
+        if (currentQuestionIndex < branchData.questions.length - 1) {
+            currentQuestionIndex++;
+            renderQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        transitionStep(2, 3);
+        updateProgress(100);
+
+        // Find top field
+        let bestFieldKey = Object.keys(userScores).reduce((a, b) => userScores[a] > userScores[b] ? a : b);
+        
+        // Calculate pseudo-confidence (max possible score is roughly 25-30)
+        let confidence = Math.min(Math.round((userScores[bestFieldKey] / 25) * 100), 98);
+        if (confidence < 60) confidence += 30; // Scale for demo impact
+
+        const branchData = DATA[selectedBranch] || DATA['cse'];
+        const result = branchData.roles[bestFieldKey];
+
+        // Update UI
+        document.getElementById('confidence-badge').innerText = `${confidence}% Match`;
+        document.getElementById('res-field').innerText = result.field;
+        document.getElementById('res-role').innerText = result.role;
+        document.getElementById('res-why').innerText = result.why;
+        document.getElementById('res-skills').innerText = result.skills;
+        document.getElementById('res-jobs').innerText = result.jobs;
+
+        // Render Roadmap
+        const planContainer = document.getElementById('plan-container');
+        planContainer.innerHTML = '';
+        result.plan.forEach(step => {
+            planContainer.innerHTML += `
+                <div class="roadmap-week animate-slide">
+                    <div class="week-num">Week ${step.week}</div>
+                    <div class="week-task">${step.task}</div>
+                </div>
+            `;
+        });
+    }
+
+    function transitionStep(oldStep, newStep) {
+        const oldEl = document.getElementById(`step-${oldStep}`);
+        const newEl = document.getElementById(`step-${newStep}`);
+
+        oldEl.classList.add('hidden');
+        setTimeout(() => {
+            oldEl.style.display = 'none';
+            newEl.style.display = 'block';
+            setTimeout(() => {
+                newEl.classList.remove('hidden');
+            }, 50);
+        }, 500);
+    }
+
+    function updateProgress(force) {
+        const bar = document.getElementById('progress-bar');
+        if (force) {
+            bar.style.width = force + '%';
+            return;
+        }
+        const branchData = DATA[selectedBranch] || DATA['cse'];
+        const percent = (currentQuestionIndex / branchData.questions.length) * 100;
+        bar.style.width = percent + '%';
+    }
+
+    // Initialize view
+    window.onload = () => {
+        document.getElementById('step-2').style.display = 'none';
+        document.getElementById('step-3').style.display = 'none';
+    };
+</script>
+</body> </html>
