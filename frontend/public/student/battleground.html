@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Battleground | T&P AI</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* --- 1. PREMIUM CONSTANTS --- */
+        :root {
+            --dark-blue: #0f172a;
+            --royal-blue: #4f46e5;
+            --accent-purple: #8b5cf6;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-color: #1e293b;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            color: var(--text-color);
+            background-attachment: fixed;
+        }
+
+        /* --- SIDEBAR (Darkened) --- */
+        .sidebar {
+            width: 260px;
+            background: #0f172a;
+            color: white;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .sidebar h2 {
+            font-size: 1.4rem;
+            margin-bottom: 40px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            color: #818cf8;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar li {
+            padding: 14px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            opacity: 0.7;
+            font-weight: 500;
+        }
+
+        .sidebar li:hover,
+        .sidebar li.active {
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 1;
+            color: #fff;
+        }
+
+        .sidebar li.active {
+            background: var(--royal-blue);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        /* --- MAIN CONTENT (Glassmorphism) --- */
+        .main {
+            margin-left: 260px;
+            padding: 40px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(to right, #4f46e5, #ec4899);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin: 0;
+        }
+
+        .xp-pill {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            color: var(--dark-blue);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid white;
+        }
+
+        /* --- GRID LAYOUT --- */
+        .arena-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* --- TASK CARDS --- */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .task-card {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            border-left: 5px solid #ccc;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            transition: 0.3s;
+        }
+
+        .task-card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .type-logic {
+            border-color: #8b5cf6;
+        }
+
+        .type-logic .badge {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+
+        .type-code {
+            border-color: #ec4899;
+        }
+
+        .type-code .badge {
+            background: #fce7f3;
+            color: #db2777;
+        }
+
+        .type-speak {
+            border-color: #10b981;
+        }
+
+        .type-speak .badge {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        /* --- LEADERBOARD --- */
+        .leader-row {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            transition: 0.2s;
+        }
+
+        .leader-row:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .rank-icon {
+            width: 30px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .gold {
+            color: #fbbf24;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+
+        .silver {
+            color: #94a3b8;
+        }
+
+        .bronze {
+            color: #b45309;
+        }
+
+        /* --- BUTTONS --- */
+        .btn-action {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--royal-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-opt {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+
+        .btn-opt:hover {
+            background: #e0e7ff;
+            border-color: #818cf8;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .arena-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                width: 70px;
+                padding: 20px 10px;
+            }
+
+            .sidebar span,
+            .sidebar h2 span {
+                display: none;
+            }
+
+            .main {
+                margin-left: 70px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="sidebar">
+        <h2><i class="fa-solid fa-bolt"></i> <span>Battleground</span></h2>
+        <ul>
+            <li onclick="location.href='dashboard.html'"><i class="fa-solid fa-arrow-left"></i> <span>Back to
+                    Dashboard</span></li>
+            <li class="active"><i class="fa-solid fa-fire"></i> <span>Daily Arena</span></li>
+            <li onclick="location.href='learning.html'"><i class="fa-solid fa-book"></i> <span>Training Grounds</span>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="main">
+        <div class="header">
+            <div>
+                <h1>Daily Battle Arena</h1>
+                <p style="color: #64748b; margin-top: 5px;">Complete tasks. Earn XP. Dominate the Leaderboard.</p>
+            </div>
+            <div class="xp-pill">
+                <i class="fa-solid fa-trophy" style="color: #fbbf24;"></i>
+                <span id="userXpDisplay" style="font-size: 1.2rem;">0</span> XP
+            </div>
+        </div>
+
+        <div class="arena-grid">
+            <!-- LEFT: TASKS -->
+            <div class="glass-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="margin: 0; font-size: 1.3rem;">Today's Triple Threat</h3>
+                    <div
+                        style="background: #fee2e2; color: #ef4444; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold;">
+                        <i class="fa-solid fa-fire"></i> Streak: <span id="streakDisplay">0</span>
+                    </div>
+                </div>
+
+                <div id="taskList" class="task-list">
+                    <div style="text-align: center; padding: 40px; color: #94a3b8;">
+                        <i class="fa-solid fa-circle-notch fa-spin fa-2x"></i><br><br>Loading Challenges...
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: LEADERBOARD -->
+            <div class="glass-card">
+                <h3 style="margin-top: 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-medal" style="color: #fbbf24;"></i> Top Warriors
+                </h3>
+                <div id="leaderList" style="margin-top: 20px;">
+                    <!-- Leaders Rendered Here -->
+                </div>
+
+                <div
+                    style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.05); text-align: center;">
+                    <p style="font-size: 0.9rem; color: #64748b;">You are currently ranked</p>
+                    <h2 style="color: var(--royal-blue); margin: 5px 0;">#<span id="rankDisplay">--</span></h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const userId = localStorage.getItem('userId');
+        const API = "http://localhost:5000/api";
+        if (!userId) location.href = "../login.html";
+
+        // --- INIT ---
+        async function init() {
+            await loadUserStats();
+            await loadTasks();
+            await loadLeaderboard();
+        }
+
+        // --- 1. USER STATS ---
+        async function loadUserStats() {
+            try {
+                const res = await fetch(`${API}/auth/user/${userId}`);
+                const data = await res.json();
+                animateValue("userXpDisplay", parseInt(document.getElementById("userXpDisplay").innerText), data.xp || 0, 1000);
+                document.getElementById('streakDisplay').innerText = data.streak || 0;
+            } catch (e) { console.error(e); }
+        }
+
+        // --- 2. LOAD TASKS ---
+        async function loadTasks() {
+            try {
+                const res = await fetch(`${API}/daily/tasks`);
+                const tasks = await res.json();
+                renderTasks(tasks);
+            } catch (e) { console.error(e); }
+        }
+
+        function renderTasks(tasks) {
+            const list = document.getElementById('taskList');
+            list.innerHTML = tasks.map(t => {
+                const borderClass = `type-${t.type}`;
+                const icon = getIcon(t.type);
+
+                return `
+                <div class="task-card ${borderClass}" id="task-${t.id}">
+                    <div class="task-header">
+                        <span class="badge">${t.type.toUpperCase()}</span>
+                        <span style="font-size: 0.85rem; color: #64748b;">+50 XP</span>
+                    </div>
+                    <h4 style="margin: 0 0 10px 0; font-size: 1.1rem;">${icon} ${t.title}</h4>
+                    <p style="margin: 0 0 15px 0; color: #475569; font-size: 0.95rem;">${t.question}</p>
+                    ${renderInputs(t)}
+                </div>`;
+            }).join('');
+        }
+
+        function getIcon(type) {
+            if (type == 'logic') return '<i class="fa-solid fa-puzzle-piece"></i>';
+            if (type == 'code') return '<i class="fa-solid fa-code"></i>';
+            return '<i class="fa-solid fa-microphone-lines"></i>';
+        }
+
+        function renderInputs(t) {
+            if (t.options) {
+                return `<div class="options-grid">
+                    ${t.options.map(o => `<button class="btn-opt" onclick="check('${t.id}', '${o}', '${t.correct}')">${o}</button>`).join('')}
+                </div>`;
+            }
+            return `<button class="btn-action btn-primary" onclick="startSpeech('${t.id}')">
+                <i class="fa-solid fa-microphone"></i> Start Recording
+            </button>`;
+        }
+
+        // --- 3. INTERACTIONS ---
+        async function check(taskId, selected, correct) {
+            if (selected === correct) {
+                triggerWin(taskId);
+            } else {
+                const card = document.getElementById(`task-${taskId}`);
+                card.style.animation = "shake 0.5s";
+                setTimeout(() => card.style.animation = "", 500);
+                alert("Incorrect. Try again!");
+            }
+        }
+
+        async function startSpeech(taskId) {
+            const btn = event.target.closest('button');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Listening...';
+            btn.style.background = "#ef4444";
+
+            setTimeout(() => {
+                triggerWin(taskId);
+            }, 2500);
+        }
+
+        async function triggerWin(taskId) {
+            // Visuals
+            const card = document.getElementById(`task-${taskId}`);
+            card.style.borderLeftColor = "#22c55e";
+            card.innerHTML = `<div style="text-align: center; color: #166534; padding: 20px;">
+                <i class="fa-solid fa-circle-check fa-3x" style="color: #22c55e; margin-bottom: 15px;"></i>
+                <h3>Task Complete!</h3>
+                <p>+50 XP Added</p>
+            </div>`;
+
+            // Confetti
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+
+            // Backend
+            await fetch(`${API}/daily/complete`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ studentId: userId, taskId })
+            });
+
+            // Refresh UI
+            loadUserStats();
+            loadLeaderboard();
+        }
+
+        // --- 4. LEADERBOARD ---
+        async function loadLeaderboard() {
+            try {
+                const res = await fetch(`${API}/leaderboard`);
+                const leaders = await res.json();
+
+                // Find My Rank
+                const myRank = leaders.findIndex(l => l._id === userId) + 1;
+                document.getElementById('rankDisplay').innerText = myRank > 0 ? myRank : "--";
+
+                document.getElementById('leaderList').innerHTML = leaders.map((l, i) => {
+                    let icon = `<span style="color:#64748b; font-weight:bold; width:20px;">${i + 1}</span>`;
+                    if (i === 0) icon = '<i class="fa-solid fa-trophy gold rank-icon"></i>';
+                    if (i === 1) icon = '<i class="fa-solid fa-trophy silver rank-icon"></i>';
+                    if (i === 2) icon = '<i class="fa-solid fa-trophy bronze rank-icon"></i>';
+
+                    return `
+                    <div class="leader-row" style="background: ${l._id === userId ? 'rgba(79, 70, 229, 0.1)' : 'transparent'}; border: ${l._id === userId ? '1px solid #818cf8' : 'none'};">
+                        <div style="margin-right: 15px;">${icon}</div>
+                        <div style="flex:1">
+                            <div style="font-weight: 600;">${l.name}</div>
+                            <div style="font-size: 0.8rem; color: #64748b;">${l.branch || 'Student'}</div>
+                        </div>
+                        <div style="font-weight: 700; color: var(--royal-blue);">${l.xp || 0} XP</div>
+                    </div>`;
+                }).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        // --- UTILS ---
+        function animateValue(id, start, end, duration) {
+            if (start === end) return;
+            const obj = document.getElementById(id);
+            const range = end - start;
+            const minTimer = 50;
+            let stepTime = Math.abs(Math.floor(duration / range));
+            stepTime = Math.max(stepTime, minTimer);
+
+            const startTime = new Date().getTime();
+            const endTime = startTime + duration;
+            let timer;
+
+            function run() {
+                const now = new Date().getTime();
+                const remaining = Math.max((endTime - now) / duration, 0);
+                const value = Math.round(end - (remaining * range));
+                obj.innerHTML = value;
+                if (value == end) { clearInterval(timer); }
+            }
+
+            timer = setInterval(run, stepTime);
+            run();
+        }
+
+        // CSS Keyframes for Shake
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes shake {
+                0% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                50% { transform: translateX(5px); }
+                75% { transform: translateX(-5px); }
+                100% { transform: translateX(0); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        init();
+    </script>
+
+</body>
+
+</html>

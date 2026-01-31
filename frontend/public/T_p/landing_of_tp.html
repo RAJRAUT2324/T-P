@@ -650,80 +650,105 @@ a:hover {
         }
     }
 
-    // --- 7. AI CHATBOT LOGIC (OLD) ---
+    // --- 1. CONFIGURATION ---
+    const API_URL = "http://localhost:5000/api/ai/chat"; // Update with your server port
+
     function toggleChat() {
-        const chatBox = document.getElementById('chatBox');
-        chatBox.style.display = (chatBox.style.display === 'flex') ? 'none' : 'flex';
-    }
-
-    function sendMessage() {
-        const input = document.getElementById('userInput');
-        const chatBody = document.getElementById('chatBody');
-        const text = input.value.trim();
-        if (text !== "") {
-            const userDiv = document.createElement('div');
-            userDiv.className = 'user-msg';
-            userDiv.innerText = text;
-            chatBody.appendChild(userDiv);
-            input.value = "";
-            chatBody.scrollTop = chatBody.scrollHeight;
-
-            setTimeout(() => {
-                const botDiv = document.createElement('div');
-                botDiv.className = 'bot-msg';
-                if(text.toLowerCase().includes("placement")) botDiv.innerText = `Current database shows ${students.filter(s => s.status === "Placed").length} placed students.`;
-                else botDiv.innerText = "I can help with placement details from the database.";
-                chatBody.appendChild(botDiv);
-                chatBody.scrollTop = chatBody.scrollHeight;
-            }, 1000);
-        }
-       function updateDashboard() {
-    // 1. Update Global Counters
-    const totalCount = document.getElementById('total-count');
-    const placedCount = document.getElementById('placed-count');
-    const placedStudents = students.filter(s => s.status === "Placed");
-
-    if(totalCount) totalCount.innerText = students.length;
-    if(placedCount) placedCount.innerText = placedStudents.length;
-
-    if (students.length > 0) {
-        // 2. Extract Highest Package & Name
-        const sortedByPkg = [...students].sort((a, b) => (b.package || 0) - (a.package || 0));
-        const topStudent = sortedByPkg[0];
-        document.getElementById('db-highest-pkg').innerText = `₹${topStudent.package || 0} LPA`;
-        document.getElementById('db-top-student-name').innerText = `Achievement by: ${topStudent.name}`;
-
-        // 3. Calculate Average CGPA for Placed Students
-        if (placedStudents.length > 0) {
-            const avgCgpa = placedStudents.reduce((acc, s) => acc + s.cgpa, 0) / placedStudents.length;
-            document.getElementById('db-avg-cgpa').innerText = avgCgpa.toFixed(2);
-            document.getElementById('cgpa-bar').style.width = `${(avgCgpa / 10) * 100}%`;
-        }
-
-        // 4. Determine Leading Branch
-        const branchStats = students.reduce((acc, s) => {
-            if(s.status === "Placed") acc[s.branch] = (acc[s.branch] || 0) + 1;
-            return acc;
-        }, {});
+        const chatWindow = document.getElementById("chatWindow");
+        chatWindow.style.display = (chatWindow.style.display === "flex") ? "none" : "flex";
         
-        const topBranch = Object.keys(branchStats).reduce((a, b) => branchStats[a] > branchStats[b] ? a : b, "N/A");
-        document.getElementById('db-top-branch').innerText = topBranch;
-        document.getElementById('db-branch-count').innerText = `${branchStats[topBranch] || 0} Students Placed`;
-
-        // 5. Fill Recent Database Updates List
-        const recentList = document.getElementById('db-recent-list');
-        recentList.innerHTML = students.slice(-4).reverse().map(s => `
-            <div style="padding: 10px; border-bottom: 1px solid #f9f9f9; display: flex; align-items: center; gap: 10px;">
-                <div style="width: 8px; height: 8px; border-radius: 50%; background: ${s.status === 'Placed' ? '#4CAF50' : '#FFC107'};"></div>
-                <div style="flex: 1;">
-                    <p style="font-size: 0.85rem; font-weight: bold; margin: 0;">${s.name}</p>
-                    <p style="font-size: 0.7rem; color: #888; margin: 0;">${s.branch} • Roll: ${s.rollNo}</p>
-                </div>
-                <span style="font-size: 0.75rem; font-weight: bold; color: var(--dark-blue);">${s.status}</span>
-            </div>
-        `).join('');
+        if(chatWindow.style.display === "flex" && document.getElementById("chatBody").children.length <= 1) {
+            showInitialGreeting();
+        }
     }
-}
+
+    function showInitialGreeting() {
+        const greeting = "Hello! I am your AI Placement Assistant. Ask me anything about placements, resumes, or interview prep!";
+        appendMessage(greeting, 'bot-msg');
+        speak(greeting);
+    }
+
+    function handleEnter(event) {
+        if (event.key === 'Enter') sendMessage();
+    }
+
+    // --- 2. INTEGRATED SEND LOGIC (REAL-TIME) ---
+    async function sendMessage() {
+        const inputField = document.getElementById("userInput");
+        const text = inputField.value.trim();
+        if (!text) return;
+
+        // 1. Show User Message
+        appendMessage(text, 'user-msg');
+        inputField.value = "";
+
+        // 2. Show "Typing..." indicator
+        const typingId = "typing-" + Date.now();
+        appendMessage("AI is thinking...", 'bot-msg', typingId);
+
+        try {
+            // 3. CALL REAL-TIME API
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+
+            const data = await response.json();
+            
+            // 4. Remove typing and show real response
+            document.getElementById(typingId).remove();
+            
+            if (data.response) {
+                appendMessage(data.response, 'bot-msg');
+                speak(data.response);
+            } else {
+                throw new Error("No response");
+            }
+
+        } catch (error) {
+            console.error("API Error:", error);
+            document.getElementById(typingId).innerText = "Sorry, I'm having trouble connecting to the AI server. Please try again.";
+        }
+    }
+
+    function appendMessage(text, className, id = null) {
+        const chatBody = document.getElementById("chatBody");
+        const msgDiv = document.createElement("div");
+        msgDiv.className = `message ${className}`;
+        if(id) msgDiv.id = id;
+        msgDiv.innerText = text;
+        chatBody.appendChild(msgDiv);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // --- 3. VOICE FEATURES ---
+    function speak(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    function startListening() {
+        const micBtn = document.getElementById("micBtn");
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            micBtn.classList.add('active');
+            
+            recognition.onresult = (event) => {
+                document.getElementById("userInput").value = event.results[0][0].transcript;
+                sendMessage();
+                micBtn.classList.remove('active');
+            };
+            
+            recognition.onerror = () => micBtn.classList.remove('active');
+            recognition.onend = () => micBtn.classList.remove('active');
+            
+            recognition.start();
+        }
     }
 </script>
 </body>

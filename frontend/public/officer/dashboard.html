@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Dashboard</title>
+    <link href="../css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-logo"><i class="fas fa-briefcase"></i> T&P Officer</div>
+
+            <a href="dashboard.html" class="menu-item active"><i class="fas fa-chart-pie"></i> Overview</a>
+            <a href="#" class="menu-item"><i class="fas fa-users"></i> At-Risk Students</a>
+            <a href="#" class="menu-item"><i class="fas fa-building"></i> Company CRM</a>
+            <a href="#" class="menu-item"><i class="fas fa-calendar-alt"></i> Smart Drive Mgmt</a>
+            <a href="#" class="menu-item"><i class="fas fa-file-contract"></i> Compliance Reports</a>
+
+            <div style="flex:1;"></div>
+            <a href="../index.html" class="menu-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <div class="top-bar">
+                <h2>Placement Overview</h2>
+                <div class="user-profile">
+                    <span>Admin Officer</span>
+                    <div class="avatar" style="background: var(--secondary);"></div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Placement Rate</div>
+                    <div class="stat-value">87%</div>
+                    <div style="color: #10b981; font-size: 0.85rem;"><i class="fas fa-arrow-up"></i> 12% YoY Growth
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Average Package</div>
+                    <div class="stat-value">₹12.5 LPA</div>
+                    <div style="color: #10b981; font-size: 0.85rem;">Exceeds Target</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Company Engagement</div>
+                    <div class="stat-value">92/100</div>
+                    <div style="color: #6366f1; font-size: 0.85rem;">High Retention</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">At-Risk Students</div>
+                    <div class="stat-value" style="color: #ef4444;">23</div>
+                    <div style="color: #ef4444; font-size: 0.85rem;">Needs Intervention</div>
+                </div>
+            </div>
+
+            <!-- AI Analytics Row -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px;">
+
+                <!-- 1. Placement Forecast -->
+                <div class="glass-panel" style="padding: 24px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="color: white;">Placement Forecast (2026)</h3>
+                        <span style="font-size: 0.85rem; color: #34d399;"><i class="fas fa-arrow-up"></i> Trending
+                            +15%</span>
+                    </div>
+                    <div
+                        style="display: flex; align-items: flex-end; justify-content: space-between; height: 150px; padding-top: 20px;">
+                        <!-- Simple CSS Bar Chart -->
+                        <div
+                            style="width: 15%; height: 40%; background: rgba(56, 189, 248, 0.2); border-radius: 4px 4px 0 0; position: relative;">
+                            <span
+                                style="position: absolute; bottom: -25px; left: 0; right: 0; text-align: center; font-size: 0.8rem; color: var(--text-muted);">Q1</span>
+                        </div>
+                        <div
+                            style="width: 15%; height: 60%; background: rgba(56, 189, 248, 0.4); border-radius: 4px 4px 0 0; position: relative;">
+                            <span
+                                style="position: absolute; bottom: -25px; left: 0; right: 0; text-align: center; font-size: 0.8rem; color: var(--text-muted);">Q2</span>
+                        </div>
+                        <div
+                            style="width: 15%; height: 50%; background: rgba(56, 189, 248, 0.3); border-radius: 4px 4px 0 0; position: relative;">
+                            <span
+                                style="position: absolute; bottom: -25px; left: 0; right: 0; text-align: center; font-size: 0.8rem; color: var(--text-muted);">Q3</span>
+                        </div>
+                        <div
+                            style="width: 15%; height: 85%; background: linear-gradient(to top, #38bdf8, #818cf8); border-radius: 4px 4px 0 0; position: relative; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);">
+                            <span
+                                style="position: absolute; bottom: -25px; left: 0; right: 0; text-align: center; font-size: 0.8rem; font-weight: 700; color: white;">Q4
+                                (AI)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Company Engagement CRM -->
+                <div class="glass-panel" style="padding: 24px;">
+                    <h3 style="margin-bottom: 16px; color: white;">Relationship Health</h3>
+                    <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                        <div
+                            style="flex: 1; padding: 12px; border: 1px solid rgba(52, 211, 153, 0.3); background: rgba(52, 211, 153, 0.1); border-radius: 8px;">
+                            <div style="font-size: 0.85rem; color: #34d399;">Active Partners</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #34d399;">42</div>
+                        </div>
+                        <div
+                            style="flex: 1; padding: 12px; border: 1px solid rgba(244, 63, 94, 0.3); background: rgba(244, 63, 94, 0.1); border-radius: 8px;">
+                            <div style="font-size: 0.85rem; color: #f43f5e;">At Risk</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #f43f5e;">3</div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">AI suggests contacting <strong
+                            style="color: white;">Infosys</strong> regarding Q3 drive delay.</p>
+                    <button class="btn btn-outline" style="width: 100%; margin-top: 12px; padding: 8px;">View CRM
+                        Insights</button>
+                </div>
+
+            </div>
+
+            <!-- Company Status -->
+            <div class="glass-panel" style="background: transparent; padding: 0;">
+                <div
+                    style="padding: 24px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between;">
+                    <h3 style="color: white;">Active Recruitment Drives</h3>
+                    <button class="btn btn-primary" style="padding: 6px 16px; font-size: 0.8rem;">+ Add Drive</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Company Name</th>
+                            <th>Applicants</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Google</td>
+                            <td>450</td>
+                            <td><span
+                                    style="background: #dbeafe; color: #1e40af; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">Interviewing</span>
+                            </td>
+                            <td>Feb 20</td>
+                            <td><i class="fas fa-ellipsis-h" style="cursor: pointer; color: #9ca3af;"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Deloitte</td>
+                            <td>320</td>
+                            <td><span
+                                    style="background: #fce7f3; color: #9d174d; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">Registration</span>
+                            </td>
+                            <td>Feb 24</td>
+                            <td><i class="fas fa-ellipsis-h" style="cursor: pointer; color: #9ca3af;"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Infosys</td>
+                            <td>600</td>
+                            <td><span
+                                    style="background: #ecfccb; color: #3f6212; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">Completed</span>
+                            </td>
+                            <td>Jan 15</td>
+                            <td><i class="fas fa-check" style="color: green;"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+</body>
+
+</html>

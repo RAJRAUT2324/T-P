@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Analytics Dashboard</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --primary-color: #0d47a1; /* Deep Blue */
+            --primary-light: #1565c0;
+            --accent-color: #ffa726;  /* Orange */
+            --bg-color: #f8f9fa;      /* Very Light Gray */
+            --card-bg: #ffffff;
+            --text-dark: #1a202c;
+            --text-gray: #718096;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+        }
+
+        /* Section Container */
+        .analytics-section {
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header Styling */
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-size: 2.25rem;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .section-header .divider {
+            height: 4px;
+            width: 60px;
+            background: var(--accent-color);
+            margin: 0 auto;
+            border-radius: 2px;
+        }
+
+        /* Key Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            border-bottom: 4px solid transparent;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: block;
+            line-height: 1.2;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+            display: block;
+        }
+
+        /* Charts Layout */
+        .charts-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow-md);
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+            padding-left: 12px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .chart-container {
+            flex-grow: 1;
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .analytics-section { padding: 40px 15px; }
+            
+            .section-header h2 { font-size: 1.75rem; }
+            
+            .charts-wrapper { grid-template-columns: 1fr; }
+            
+            .chart-card { height: 350px; padding: 20px; }
+            
+            .metric-value { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <section class="analytics-section reveal">
+        
+        <div class="section-header">
+            <h2>Placement Analytics</h2>
+            <div class="divider"></div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <span class="metric-value">320</span>
+                <span class="metric-label">Students Placed (2025)</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-value">45 <span style="font-size: 1.5rem;">LPA</span></span>
+                <span class="metric-label">Highest Package</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-value">128</span>
+                <span class="metric-label">Companies Visited</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-value">92%</span>
+                <span class="metric-label">Placement Record</span>
+            </div>
+        </div>
+
+        <div class="charts-wrapper">
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Yearly Placement Stats</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="placementChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Branch-wise Selection %</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="branchChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Global Chart Defaults for consistent styling
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.color = '#718096';
+            Chart.defaults.scale.grid.color = '#edf2f7';
+
+            // --- 1. Yearly Placement Bar Chart ---
+            const ctx1 = document.getElementById('placementChart').getContext('2d');
+            
+            // Create a gradient for the bars
+            const gradientBlue = ctx1.createLinearGradient(0, 0, 0, 400);
+            gradientBlue.addColorStop(0, '#0d47a1'); // Dark Blue top
+            gradientBlue.addColorStop(1, '#42a5f5'); // Light Blue bottom
+
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['2021', '2022', '2023', '2024', '2025'],
+                    datasets: [{
+                        label: 'Students Placed',
+                        data: [120, 150, 180, 240, 320], // Matches your image data
+                        backgroundColor: gradientBlue,
+                        borderRadius: 6,
+                        barPercentage: 0.6,
+                        hoverBackgroundColor: '#ffa726' // Turns orange on hover
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1a202c',
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 14 },
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { font: { size: 12 } },
+                            border: { display: false }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 12 } },
+                            border: { display: false }
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+
+            // --- 2. Branch Selection Doughnut Chart ---
+            const ctx2 = document.getElementById('branchChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['CS', 'IT', 'E&TC', 'Mech', 'Civil'],
+                    datasets: [{
+                        data: [45, 25, 15, 10, 5],
+                        backgroundColor: [
+                            '#0d47a1', // CS (Deep Blue)
+                            '#1e88e5', // IT (Blue)
+                            '#ffa726', // E&TC (Orange)
+                            '#263238', // Mech (Dark Gray)
+                            '#90a4ae'  // Civil (Light Gray)
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff',
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%', // Makes the ring thinner
+                    plugins: {
+                        legend: {
+                            position: 'right', // Legend on the right side
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                padding: 20,
+                                font: { size: 13, weight: '500' }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1a202c',
+                            bodyFont: { size: 14 },
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    return ' ' + context.label + ': ' + context.raw + '%';
+                                }
+                            }
+                        }
+                    },
+                    layout: {
+                        padding: 10
+                    },
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

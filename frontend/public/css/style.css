@@ -1,0 +1,532 @@
+/* --- FUTURISTIC DARK AURA THEME (Sci-Fi & Neon) --- */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;700&display=swap');
+
+:root {
+    /* Neon Palette */
+    --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+    /* Cyan to Purple */
+    --gradient-accent: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%);
+    /* Neon Red */
+    --gradient-glow: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.15), transparent 70%);
+
+    /* Deep Space Colors */
+    --bg-page: #020617;
+    /* Slate 950 - Almost Black */
+    --bg-card: rgba(15, 23, 42, 0.7);
+    /* Slate 900 Glass */
+
+    /* Text Colors */
+    --text-main: #f8fafc;
+    /* Slate 50 */
+    --text-muted: #94a3b8;
+    /* Slate 400 */
+
+    /* Neon Accents */
+    --primary: #38bdf8;
+    /* Cyan 400 */
+    --secondary: #a855f7;
+    /* Purple 500 */
+    --accent: #f43f5e;
+    /* Rose 500 */
+    --success: #34d399;
+    /* Emerald 400 */
+
+    /* Dark Glassmorphism */
+    --glass-bg: rgba(15, 23, 42, 0.6);
+    --glass-border: 1px solid rgba(56, 189, 248, 0.2);
+    /* Cyan hint */
+    --glass-shadow: 0 0 20px rgba(56, 189, 248, 0.05);
+    /* Subtle glow */
+    --blur: blur(20px);
+
+    /* Dimensions */
+    --radius-lg: 24px;
+    --radius-md: 12px;
+
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-page);
+    /* Animated Aurora Background */
+    background-image:
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%);
+    background-attachment: fixed;
+    color: var(--text-main);
+    font-family: 'Space Grotesk', sans-serif;
+    /* Tech Font */
+    line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -0.5px;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: var(--transition);
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* --- FUTURE GLASS COMPONENTS --- */
+.glass-panel {
+    background: var(--bg-card);
+    backdrop-filter: var(--blur);
+    border: var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-lg);
+    color: var(--text-main);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Glowing Border Effect on Panels */
+.glass-panel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.5), transparent);
+    opacity: 0.5;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    font-size: 0.95rem;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+    /* Neon Glow */
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.6);
+}
+
+.btn-outline {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: var(--primary);
+}
+
+.btn-outline:hover {
+    border-color: var(--primary);
+    background: rgba(56, 189, 248, 0.1);
+    color: white;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+}
+
+/* --- NAVBAR (Dark Glass) --- */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(2, 6, 23, 0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 20px 0;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(to right, #38bdf8, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.nav-links a {
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.nav-links a:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* --- HERO SECTION --- */
+.hero {
+    padding: 100px 0 120px;
+    text-align: center;
+    position: relative;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    margin-bottom: 24px;
+    line-height: 1.1;
+    text-shadow: 0 0 40px rgba(14, 165, 233, 0.3);
+}
+
+.hero h1 span {
+    background: linear-gradient(to right, #38bdf8, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+    max-width: 650px;
+    margin: 0 auto 60px;
+    font-size: 1.25rem;
+    color: var(--text-muted);
+}
+
+/* HERO CARDS (THE LOGIN SPLIT) - Dark Glass Edition */
+.hero-cards-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.hero-card {
+    background: rgba(30, 41, 59, 0.4);
+    /* Slate 800 transparent */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 40px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 300px;
+}
+
+.hero-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: var(--primary);
+    box-shadow: 0 0 40px rgba(56, 189, 248, 0.2);
+    background: rgba(30, 41, 59, 0.6);
+}
+
+.card-icon-lg {
+    width: 70px;
+    height: 70px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 24px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.icon-student i {
+    color: #38bdf8;
+}
+
+.icon-officer i {
+    color: #f43f5e;
+}
+
+.hero-card h3 {
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+
+.hero-card p {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 0;
+}
+
+/* --- FEATURES (Dark Cards) --- */
+.features-section {
+    padding: 100px 0;
+    position: relative;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+.feature-box {
+    padding: 35px;
+    background: rgba(30, 41, 59, 0.3);
+    /* Transparent dark */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    transition: var(--transition);
+}
+
+.feature-box:hover {
+    transform: translateY(-8px);
+    background: rgba(30, 41, 59, 0.8);
+    border-color: var(--primary);
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.15);
+}
+
+.feature-box i {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 24px;
+    text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+}
+
+.feature-box h3 {
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.feature-box p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* --- DASHBOARD STYLES (HUD Theme) --- */
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background: var(--bg-page);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 280px;
+    background: rgba(2, 6, 23, 0.95);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    padding: 32px;
+    position: fixed;
+    height: 100%;
+    z-index: 50;
+}
+
+.sidebar-logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 8px;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+
+.menu-item:hover,
+.menu-item.active {
+    background: rgba(56, 189, 248, 0.1);
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.2);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
+}
+
+.main-content {
+    margin-left: 280px;
+    flex: 1;
+    padding: 40px 50px;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+/* Stats HUD */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: rgba(30, 41, 59, 0.4);
+    backdrop-filter: blur(10px);
+    padding: 24px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--primary);
+    box-shadow: 0 0 10px var(--primary);
+}
+
+.stat-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: white;
+    margin: 10px 0;
+    font-family: 'Outfit', sans-serif;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Table HUD */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(30, 41, 59, 0.3);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.data-table th {
+    background: rgba(2, 6, 23, 0.5);
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    padding: 20px 24px;
+}
+
+.data-table td {
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+/* --- CHAT BOT (Holo-Interface) --- */
+.chat-widget-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    cursor: pointer;
+    z-index: 200;
+    transition: var(--transition);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.chat-widget-btn:hover {
+    transform: scale(1.1) rotate(10deg);
+    box-shadow: 0 0 50px rgba(168, 85, 247, 0.8);
+}
+
+#chat-container {
+    background: rgba(2, 6, 23, 0.95);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    color: white;
+}
+
+.chat-header {
+    background: rgba(56, 189, 248, 0.1);
+    border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+    padding: 20px;
+}
+
+.chat-body {
+    background: transparent;
+}
+
+.chat-footer {
+    background: rgba(2, 6, 23, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#chat-input {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 12px;
+}
+
+#chat-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    outline: none;
+}

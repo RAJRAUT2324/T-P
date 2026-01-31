@@ -1,50 +1,52 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const path = require('path');
-const authRoute = require('./routes/auth');
-const studentRoute = require('./routes/studentRoutes');
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const path = require("path");
 
 // Initialize Express
 const app = express();
 
-// Load environment variables
-dotenv.config({ path: path.resolve(__dirname, '.env') });
+// Load environment variables FIRST
+dotenv.config({ path: path.resolve(__dirname, ".env") });
+
+// --- Import Routes ---
+const authRoute = require("./routes/auth");
+const studentRoute = require("./routes/studentRoutes");
+const aiRoute = require("./routes/aiRoutes"); // Import your Groq AI Route
+
 
 // --- 1. MIDDLEWARE ---
 app.use(express.json());
 app.use(cors());
 
-// --- REGISTER ROUTES ---
+// --- 2. REGISTER API ROUTES ---
 app.use("/api/auth", authRoute);
-// --- LINE 2: Register the student route ---
 app.use("/api/students", studentRoute);
+app.use("/api/ai", aiRoute); // This activates the AI routes
 
-// --- 2. STATIC FILE SERVING ---
+// --- 3. STATIC FILE SERVING ---
 // Serve static files from the public folder (HTML)
-app.use(express.static(path.join(__dirname, '../frontend/public')));
+app.use(express.static(path.join(__dirname, "../frontend/public")));
 // Serve assets (CSS, JS, Images)
-app.use('/assets', express.static(path.join(__dirname, '../frontend/assets')));
+app.use("/assets", express.static(path.join(__dirname, "../frontend/assets")));
 
-// --- 3. DATABASE CONNECTION ---
-mongoose.connect(process.env.MONGO_URL)
-    .then(() => console.log("DB Connection Successfull!"))
-    .catch((err) => {
-        console.error("DB Connection Error:", err);
-    });
-
-// --- 4. ROUTES ---
-app.use("/api/auth", authRoute);
+// --- 4. DATABASE CONNECTION ---
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => console.log("DB Connection Successfull!"))
+  .catch((err) => {
+    console.error("DB Connection Error:", err);
+  });
 
 // --- 5. LANDING PAGE ---
-// Direct the root URL to your index.html
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/public/index.html"));
 });
 
 // --- 6. SERVER INITIALIZATION ---
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Full Project running on http://localhost:${PORT}`);
+  console.log(`Full Project running on http://localhost:${PORT}`);
+  console.log(`AI Chatbot endpoint: http://localhost:${PORT}/api/ai/chat`);
 });

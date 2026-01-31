@@ -1,26 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Training & Placement Cell</title>
-  
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
     /* --- 1. THEME VARIABLES --- */
     :root {
-      --primary-dark: #0a3d91;      /* Deep Blue */
-      --primary-royal: #0a66c2;     /* Royal Blue */
-      --accent-orange: #f2ad58;     /* Orange */
-      --bg-light: #f4f6fa;          /* Light Gray Background */
+      --primary-dark: #0a3d91;
+      /* Deep Blue */
+      --primary-royal: #0a66c2;
+      /* Royal Blue */
+      --accent-orange: #f2ad58;
+      /* Orange */
+      --bg-light: #f4f6fa;
+      /* Light Gray Background */
       --text-dark: #333333;
       --white: #ffffff;
       --transition: all 0.3s ease;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     body {
       font-family: 'Poppins', sans-serif;
@@ -29,7 +38,10 @@
       overflow-x: hidden;
     }
 
-    a { text-decoration: none; color: inherit; }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
 
     /* --- 2. NAVBAR --- */
     .navbar {
@@ -41,19 +53,25 @@
       position: sticky;
       top: 0;
       z-index: 1000;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
-    .logo { color: var(--white); font-size: 1.8rem; font-weight: 700; }
+    .logo {
+      color: var(--white);
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
 
     .navbar nav a {
-      color: rgba(255,255,255,0.8);
+      color: rgba(255, 255, 255, 0.8);
       margin-left: 25px;
       font-weight: 500;
       transition: var(--transition);
     }
 
-    .navbar nav a:hover { color: var(--accent-orange); }
+    .navbar nav a:hover {
+      color: var(--accent-orange);
+    }
 
     /* --- 3. HERO SECTION WITH ANIMATED BACKGROUND --- */
     .hero {
@@ -70,7 +88,8 @@
     }
 
     /* Moving Background Animation (Particles) */
-    .hero::before, .hero::after {
+    .hero::before,
+    .hero::after {
       content: '';
       position: absolute;
       width: 300px;
@@ -79,19 +98,48 @@
       border-radius: 50%;
       animation: floatShape 10s infinite alternate;
     }
-    
-    .hero::before { top: -50px; left: -50px; }
-    .hero::after { bottom: -50px; right: -50px; animation-delay: -5s; }
 
-    @keyframes floatShape {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(50px, 50px) scale(1.2); }
+    .hero::before {
+      top: -50px;
+      left: -50px;
     }
 
-    .hero h2 { font-size: 3.5rem; margin-bottom: 20px; z-index: 2; }
-    .hero h2 span { color: var(--accent-orange); }
-    .hero p { font-size: 1.2rem; margin-bottom: 40px; opacity: 0.9; z-index: 2; }
-    .hero-buttons { z-index: 2; }
+    .hero::after {
+      bottom: -50px;
+      right: -50px;
+      animation-delay: -5s;
+    }
+
+    @keyframes floatShape {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      100% {
+        transform: translate(50px, 50px) scale(1.2);
+      }
+    }
+
+    .hero h2 {
+      font-size: 3.5rem;
+      margin-bottom: 20px;
+      z-index: 2;
+    }
+
+    .hero h2 span {
+      color: var(--accent-orange);
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      opacity: 0.9;
+      z-index: 2;
+    }
+
+    .hero-buttons {
+      z-index: 2;
+    }
 
     .btn {
       padding: 12px 30px;
@@ -102,217 +150,505 @@
       display: inline-block;
     }
 
-    .btn.primary { background: var(--accent-orange); color: #000; }
-    .btn.primary:hover { background: #e09b45; transform: translateY(-3px); }
-    .btn.secondary { background: transparent; border: 2px solid var(--white); color: var(--white); }
-    .btn.secondary:hover { background: var(--white); color: var(--primary-dark); transform: translateY(-3px); }
+    .btn.primary {
+      background: var(--accent-orange);
+      color: #000;
+    }
+
+    .btn.primary:hover {
+      background: #e09b45;
+      transform: translateY(-3px);
+    }
+
+    .btn.secondary {
+      background: transparent;
+      border: 2px solid var(--white);
+      color: var(--white);
+    }
+
+    .btn.secondary:hover {
+      background: var(--white);
+      color: var(--primary-dark);
+      transform: translateY(-3px);
+    }
 
     /* --- 4. ANNOUNCEMENTS SECTION (Vertical Scroll) --- */
-    .announcements { padding: 60px 5%; }
-    .row { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
-    
+    .announcements {
+      padding: 60px 5%;
+    }
+
+    .row {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
     .announce-box {
-      flex: 1; min-width: 300px; background: var(--white); border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden;
+      flex: 1;
+      min-width: 300px;
+      background: var(--white);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
       border-top: 5px solid var(--primary-royal);
     }
 
-    .announce-box:nth-child(2) { border-top: 5px solid var(--accent-orange); }
-
-    .section-title {
-      background: var(--bg-light); padding: 15px; font-weight: 700;
-      color: var(--primary-dark); text-align: center; border-bottom: 1px solid #eee;
+    .announce-box:nth-child(2) {
+      border-top: 5px solid var(--accent-orange);
     }
 
-    .scroll-area { height: 300px; overflow: hidden; position: relative; }
-    .announce-list { animation: scrollUp 15s linear infinite; }
-    .announce-list:hover { animation-play-state: paused; }
+    .section-title {
+      background: var(--bg-light);
+      padding: 15px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    .scroll-area {
+      height: 300px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .announce-list {
+      animation: scrollUp 15s linear infinite;
+    }
+
+    .announce-list:hover {
+      animation-play-state: paused;
+    }
 
     @keyframes scrollUp {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-50%); }
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(-50%);
+      }
     }
 
     .announce-item {
-      padding: 15px 20px; border-bottom: 1px solid #f0f0f0; color: var(--text-dark);
-      font-size: 0.95rem; display: flex; justify-content: space-between;
-      cursor: pointer; transition: var(--transition);
+      padding: 15px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      color: var(--text-dark);
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: var(--transition);
     }
-    .announce-item span { color: var(--accent-orange); }
-    .announce-item:hover { background: #fafafa; padding-left: 25px; color: var(--primary-royal); }
+
+    .announce-item span {
+      color: var(--accent-orange);
+    }
+
+    .announce-item:hover {
+      background: #fafafa;
+      padding-left: 25px;
+      color: var(--primary-royal);
+    }
 
     /* --- 5. MARQUEE SECTIONS (UPDATED FOR SEAMLESS LOOP) --- */
-    .marquee-section { padding: 40px 0; background: var(--white); margin-bottom: 20px; }
-    .marquee-section h3 { text-align: center; color: var(--primary-dark); margin-bottom: 30px; font-size: 1.8rem; }
-    
-    .marquee { 
-      width: 100%; 
-      overflow: hidden; 
-      white-space: nowrap; 
-      position: relative; 
+    .marquee-section {
+      padding: 40px 0;
+      background: var(--white);
+      margin-bottom: 20px;
     }
-    
-    .track { 
-      display: inline-flex; 
+
+    .marquee-section h3 {
+      text-align: center;
+      color: var(--primary-dark);
+      margin-bottom: 30px;
+      font-size: 1.8rem;
+    }
+
+    .marquee {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .track {
+      display: inline-flex;
       /* The animation moves -50% because we duplicated the content. 
          -50% brings us exactly to the start of the duplicate set, 
          creating a seamless loop. */
-      animation: scrollLeft 25s linear infinite; 
-      align-items: center; 
+      animation: scrollLeft 25s linear infinite;
+      align-items: center;
     }
-    
-    .track:hover { animation-play-state: paused; }
-    
+
+    .track:hover {
+      animation-play-state: paused;
+    }
+
     /* Ensure images have consistent sizing and spacing */
-    .track img { 
-      height: 80px; 
-      margin: 0 40px; 
-      filter: grayscale(100%); 
-      transition: var(--transition); 
-      opacity: 0.7; 
-      flex-shrink: 0; /* Prevent images from squishing */
+    .track img {
+      height: 80px;
+      margin: 0 40px;
+      filter: grayscale(100%);
+      transition: var(--transition);
+      opacity: 0.7;
+      flex-shrink: 0;
+      /* Prevent images from squishing */
     }
-    
-    .track img:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
+
+    .track img:hover {
+      filter: grayscale(0%);
+      opacity: 1;
+      transform: scale(1.1);
+    }
 
     @keyframes scrollLeft {
-      from { transform: translateX(0); }
-      to { transform: translateX(-50%); } /* Moves exactly half the total width */
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
+
+      /* Moves exactly half the total width */
     }
 
     /* --- 6. ABOUT SECTION --- */
-    .about { padding: 80px 5%; text-align: center; background: var(--bg-light); }
-    .about h2 { color: var(--primary-dark); font-size: 2.2rem; margin-bottom: 15px; }
-    .about p { max-width: 700px; margin: 0 auto 50px; color: #666; }
-    .about-cards { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+    .about {
+      padding: 80px 5%;
+      text-align: center;
+      background: var(--bg-light);
+    }
+
+    .about h2 {
+      color: var(--primary-dark);
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+    }
+
+    .about p {
+      max-width: 700px;
+      margin: 0 auto 50px;
+      color: #666;
+    }
+
+    .about-cards {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
 
     .about-card {
-      background: var(--white); padding: 30px; border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08); width: 300px;
-      transition: var(--transition); border-bottom: 4px solid transparent;
+      background: var(--white);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      width: 300px;
+      transition: var(--transition);
+      border-bottom: 4px solid transparent;
     }
-    .about-card:hover { transform: translateY(-10px); border-bottom: 4px solid var(--accent-orange); }
+
+    .about-card:hover {
+      transform: translateY(-10px);
+      border-bottom: 4px solid var(--accent-orange);
+    }
+
     .about-card img {
-      width: 100px; height: 100px; border-radius: 50%; margin-bottom: 20px;
-      border: 3px solid var(--primary-royal); object-fit: cover;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      border: 3px solid var(--primary-royal);
+      object-fit: cover;
     }
-    .about-card h3 { color: var(--primary-dark); margin-bottom: 10px; }
-    .about-card p { font-size: 0.9rem; line-height: 1.6; }
+
+    .about-card h3 {
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+    }
+
+    .about-card p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
 
     /* --- 7. AI CHATBOT WIDGET --- */
     #ai-assistant {
-      position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
-      background: var(--accent-orange); border-radius: 50%;
-      display: flex; justify-content: center; align-items: center;
-      font-size: 30px; cursor: pointer; z-index: 1001;
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: var(--accent-orange);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 30px;
+      cursor: pointer;
+      z-index: 1001;
       box-shadow: 0 5px 20px rgba(242, 173, 88, 0.5);
-      animation: pulse 2s infinite; transition: var(--transition);
+      animation: pulse 2s infinite;
+      transition: var(--transition);
     }
-    
-    #ai-assistant:hover { transform: scale(1.1); }
+
+    #ai-assistant:hover {
+      transform: scale(1.1);
+    }
 
     @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(242, 173, 88, 0.7); }
-      70% { box-shadow: 0 0 0 15px rgba(242, 173, 88, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(242, 173, 88, 0); }
+      0% {
+        box-shadow: 0 0 0 0 rgba(242, 173, 88, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 15px rgba(242, 173, 88, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(242, 173, 88, 0);
+      }
     }
 
     /* Chat Window */
     .chat-container {
-      position: fixed; bottom: 100px; right: 30px; width: 350px; height: 500px;
-      background: var(--white); border-radius: 15px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 2000;
-      display: none; flex-direction: column; overflow: hidden;
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      width: 350px;
+      height: 500px;
+      background: var(--white);
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      z-index: 2000;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
       border: 1px solid #eee;
     }
 
-    .chat-container.active { display: flex; }
+    .chat-container.active {
+      display: flex;
+    }
 
     .chat-header {
-      background: var(--primary-dark); color: var(--white); padding: 15px;
-      display: flex; justify-content: space-between; align-items: center;
+      background: var(--primary-dark);
+      color: var(--white);
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-weight: 600;
     }
 
     .chat-messages {
-      flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9;
-      display: flex; flex-direction: column; gap: 10px;
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .message {
-      max-width: 80%; padding: 10px 15px; border-radius: 10px; font-size: 0.9rem;
-      line-height: 1.4; word-wrap: break-word;
+      max-width: 80%;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      word-wrap: break-word;
     }
 
-    .bot-msg { background: #e1e1e1; color: #333; align-self: flex-start; border-bottom-left-radius: 0; }
-    .user-msg { background: var(--primary-royal); color: white; align-self: flex-end; border-bottom-right-radius: 0; }
+    .bot-msg {
+      background: #e1e1e1;
+      color: #333;
+      align-self: flex-start;
+      border-bottom-left-radius: 0;
+    }
+
+    .user-msg {
+      background: var(--primary-royal);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 0;
+    }
 
     .chat-input-area {
-      padding: 10px; border-top: 1px solid #eee; display: flex; align-items: center; gap: 8px;
+      padding: 10px;
+      border-top: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .chat-input-area input {
-      flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none;
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      outline: none;
     }
 
     .chat-btn {
-      background: var(--primary-royal); color: white; border: none;
-      width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
-      display: flex; justify-content: center; align-items: center; transition: 0.2s;
+      background: var(--primary-royal);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.2s;
     }
 
-    .chat-btn:hover { background: var(--primary-dark); }
-    .mic-btn.active { background: #ff4444; animation: pulse-red 1s infinite; }
+    .chat-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .mic-btn.active {
+      background: #ff4444;
+      animation: pulse-red 1s infinite;
+    }
 
     @keyframes pulse-red {
-      0% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7); }
-      70% { box-shadow: 0 0 0 10px rgba(255, 68, 68, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); }
+      0% {
+        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(255, 68, 68, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+      }
     }
 
     /* --- 8. SOCIAL SIDEBAR --- */
     .social-sidebar {
-      position: fixed; left: 0; top: 50%; transform: translateY(-50%);
-      display: flex; flex-direction: column; z-index: 100;
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
     }
 
     .social-link {
-      width: 50px; height: 50px; display: flex; justify-content: center; align-items: center;
-      color: white; font-size: 1.2rem; transition: var(--transition); margin-left: -10px;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 1.2rem;
+      transition: var(--transition);
+      margin-left: -10px;
     }
 
-    .social-link:hover { margin-left: 0; width: 60px; }
-    .social-link.linkedin { background: #0077b5; }
-    .social-link.instagram { background: #e1306c; }
-    .social-link.twitter { background: #1da1f2; }
-    .social-link.youtube { background: #ff0000; }
+    .social-link:hover {
+      margin-left: 0;
+      width: 60px;
+    }
+
+    .social-link.linkedin {
+      background: #0077b5;
+    }
+
+    .social-link.instagram {
+      background: #e1306c;
+    }
+
+    .social-link.twitter {
+      background: #1da1f2;
+    }
+
+    .social-link.youtube {
+      background: #ff0000;
+    }
 
     /* --- 9. FOOTER --- */
-    .footer { background: var(--primary-dark); color: var(--white); padding: 50px 5% 20px; }
-    .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 30px; gap: 30px; }
-    .footer h4 { color: var(--accent-orange); margin-bottom: 15px; font-size: 1.2rem; }
-    .footer p { opacity: 0.8; line-height: 1.6; }
-    .copyright { text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; font-size: 0.9rem; opacity: 0.6; }
+    .footer {
+      background: var(--primary-dark);
+      color: var(--white);
+      padding: 50px 5% 20px;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+      gap: 30px;
+    }
+
+    .footer h4 {
+      color: var(--accent-orange);
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    .footer p {
+      opacity: 0.8;
+      line-height: 1.6;
+    }
+
+    .copyright {
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 20px;
+      font-size: 0.9rem;
+      opacity: 0.6;
+    }
 
     /* Responsive */
     @media (max-width: 768px) {
-      .hero h2 { font-size: 2.5rem; }
-      .navbar { flex-direction: column; gap: 15px; }
-      .navbar nav a { margin: 0 10px; }
-      .social-sidebar { display: none; }
-      .footer-content { flex-direction: column; text-align: center; }
-      .chat-container { width: 90%; right: 5%; bottom: 100px; }
+      .hero h2 {
+        font-size: 2.5rem;
+      }
+
+      .navbar {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .navbar nav a {
+        margin: 0 10px;
+      }
+
+      .social-sidebar {
+        display: none;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .chat-container {
+        width: 90%;
+        right: 5%;
+        bottom: 100px;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<header class="navbar">
+  <header class="navbar">
     <h1 class="logo">𖤍 AI T&P Cell</h1>
     <nav>
       <a href="#about">About</a>
       <a href="#announcements">Announcements</a>
-    
+
     </nav>
   </header>
   <section class="hero">
@@ -324,51 +660,55 @@
     </div>
   </section>
 
- <section class="announcements" id="announcements">
-  <div class="row">
-    <div class="announce-box">
-      <div class="section-title">Campus Announcements</div>
-      <div class="scroll-area">
-        <div class="announce-list">
-          <div class="announce-item">Internal Complaint Committee Form <span>➤</span></div>
-          <div class="announce-item">Placement 2024–25 <span>➤</span></div>
-          <div class="announce-item">Newsletter Jan–Mar 2025 <span>➤</span></div>
-          <div class="announce-item">AICTE Feedback System <span>➤</span></div>
-          <div class="announce-item">College Magazine – Potential 24 <span>➤</span></div>
-          <div class="announce-item">E-Newsletter Jan–Apr 2024 <span>➤</span></div>
-          <div class="announce-item">Alumni Portal <span>➤</span></div>
-          <div class="announce-item">Internal Complaint Committee Form <span>➤</span></div>
-          <div class="announce-item">Placement 2024–25 <span>➤</span></div>
-          <div class="announce-item">Newsletter Jan–Mar 2025 <span>➤</span></div>
+  <section class="announcements" id="announcements">
+    <div class="row">
+      <div class="announce-box">
+        <div class="section-title">Campus Announcements</div>
+        <div class="scroll-area">
+          <div class="announce-list">
+            <div class="announce-item">Internal Complaint Committee Form <span>➤</span></div>
+            <div class="announce-item">Placement 2024–25 <span>➤</span></div>
+            <div class="announce-item">Newsletter Jan–Mar 2025 <span>➤</span></div>
+            <div class="announce-item">AICTE Feedback System <span>➤</span></div>
+            <div class="announce-item">College Magazine – Potential 24 <span>➤</span></div>
+            <div class="announce-item">E-Newsletter Jan–Apr 2024 <span>➤</span></div>
+            <div class="announce-item">Alumni Portal <span>➤</span></div>
+            <div class="announce-item">Internal Complaint Committee Form <span>➤</span></div>
+            <div class="announce-item">Placement 2024–25 <span>➤</span></div>
+            <div class="announce-item">Newsletter Jan–Mar 2025 <span>➤</span></div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="announce-box">
-      <div class="section-title">Off-Campus Opportunities</div>
-      <div class="scroll-area">
-        <div class="announce-list">
-          <div class="announce-item">Infosys Off-Campus Drive <span>➤</span></div>
-          <div class="announce-item">TCS NQT Hiring 2025 <span>➤</span></div>
-          <div class="announce-item">Wipro TalentNext Program <span>➤</span></div>
-          <div class="announce-item">Capgemini Pooled Drive <span>➤</span></div>
-          <div class="announce-item">Cognizant GENC Opportunity <span>➤</span></div>
-          <div class="announce-item">HCL Graduate Program <span>➤</span></div>
-          <div class="announce-item">Infosys Off-Campus Drive <span>➤</span></div>
-          <div class="announce-item">TCS NQT Hiring 2025 <span>➤</span></div>
-          <div class="announce-item">Wipro TalentNext Program <span>➤</span></div>
+      <div class="announce-box">
+        <div class="section-title">Off-Campus Opportunities</div>
+        <div class="scroll-area">
+          <div class="announce-list">
+            <div class="announce-item">Infosys Off-Campus Drive <span>➤</span></div>
+            <div class="announce-item">TCS NQT Hiring 2025 <span>➤</span></div>
+            <div class="announce-item">Wipro TalentNext Program <span>➤</span></div>
+            <div class="announce-item">Capgemini Pooled Drive <span>➤</span></div>
+            <div class="announce-item">Cognizant GENC Opportunity <span>➤</span></div>
+            <div class="announce-item">HCL Graduate Program <span>➤</span></div>
+            <div class="announce-item">Infosys Off-Campus Drive <span>➤</span></div>
+            <div class="announce-item">TCS NQT Hiring 2025 <span>➤</span></div>
+            <div class="announce-item">Wipro TalentNext Program <span>➤</span></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
   <div id="ai-assistant" onclick="toggleChat()">🤖</div>
-  
+
   <div class="chat-container" id="chatWindow">
     <div class="chat-header">
       <span><i class="fas fa-robot"></i> AI Assistant</span>
-      <span style="cursor:pointer" onclick="toggleChat()"><i class="fas fa-times"></i></span>
+      <div style="display: flex; gap: 15px; align-items: center;">
+        <span id="speechToggle" style="cursor:pointer" onclick="toggleSpeech()" title="Toggle Speech"><i
+            class="fas fa-volume-up"></i></span>
+        <span style="cursor:pointer" onclick="toggleChat()"><i class="fas fa-times"></i></span>
+      </div>
     </div>
     <div class="chat-messages" id="chatBody">
       <div class="message bot-msg">Hello! I am your AI Placement Assistant. You can type or speak to me! 🎙</div>
@@ -381,31 +721,39 @@
   </div>
 
   <div class="social-sidebar">
-    <a href="https://www.linkedin.com/company/p-r-pote-patil-group-of-educational-institutes-amravati/?originalSubdomain=in" class="social-link linkedin" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-    <a href="https://www.instagram.com/prpotegroup/?hl=en" class="social-link instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
-    <a href="https://x.com/prpgei?lang=en" class="social-link twitter" title="Twitter"><i class="fab fa-twitter"></i></a>
-    <a href="https://www.youtube.com/channel/UCZ3_sR2StcxL1N9GzPnVX1g" class="social-link youtube" title="YouTube"><i class="fab fa-youtube"></i></a>
+    <a href="https://www.linkedin.com/company/p-r-pote-patil-group-of-educational-institutes-amravati/?originalSubdomain=in"
+      class="social-link linkedin" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+    <a href="https://www.instagram.com/prpotegroup/?hl=en" class="social-link instagram" title="Instagram"><i
+        class="fab fa-instagram"></i></a>
+    <a href="https://x.com/prpgei?lang=en" class="social-link twitter" title="Twitter"><i
+        class="fab fa-twitter"></i></a>
+    <a href="https://www.youtube.com/channel/UCZ3_sR2StcxL1N9GzPnVX1g" class="social-link youtube" title="YouTube"><i
+        class="fab fa-youtube"></i></a>
   </div>
 
   <section class="marquee-section">
     <h3>Our Placed Students</h3>
     <div class="marquee">
       <div class="track">
-        <span><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD-LlCOmae37Y3uBB3lzSVMpkDDT45pdvmAfePfZgZzA&s" /></span>
+        <span><img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD-LlCOmae37Y3uBB3lzSVMpkDDT45pdvmAfePfZgZzA&s" /></span>
         <span><img src="https://iili.io/fxlKRna.th.jpg" /></span>
         <span><img src="https://iili.io/fx3eUg4.th.jpg" /></span>
         <span><img src="https://iili.io/fxlnOTN.th.jpg" /></span>
         <span><img src="https://iili.io/fxlBCFf.th.jpg" /></span>
-        <span><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD-LlCOmae37Y3uBB3lzSVMpkDDT45pdvmAfePfZgZzA&s" /></span>
+        <span><img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD-LlCOmae37Y3uBB3lzSVMpkDDT45pdvmAfePfZgZzA&s" /></span>
         <span><img src="https://iili.io/fxlKRna.th.jpg" /></span>
         <span><img src="https://iili.io/fx3eUg4.th.jpg" /></span>
 
-        <span><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD-LlCOmae37Y3uBB3lzSVMpkDDT45pdvmAfePfZgZzA&s" /></span>
+        <span><img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD-LlCOmae37Y3uBB3lzSVMpkDDT45pdvmAfePfZgZzA&s" /></span>
         <span><img src="https://iili.io/fxlKRna.th.jpg" /></span>
         <span><img src="https://iili.io/fx3eUg4.th.jpg" /></span>
         <span><img src="https://iili.io/fxlnOTN.th.jpg" /></span>
         <span><img src="https://iili.io/fxlBCFf.th.jpg" /></span>
-        <span><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD-LlCOmae37Y3uBB3lzSVMpkDDT45pdvmAfePfZgZzA&s" /></span>
+        <span><img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD-LlCOmae37Y3uBB3lzSVMpkDDT45pdvmAfePfZgZzA&s" /></span>
         <span><img src="https://iili.io/fxlKRna.th.jpg" /></span>
         <span><img src="https://iili.io/fx3eUg4.th.jpg" /></span>
       </div>
@@ -435,7 +783,8 @@
 
   <section id="about" class="about">
     <h2>About Our Training & Placement Cell</h2>
-    <p>We bridge the gap between academics and industry using AI-powered training modules, mock interviews, and personalized guidance.</p>
+    <p>We bridge the gap between academics and industry using AI-powered training modules, mock interviews, and
+      personalized guidance.</p>
     <div class="about-cards">
       <div class="about-card">
         <img src="https://prpotepatilengg.ac.in/assets/images/chairman.png" alt="Placement Head">
@@ -454,7 +803,7 @@
       </div>
     </div>
   </section>
-<footer class="footer">
+  <footer class="footer">
     <div class="footer-content">
       <div>
         <h4>AI Training & Placement Cell</h4>
@@ -466,147 +815,209 @@
         <p>Phone: +91 98765 43210</p>
       </div>
       <div>
-    <h4>Developers</h4>
-    <p>
-        <a href="https://www.linkedin.com/in/raj-raut-0b8502351/" style="text-decoration: none; color: inherit;">
+        <h4>Developers</h4>
+        <p>
+          <a href="https://www.linkedin.com/in/raj-raut-0b8502351/" style="text-decoration: none; color: inherit;">
             👨‍💻 Raj Raut
-        </a>
-    </p>
-    <p>
-        <a href="https://www.linkedin.com/in/shreyas-dakhole-562388338/" style="text-decoration: none; color: inherit;">
+          </a>
+        </p>
+        <p>
+          <a href="https://www.linkedin.com/in/shreyas-dakhole-562388338/"
+            style="text-decoration: none; color: inherit;">
             👨‍💻 Shreyas Dakhole
-        </a>
-    </p>
-</div>
+          </a>
+        </p>
+      </div>
     </div>
     <p class="copyright">© 2025 College Name. All rights reserved.</p>
     <p class="copyright">Made with <span class="heart">❤️</span> by Team Arjuna</p>
   </footer>
-<script>
-    // --- 1. CONFIGURATION & DATA ---
+  <script>
+    // --- 1. CONFIG & DATA ---
+    // Removed exposed API Key for security
+
     const placementData = {
-        stats: "Last year, we achieved a 92% placement rate. The highest package was 45 LPA, and the average was 6.5 LPA.",
-        companies: "Our marquee recruiters include Google, Microsoft, TCS, Infosys, Zensar, and Cognizant.",
-        tpCell: "The T&P Cell is located on the 2nd floor, Admin Block. Headed by Prof. Sharma, it provides resume building and mock interview sessions.",
-        eligibility: "Students need a minimum 6.5 CGPA and no active backlogs to participate in the recruitment drive.",
-        contact: "You can email the T&P cell at tp-cell@college.edu or call +123-456-7890."
+      stats: "Last year, we achieved a 92% placement rate. The highest package was 45 LPA, and the average was 6.5 LPA.",
+      companies: "Our marquee recruiters include Google, Microsoft, TCS, Infosys, Zensar, and Cognizant.",
+      tpCell: "The T&P Cell is located on the 2nd floor, Admin Block. Headed by Prof. Sharma, it provides resume building and mock interview sessions.",
+      eligibility: "Students need a minimum 6.5 CGPA and no active backlogs to participate in the recruitment drive.",
+      contact: "You can email the T&P cell at tp-cell@college.edu or call +123-456-7890."
     };
 
     // --- 2. UI LOGIC ---
+    let isSpeechEnabled = true;
+
     function toggleChat() {
-        const chatWindow = document.getElementById("chatWindow");
-        chatWindow.style.display = (chatWindow.style.display === "flex") ? "none" : "flex";
-        
-        // Greet user when opened for the first time
-        if(chatWindow.style.display === "flex" && document.getElementById("chatBody").children.length === 0) {
-            showInitialGreeting();
-        }
+      const chatWindow = document.getElementById("chatWindow");
+      const isOpen = chatWindow.style.display === "flex";
+      chatWindow.style.display = isOpen ? "none" : "flex";
+
+      if (!isOpen && document.getElementById("chatBody").children.length === 0) {
+        showInitialGreeting();
+      }
+    }
+
+    function toggleSpeech() {
+      isSpeechEnabled = !isSpeechEnabled;
+      const icon = document.querySelector("#speechToggle i");
+
+      if (isSpeechEnabled) {
+        icon.className = "fas fa-volume-up";
+        // Optional: Speak "Voice enabled"
+      } else {
+        icon.className = "fas fa-volume-mute";
+        window.speechSynthesis.cancel(); // Stop talking immediately
+      }
+    }
+
+    // Fix: Added handleEnter function
+    function handleEnter(event) {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
     }
 
     function showInitialGreeting() {
-        const greeting = "Hello! I am your T&P Assistant. How can I help you today?";
-        appendMessage(greeting, 'bot-msg');
-        speak(greeting);
-        showSuggestions();
+      const greeting = "Hello! I am your AI T&P Assistant. How can I help you today?";
+      appendMessage(greeting, 'bot-msg');
+      speak(greeting);
+      showSuggestions();
     }
 
-    // --- 3. SUGGESTION BUTTONS (The "Que & Ans" fix) ---
+    // --- 3. SUGGESTION BUTTONS ---
     function showSuggestions() {
-        const chatBody = document.getElementById("chatBody");
-        const suggestionDiv = document.createElement("div");
-        suggestionDiv.className = "suggestion-container";
-        suggestionDiv.style.display = "flex";
-        suggestionDiv.style.flexWrap = "wrap";
-        suggestionDiv.style.gap = "5px";
-        suggestionDiv.style.padding = "10px";
+      const chatBody = document.getElementById("chatBody");
+      const suggestionDiv = document.createElement("div");
+      suggestionDiv.className = "suggestion-container";
+      suggestionDiv.style.cssText = "display:flex; flex-wrap:wrap; gap:5px; padding:10px;";
 
-        const options = [
-            { label: "📊 Placement Stats", query: "placement stats" },
-            { label: "🏢 Top Companies", query: "companies" },
-            { label: "📍 T&P Location", query: "tp cell" },
-            { label: "📞 Contact Us", query: "contact" }
-        ];
+      const options = [
+        { label: "📊 Placement Stats", query: "placement stats" },
+        { label: "🏢 Top Companies", query: "companies" },
+        { label: "📍 T&P Location", query: "tp cell" },
+        { label: "📞 Contact Us", query: "contact" }
+      ];
 
-        options.forEach(opt => {
-            const btn = document.createElement("button");
-            btn.innerText = opt.label;
-            btn.style.cssText = "padding:5px 10px; border-radius:15px; border:1px solid #007bff; background:white; color:#007bff; cursor:pointer; font-size:12px;";
-            btn.onclick = () => {
-                document.getElementById("userInput").value = opt.query;
-                sendMessage();
-                suggestionDiv.remove(); // Remove after clicking
-            };
-            suggestionDiv.appendChild(btn);
-        });
+      options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.innerText = opt.label;
+        btn.style.cssText = "padding:5px 10px; border-radius:15px; border:1px solid #007bff; background:white; color:#007bff; cursor:pointer; font-size:12px;";
+        btn.onclick = () => {
+          document.getElementById("userInput").value = opt.query;
+          sendMessage();
+          suggestionDiv.remove();
+        };
+        suggestionDiv.appendChild(btn);
+      });
 
-        chatBody.appendChild(suggestionDiv);
-        chatBody.scrollTop = chatBody.scrollHeight;
+      chatBody.appendChild(suggestionDiv);
+      chatBody.scrollTop = chatBody.scrollHeight;
     }
 
     // --- 4. CORE SEND LOGIC ---
-    function sendMessage() {
-        const inputField = document.getElementById("userInput");
-        const text = inputField.value.trim();
-        if (!text) return;
+    async function sendMessage() {
+      const inputField = document.getElementById("userInput");
+      const text = inputField.value.trim();
+      if (!text) return;
 
-        appendMessage(text, 'user-msg');
-        inputField.value = "";
+      appendMessage(text, 'user-msg');
+      inputField.value = "";
 
-        setTimeout(() => {
-            const botResponse = getAIResponse(text);
-            appendMessage(botResponse, 'bot-msg');
-            speak(botResponse);
-            // Show suggestions again after a short delay so user can keep clicking
-            setTimeout(showSuggestions, 1000); 
-        }, 600);
+      // Show a "typing..." indicator
+      const typingId = "typing-" + Date.now();
+      appendMessage("Thinking...", 'bot-msg', typingId);
+
+      try {
+        const botResponse = await getAIResponse(text);
+
+        // Remove typing indicator and show real response
+        const typingEl = document.getElementById(typingId);
+        if (typingEl) typingEl.remove();
+
+        appendMessage(botResponse, 'bot-msg');
+        speak(botResponse);
+
+        setTimeout(showSuggestions, 1000);
+      } catch (error) {
+        const typingEl = document.getElementById(typingId);
+        if (typingEl) typingEl.remove();
+        appendMessage("Sorry, I'm having trouble connecting to the brain right now.", 'bot-msg');
+      }
     }
 
-    function appendMessage(text, className) {
-        const chatBody = document.getElementById("chatBody");
-        const msgDiv = document.createElement("div");
-        msgDiv.className = `message ${className}`;
-        msgDiv.innerText = text;
-        chatBody.appendChild(msgDiv);
-        chatBody.scrollTop = chatBody.scrollHeight;
+    function appendMessage(text, className, id = null) {
+      const chatBody = document.getElementById("chatBody");
+      const msgDiv = document.createElement("div");
+      msgDiv.className = `message ${className}`;
+      if (id) msgDiv.id = id;
+      msgDiv.innerText = text;
+      chatBody.appendChild(msgDiv);
+      chatBody.scrollTop = chatBody.scrollHeight;
     }
 
-    // --- 5. AI LOGIC ---
-    function getAIResponse(input) {
-        const query = input.toLowerCase();
-        if (query.includes("stats") || query.includes("placement")) return placementData.stats;
-        if (query.includes("company") || query.includes("recruiter")) return placementData.companies;
-        if (query.includes("t&p") || query.includes("cell") || query.includes("location")) return placementData.tpCell;
-        if (query.includes("eligible") || query.includes("criteria")) return placementData.eligibility;
-        if (query.includes("contact") || query.includes("email")) return placementData.contact;
-        
-        return "I'm here to help with placements. Try clicking one of the options below!";
+    // --- 5. AI LOGIC (INTEGRATED WITH BACKEND) ---
+    async function getAIResponse(input) {
+      const query = input.toLowerCase();
+
+      // Check local data first
+      if (query.includes("stats") || query.includes("placement")) return placementData.stats;
+      if (query.includes("company") || query.includes("recruiter")) return placementData.companies;
+      if (query.includes("t&p") || query.includes("cell") || query.includes("location")) return placementData.tpCell;
+      if (query.includes("eligible") || query.includes("criteria")) return placementData.eligibility;
+      if (query.includes("contact") || query.includes("email")) return placementData.contact;
+
+      // If not found in local data, ask the Backend (which calls Groq)
+      try {
+        // Updated to use your backend route
+        const response = await fetch("/api/ai/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message: input })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          console.error("Backend Error:", data.error);
+          return "I encountered a server error. Please try again.";
+        }
+
+        return data.response || "No response received.";
+      } catch (err) {
+        console.error("Network Error:", err);
+        return "I'm having trouble connecting to the server.";
+      }
     }
 
     // --- 6. BEST VOICE TTS ---
     function speak(text) {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            const voices = window.speechSynthesis.getVoices();
-            const preferredVoice = voices.find(v => v.name.includes('Google US English') || v.name.includes('Samantha'));
-            if (preferredVoice) utterance.voice = preferredVoice;
-            window.speechSynthesis.speak(utterance);
-        }
+      if (!isSpeechEnabled) return; // Respect toggle state
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        const voices = window.speechSynthesis.getVoices();
+        const preferredVoice = voices.find(v => v.name.includes('Google US English') || v.name.includes('Samantha'));
+        if (preferredVoice) utterance.voice = preferredVoice;
+        window.speechSynthesis.speak(utterance);
+      }
     }
 
-    // Speech to Text (Mic)
     function startListening() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (SpeechRecognition) {
-            const recognition = new SpeechRecognition();
-            recognition.onresult = (event) => {
-                document.getElementById("userInput").value = event.results[0][0].transcript;
-                sendMessage();
-            };
-            recognition.start();
-        }
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.onresult = (event) => {
+          document.getElementById("userInput").value = event.results[0][0].transcript;
+          sendMessage();
+        };
+        recognition.start();
+      }
     }
-</script>
+  </script>
 
 </body>
+
 </html>
